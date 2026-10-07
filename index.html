@@ -11,7 +11,9 @@ body{display:flex;align-items:center;justify-content:center}
 #scene{position:relative;aspect-ratio:16/9;border:3px solid #69717e;background:#111;overflow:hidden;box-shadow:0 0 30px #000}
 #bg{width:100%;height:100%;display:block;object-fit:cover}
 .hot{position:absolute;cursor:pointer;background:transparent;border:0;z-index:2}
-.hot:hover{outline:2px dashed #ffd84a;outline-offset:-2px}\n#faderHint{position:absolute;left:52%;top:66%;width:14%;height:23%;border:2px dashed transparent;box-sizing:border-box;pointer-events:none;z-index:3;transition:.15s}\n#scene:hover #faderHint{border-color:rgba(255,216,74,.35)}
+.hot:hover{outline:2px dashed #ffd84a;outline-offset:-2px}
+#faderHint{position:absolute;left:52%;top:66%;width:14%;height:23%;border:2px dashed transparent;box-sizing:border-box;pointer-events:none;z-index:3;transition:.15s}
+#scene:hover #faderHint{border-color:rgba(255,216,74,.35)}
 #ui{background:#11151d;border:3px solid #69717e;border-top:0;padding:7px}
 #msg{min-height:34px;font-size:14px;line-height:1.25;margin-bottom:5px}
 button{font:bold 12px monospace;background:#252a34;color:#fff;border:2px solid #657080;padding:7px 9px;margin:2px;cursor:pointer}
@@ -30,7 +32,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <img id="bg" src="Regia Gold_ caos in console.png" alt="Regia Gold MiCo">
 
     <div class="hot" data-name="mixer" style="left:30%;top:52%;width:53%;height:38%"></div>
-    <div class="hot" data-name="fader" style="left:33%;top:58%;width:9%;height:16%;z-index:10" title="PRIMO FADER"></div>\n    <div class="hot" data-name="postit" style="left:47%;top:70%;width:15%;height:13%;z-index:10" title="NO FEEDBACK"></div>\n    <div id="faderHint"></div>
+    <div class="hot" data-name="fader" style="left:33%;top:58%;width:9%;height:16%;z-index:10" title="PRIMO FADER"></div>
+    <div class="hot" data-name="postit" style="left:47%;top:70%;width:15%;height:13%;z-index:10" title="NO FEEDBACK"></div>
+    <div id="faderHint"></div>
     <div class="hot" data-name="radio" style="left:83%;top:54%;width:10%;height:22%"></div>
     <div class="hot" data-name="monitor" style="left:18%;top:45%;width:19%;height:23%"></div>
     <div class="hot" data-name="door" style="left:89%;top:10%;width:11%;height:38%"></div>
@@ -140,7 +144,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function act(name){
     if(verb === 'GUARDA'){
       if(name === 'mixer') return say('Yamaha RIVAGE. La regia è pronta per la plenaria.');
-      if(name === 'fader') return say('Il primo fader a sinistra del RIVAGE. È quello che devo manovrare.');\n      if(name === 'postit') return say('Il post-it dice: NO FEEDBACK! Un consiglio che arriva sempre troppo tardi.');
+      if(name === 'fader') return say('Il primo fader a sinistra del RIVAGE. È quello che devo manovrare.');
+      if(name === 'postit') return say('Il post-it dice: NO FEEDBACK! Un consiglio che arriva sempre troppo tardi.');
       if(name === 'radio') return say('La radio di servizio. Da qui arrivano le chiamate dal palco.');
       if(name === 'monitor') return say('RELATORE PRONTO • PLENARIA • STREAMING OK. Per ora...');
       if(name === 'door') return say('Backstage. Cavi, relatori, runner e almeno tre persone che cercano qualcuno.');
