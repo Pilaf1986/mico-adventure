@@ -38,6 +38,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="radio" style="left:83%;top:54%;width:10%;height:22%"></div>
     <div class="hot" data-name="monitor" style="left:18%;top:45%;width:19%;height:23%"></div>
     <div class="hot" data-name="door" style="left:89%;top:10%;width:11%;height:38%"></div>
+    <div class="hot" data-name="cable" style="left:52%;top:78%;width:18%;height:20%;z-index:10" title="CAVO DMX"></div>
     <div class="hot" data-name="coffee" style="left:84%;top:78%;width:11%;height:18%"></div>
 
     <div id="panicOverlay">
@@ -75,6 +76,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let verb = 'GUARDA';
   let radioCalled = false;
   let panicked = false;
+  let responsibleCalled = false;
+  let cableDiagnosed = false;
+  let cableFixed = false;
   let inventory = [];
 
   function say(text){
@@ -138,6 +142,52 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       panic.style.display = 'flex';
       say('FADER SBAGLIATO! FIIIIIIIIIIII! PANICO IN REGIA!');
       beep();
+    }else{
+      say('Il fader è ancora lì. Il danno ormai è fatto.');
+    }
+  }
+
+  function callResponsible(){
+    if(!panicked){
+      return say('Prima devo avere un problema serio da segnalare.');
+    }
+    if(!responsibleCalled){
+      responsibleCalled = true;
+      panic.style.display = 'none';
+      say('📞 TELEFONO — FONICO: «Ehi, il mixer della plenaria non risponde, fischia tutto!»');
+      setTimeout(function(){
+        say('📞 RESPONSABILE: «Ma che cazzo dici, impara a lavorare!»');
+      }, 1100);
+      setTimeout(function(){
+        say('Il responsabile riattacca. In regia rimaniamo solo io e il tecnico di palco.');
+      }, 2500);
+      setTimeout(function(){
+        say('🎙️ TECNICO DI PALCO: «Aspetta... ho capito qual è il problema.»');
+      }, 3900);
+      setTimeout(function(){
+        cableDiagnosed = true;
+        say('🎙️ TECNICO DI PALCO: «Il cavo del microfono è finito nel DMX delle luci! Lo ricollego subito.»');
+      }, 5100);
+    }else{
+      say('Il responsabile ha già risposto. Ora il tecnico di palco sta sistemando il cavo.');
+    }
+  }
+
+  function fixCable(){
+    if(!cableDiagnosed){
+      return say('Sono solo cavi sotto la console. Non so ancora quale sia il problema.');
+    }
+    if(!cableFixed){
+      cableFixed = true;
+      say('🔌 TECNICO DI PALCO: «Eccolo! Era collegato al DMX delle luci.» Ricollega il cavo del microfono.');
+      setTimeout(function(){
+        say('🎙️ TECNICO DI PALCO: «Prova adesso.»');
+      }, 1400);
+      setTimeout(function(){
+        say('🎤 MICROFONO RELATORE: OK. «Uno, due... mi sentite?» — Perfetto. Il congresso può partire.');
+      }, 2800);
+    }else{
+      say('Il cavo è già ricollegato. Il microfono funziona.');
     }
   }
 
@@ -149,6 +199,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(name === 'radio') return say('La radio di servizio. Da qui arrivano le chiamate dal palco.');
       if(name === 'monitor') return say('RELATORE PRONTO • PLENARIA • STREAMING OK. Per ora...');
       if(name === 'door') return say('Backstage. Cavi, relatori, runner e almeno tre persone che cercano qualcuno.');
+      if(name === 'cable') return say('Un groviglio di cavi sotto la console. Uno di questi va verso il sistema luci.');
       if(name === 'coffee') return say('Caffè. L’unica cosa veramente indispensabile in regia.');
     }
 
@@ -168,15 +219,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
 
     if(verb === 'USA'){
-      if(name === 'radio') return radioCall();
+      if(name === 'radio') return panicked ? callResponsible() : radioCall();
       if(name === 'mixer') return useMixer();
       if(name === 'fader') return useFader();
+      if(name === 'cable') return fixCable();
       if(name === 'coffee') return say('Il caffè si usa in modo molto semplice: bevendolo.');
       return say('Non posso usarlo così.');
     }
 
     if(verb === 'PARLA'){
-      if(name === 'radio') return radioCall();
+      if(name === 'radio') return panicked ? callResponsible() : radioCall();
+      if(name === 'cable') return cableDiagnosed ? say('«È quello! Il cavo era finito nel DMX delle luci.»') : say('«Che succede con questi cavi?» — Il tecnico di palco sta ancora cercando di capire.');
       if(name === 'door') return say('«Che succede sul palco?» — Nessuna risposta. Il backstage è nel caos.');
       return say('Non c’è nessuno con cui parlare qui.');
     }
@@ -193,6 +246,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
     if(verb === 'SPINGI'){
       if(name === 'fader') return useFader();
+      if(name === 'cable') return fixCable();
       return say('Non è qualcosa da spingere.');
     }
 
