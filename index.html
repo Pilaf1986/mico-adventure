@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MiCo Adventure — Regia Gold</title>
+<style>
+html,body{margin:0;background:#090b10;color:#fff;font-family:monospace;height:100%;overflow:hidden}
+body{display:flex;align-items:center;justify-content:center}
+#wrap{width:min(100vw,1000px);padding:10px;box-sizing:border-box}
+canvas{width:100%;image-rendering:pixelated;border:3px solid #777;background:#111;display:block}
+#ui{background:#15171d;border:3px solid #777;border-top:0;padding:8px}
+#msg{min-height:32px;font-size:15px;line-height:1.25;margin-bottom:7px}
+button{font:bold 13px monospace;background:#292c35;color:#fff;border:2px solid #777;padding:8px 10px;margin:3px;cursor:pointer}
+button:hover{background:#414653}
+#inv{font-size:12px;color:#bbb;padding-top:5px}
+</style>
+</head>
+<body>
+<div id="wrap">
+<canvas id="game" width="800" height="450"></canvas>
+<div id="ui"><div id="msg">Benvenuto alla REGIA GOLD. Il congresso sta per iniziare...</div>
+<div id="verbs"></div><div id="inv">Inventario: • nessun oggetto</div></div>
+</div>
+<script>
+const c=document.getElementById('game'),x=c.getContext('2d'); x.imageSmoothingEnabled=false;
+let verb='GUARDA', panic=false, solved=false, inventory=[];
+const spots={
+ mixer:{x:300,y:235,w:250,h:105,name:'MIXER'},
+ fader:{x:425,y:238,w:42,h:75,name:'FADER'},
+ radio:{x:665,y:190,w:70,h:80,name:'RADIO'},
+ door:{x:710,y:70,w:60,h:110,name:'PORTA'},
+ monitor:{x:105,y:125,w:160,h:105,name:'MONITOR'},
+ coffee:{x:65,y:320,w:70,h:65,name:'CAFFÈ'}
+};
+function rect(a,b,w,h,col){x.fillStyle=col;x.fillRect(a,b,w,h)}
+function text(t,a,b,size=14,col='#fff'){x.font=size+'px monospace';x.fillStyle=col;x.fillText(t,a,b)}
+function draw(){
+  rect(0,0,800,450,'#11151d');
+  // ceiling / room
+  rect(0,0,800,65,'#252932'); for(let i=0;i<10;i++) rect(i*82,0,2,65,'#11141a');
+  // rear window
+  rect(20,65,760,120,'#17202d'); rect(35,80,730,90,'#0b4c78');
+  for(let i=0;i<24;i++){rect(45+i*30,90,18,3,'#42b8e8');}
+  text('MiCo  •  REGIA GOLD',28,48,22,'#d7d7d7'); text('09:27',700,48,18,'#ffd84a');
+  // conference room
+  rect(20,185,760,240,'#30343b');
+  for(let i=0;i<11;i++){rect(30+i*70,360-(i%3)*8,55,12,'#17191e');}
+  // desk
+  rect(45,285,710,125,'#5b3c29'); rect(45,285,710,15,'#855a3b');
+  // monitor
+  rect(100,135,170,105,'#0b0c0f');rect(110,145,150,78,'#1b6b8c');
+  text('MAIN SCREEN',120,164,13,'#b9f3ff'); text('EVENT READY',120,190,16,'#fff');
+  // mixer
+  rect(300,235,250,105,'#1c1f25');rect(315,247,220,78,'#30343b');
+  for(let i=0;i<12;i++){let xx=325+i*17;rect(xx,258,8,54,'#17191e');rect(xx+2,282,4,15,i===6&&!solved?'#ffdf4a':'#aaa');}
+  rect(405,242,52,18,'#080909');text('DM7',414,256,12,'#ddd');
+  text('CH 20',415,334,12,'#aaa');
+  // radio
+  rect(665,190,70,80,'#252830');rect(675,201,50,22,'#111');text('COM',687,217,11,'#6cff9a');rect(677,235,8,8,'#e44');rect(692,235,8,8,'#4e9');rect(707,235,8,8,'#49e');
+  // door
+  rect(710,70,60,110,'#4a3328');rect(724,115,8,8,'#e6c06a');text('BACKSTAGE',675,65,10,'#aaa');
+  // coffee
+  rect(65,320,70,65,'#191b20');rect(80,330,32,28,'#ddd');rect(84,337,24,17,'#57331f');rect(111,337,12,10,'#ddd');
+  if(panic){
+    rect(0,0,800,450,'rgba(180,0,0,.25)');
+    text('FIIIIIIIIIIIIIIII!',255,115,30,'#ff4b4b');
+    text('PANICO IN REGIA!',285,150,18,'#fff');
+  }
+  if(solved){
+    rect(0,0,800,450,'rgba(0,80,30,.28)');
+    text('HAI SALVATO IL CONGRESSO!',190,120,25,'#7dff9a');
+  }
+  // hotspots
+  if(verb==='GUARDA'){}
+}
+function feedback(){
+ try{
+  const ac=new AudioContext(),o=ac.createOscillator(),g=ac.createGain();
+  o.type='sawtooth';o.frequency.setValueAtTime(520,ac.currentTime);o.frequency.linearRampToValueAtTime(1300,ac.currentTime+.7);
+  g.gain.setValueAtTime(.0001,ac.currentTime);g.gain.exponentialRampToValueAtTime(.35,ac.currentTime+.05);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+1.2);
+  o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+1.25);
+ }catch(e){}
+}
+function say(s){document.getElementById('msg').textContent=s}
+function act(name){
+ if(name==='fader'){
+  if(verb==='USA'||verb==='SPINGI'){
+   if(!panic&&!solved){panic=true;feedback();say('HAI SPINTO IL FADER SBAGLIATO! FIIIIIIII! Il congresso è nel panico!');}
+   else if(panic&&!solved){panic=false;solved=true;say('Hai corretto il fader! Il feedback sparisce. La sala applaude.');}
+  } else say('Un fader Yamaha. Meglio non toccarlo senza sapere cosa stai facendo...');
+ } else if(name==='mixer') say(panic?'Sul display lampeggia CH 20. Il problema è lì!':'Il mixer è pronto. Tutti i canali sono armati per il congresso.');
+ else if(name==='radio') say('Radio: «Regia Gold, mi ricevi? Tra tre minuti si parte!»');
+ else if(name==='door') say('Porta del backstage. Meglio restare in regia.');
+ else if(name==='monitor') say('Il relatore è pronto. Il pubblico sta entrando.');
+ else if(name==='coffee') {if(!inventory.includes('CAFFÈ')){inventory.push('CAFFÈ');document.getElementById('inv').textContent='Inventario: • CAFFÈ';say('Prendi il caffè. La vera tecnologia della regia.');}else say('Hai già preso il caffè.');}
+ draw();
+}
+const verbs=['GUARDA','PRENDI','USA','PARLA','APRI','CHIUDI','DAI','SPINGI'];
+document.getElementById('verbs').innerHTML=verbs.map(v=>'<button onclick="verb=\''+v+'\';say(\''+v+' selezionato. Clicca un oggetto nella regia.\')">'+v+'</button>').join('');
+c.addEventListener('click',e=>{
+ const r=c.getBoundingClientRect(),mx=(e.clientX-r.left)*800/r.width,my=(e.clientY-r.top)*450/r.height;
+ for(const [k,s] of Object.entries(spots)) if(mx>=s.x&&mx<=s.x+s.w&&my>=s.y&&my<=s.y+s.h){act(k);return;}
+});
+draw();
+</script>
+</body></html>
