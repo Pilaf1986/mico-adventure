@@ -30,7 +30,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <img id="bg" src="Regia Gold_ caos in console.png" alt="Regia Gold MiCo">
 
     <div class="hot" data-name="mixer" style="left:30%;top:52%;width:53%;height:38%"></div>
-    <div class="hot" data-name="fader" style="left:33%;top:58%;width:9%;height:16%;z-index:10" title="PRIMO FADER"></div>\n    <div class="hot" data-name="postit" style="left:47%;top:70%;width:15%;height:13%;z-index:10" title="NO FEEDBACK"></div>\n    <div id="faderHint"></div>
+    <div class="hot" data-name="fader" style="left:34.2%;top:62%;width:2.8%;height:8%;z-index:10" title="PRIMO FADER"></div>\n    <div class="hot" data-name="postit" style="left:47%;top:70%;width:15%;height:13%;z-index:10" title="NO FEEDBACK"></div>\n    <div id="faderHint"></div>
     <div class="hot" data-name="radio" style="left:83%;top:54%;width:10%;height:22%"></div>
     <div class="hot" data-name="monitor" style="left:18%;top:45%;width:19%;height:23%"></div>
     <div class="hot" data-name="door" style="left:89%;top:10%;width:11%;height:38%"></div>
@@ -72,6 +72,46 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let radioCalled = false;
   let panicked = false;
   let inventory = [];
+  let musicStarted = false;
+  let musicTimer = null;
+
+  function startMusic(){
+    if(musicStarted) return;
+    try{
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if(!AudioCtx) return;
+      const audio = new AudioCtx();
+      const master = audio.createGain();
+      master.gain.value = 0.045;
+      master.connect(audio.destination);
+
+      function note(freq, when, duration, type){
+        const osc = audio.createOscillator();
+        const gain = audio.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, when);
+        gain.gain.exponentialRampToValueAtTime(0.12, when + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.0001, when + duration);
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start(when);
+        osc.stop(when + duration + 0.05);
+      }
+
+      const start = audio.currentTime + 0.05;
+      [55, 65.41, 49, 73.42, 55, 65.41, 41.2, 49].forEach(function(f,i){
+        note(f, start + i*1.5, 2.2, 'triangle');
+      });
+      musicTimer = setInterval(function(){
+        const t = audio.currentTime + 0.05;
+        [55,65.41,49,73.42,55,65.41,41.2,49].forEach(function(f,i){
+          note(f, t + i*1.5, 2.2, 'triangle');
+        });
+      }, 12000);
+      musicStarted = true;
+    }catch(e){}
+  }
 
   function say(text){
     msg.textContent = text;
@@ -200,12 +240,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   buttons.forEach(function(button){
     button.classList.toggle('sel', button.dataset.verb === verb);
     button.addEventListener('click', function(){
+      startMusic();
       setVerb(button.dataset.verb);
     });
   });
 
   hotspots.forEach(function(hotspot){
     hotspot.addEventListener('click', function(){
+      startMusic();
       act(hotspot.dataset.name);
     });
   });
