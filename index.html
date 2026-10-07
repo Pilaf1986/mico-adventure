@@ -9,7 +9,7 @@ html,body{margin:0;background:#07090e;color:#fff;font-family:monospace;height:10
 body{display:flex;align-items:center;justify-content:center}
 #wrap{width:min(1100px,100vw);padding:8px;box-sizing:border-box}
 #scene{position:relative;aspect-ratio:16/9;border:3px solid #69717e;background:#111;overflow:hidden;box-shadow:0 0 30px #000}
-svg{width:100%;height:100%;display:block;image-rendering:pixelated}
+#bg{width:100%;height:100%;display:block;object-fit:cover;image-rendering:auto}
 .hot{position:absolute;cursor:pointer;background:transparent;border:0}
 .hot:hover{outline:2px dashed #ffd84a;outline-offset:-2px}
 #ui{background:#11151d;border:3px solid #69717e;border-top:0;padding:7px}
@@ -23,62 +23,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 <body>
 <div id="wrap">
 <div id="scene">
-<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" aria-label="Regia Gold MiCo">
-<defs>
- <linearGradient id="room" x2="0" y2="1"><stop stop-color="#151c29"/><stop offset="1" stop-color="#070a10"/></linearGradient>
- <linearGradient id="glass" x2="0" y2="1"><stop stop-color="#173d63"/><stop offset="1" stop-color="#071522"/></linearGradient>
- <linearGradient id="desk" x2="0" y2="1"><stop stop-color="#5d3c29"/><stop offset="1" stop-color="#241912"/></linearGradient>
- <filter id="glow"><feGaussianBlur stdDeviation="4"/></filter>
-</defs>
-<rect width="1280" height="720" fill="url(#room)"/>
-<rect x="0" y="0" width="1280" height="62" fill="#252a34"/>
-<path d="M0 62H1280" stroke="#555e6b" stroke-width="4"/>
-<g fill="#ffd66a"><rect x="85" y="18" width="80" height="9"/><rect x="310" y="18" width="80" height="9"/><rect x="535" y="18" width="80" height="9"/><rect x="760" y="18" width="80" height="9"/><rect x="985" y="18" width="80" height="9"/></g>
-<g fill="#ffd66a" opacity=".22" filter="url(#glow)"><rect x="90" y="25" width="70" height="18"/><rect x="315" y="25" width="70" height="18"/><rect x="540" y="25" width="70" height="18"/><rect x="765" y="25" width="70" height="18"/><rect x="990" y="25" width="70" height="18"/></g>
-<rect x="25" y="76" width="1230" height="270" rx="3" fill="#05070a" stroke="#69717e" stroke-width="6"/>
-<rect x="40" y="91" width="1200" height="240" fill="url(#glass)"/>
-<rect x="420" y="108" width="440" height="112" fill="#114da5"/>
-<text x="640" y="155" text-anchor="middle" fill="#fff" font-size="43" font-weight="bold">MiCo</text>
-<text x="640" y="187" text-anchor="middle" fill="#c8e2ff" font-size="17">MILANO CONGRESSI</text>
-<rect x="460" y="232" width="360" height="65" fill="#111722"/>
-<rect x="470" y="287" width="340" height="18" fill="#28303b"/>
-<g fill="#d9e0e8"><rect x="530" y="238" width="10" height="42"/><rect x="735" y="238" width="10" height="42"/></g>
-<g fill="#14171d"><circle cx="635" cy="268" r="8"/><circle cx="665" cy="268" r="8"/><circle cx="605" cy="268" r="8"/></g>
-<g fill="#252a35"><circle cx="130" cy="294" r="12"/><circle cx="175" cy="288" r="12"/><circle cx="220" cy="298" r="12"/><circle cx="270" cy="286" r="12"/><circle cx="320" cy="299" r="12"/><circle cx="365" cy="289" r="12"/><circle cx="910" cy="291" r="12"/><circle cx="960" cy="300" r="12"/><circle cx="1010" cy="287" r="12"/><circle cx="1060" cy="300" r="12"/><circle cx="1110" cy="288" r="12"/><circle cx="1160" cy="300" r="12"/></g>
-<g stroke="#394252" stroke-width="3"><path d="M50 325H1230"/><path d="M50 310H1230"/></g>
-<rect x="0" y="70" width="210" height="650" fill="#0b0e14"/>
-<rect x="18" y="90" width="174" height="88" fill="#171d27" stroke="#4d5663" stroke-width="4"/>
-<text x="32" y="124" fill="#f0b43c" font-size="30" font-weight="bold">MiCo</text><text x="32" y="151" fill="#fff" font-size="19">REGIA GOLD</text>
-<rect x="20" y="205" width="170" height="160" fill="#efe7d2"/>
-<text x="32" y="230" fill="#222" font-size="15" font-weight="bold">CHECKLIST</text>
-<g fill="#333" font-size="13"><text x="32" y="254">□ RADIO</text><text x="32" y="276">□ MICROFONI</text><text x="32" y="298">□ SLIDE</text><text x="32" y="320">□ REGISTRAZIONE</text><text x="32" y="342">□ STREAMING</text><text x="32" y="364">□ SOPRAVVIVERE</text></g>
-<g stroke="#555e6b" stroke-width="4"><rect x="225" y="330" width="155" height="245" fill="#11151c"/><rect x="395" y="350" width="125" height="225" fill="#10141b"/><rect x="1030" y="350" width="125" height="225" fill="#10141b"/></g>
-<g fill="#45d87a"><circle cx="245" cy="365" r="4"/><circle cx="263" cy="365" r="4"/><circle cx="281" cy="365" r="4"/><circle cx="299" cy="365" r="4"/><circle cx="245" cy="405" r="4"/><circle cx="263" cy="405" r="4"/><circle cx="281" cy="405" r="4"/><circle cx="420" cy="390" r="4"/><circle cx="438" cy="390" r="4"/><circle cx="456" cy="390" r="4"/><circle cx="1055" cy="390" r="4"/><circle cx="1073" cy="390" r="4"/><circle cx="1091" cy="390" r="4"/></g>
-<g fill="#e45b4a"><circle cx="245" cy="445" r="4"/><circle cx="263" cy="445" r="4"/><circle cx="420" cy="430" r="4"/><circle cx="1055" cy="430" r="4"/></g>
-<path d="M200 480 L1135 480 L1190 720 L145 720 Z" fill="url(#desk)" stroke="#15100d" stroke-width="8"/><path d="M205 480H1135" stroke="#9a6842" stroke-width="8"/>
-<g><rect x="245" y="362" width="205" height="112" rx="5" fill="#080a0d" stroke="#5e6774" stroke-width="6"/><rect x="258" y="375" width="179" height="83" fill="#0a6c8f"/><path d="M267 439L300 414L327 427L360 396L390 423L425 391" fill="none" stroke="#8ff3ff" stroke-width="4"/><text x="270" y="397" fill="#fff" font-size="13">MAIN / PLENARIA</text><rect x="325" y="474" width="42" height="12" fill="#5e6774"/></g>
-<g><path d="M425 420 L1040 420 L1090 605 L380 605 Z" fill="#171b22" stroke="#656f7d" stroke-width="7"/><path d="M447 436 L1015 436 L1048 580 L410 580 Z" fill="#292f39"/><text x="470" y="463" fill="#d9e1ea" font-size="18" font-weight="bold">YAMAHA</text><text x="1005" y="568" text-anchor="end" fill="#f1f4f7" font-size="32" font-weight="bold">RIVAGE</text>
-<rect x="465" y="475" width="145" height="62" fill="#081018" stroke="#6b7480" stroke-width="3"/><rect x="628" y="475" width="170" height="62" fill="#081018" stroke="#6b7480" stroke-width="3"/><rect x="816" y="475" width="130" height="62" fill="#081018" stroke="#6b7480" stroke-width="3"/>
-<g fill="#39d17a"><rect x="478" y="489" width="8" height="37"/><rect x="492" y="496" width="8" height="30"/><rect x="506" y="482" width="8" height="44"/><rect x="520" y="501" width="8" height="25"/></g><path d="M645 523 C670 505 690 515 712 492 S752 506 783 485" fill="none" stroke="#ffd34d" stroke-width="3"/>
-<g fill="#4ba3ff"><rect x="829" y="487" width="10" height="42"/><rect x="847" y="496" width="10" height="33"/><rect x="865" y="480" width="10" height="49"/><rect x="883" y="503" width="10" height="26"/><rect x="901" y="491" width="10" height="38"/></g>
-<g stroke="#69717e" stroke-width="2" fill="#11151c"><rect x="455" y="545" width="32" height="30"/><rect x="492" y="545" width="32" height="30"/><rect x="529" y="545" width="32" height="30"/><rect x="566" y="545" width="32" height="30"/><rect x="603" y="545" width="32" height="30"/><rect x="640" y="545" width="32" height="30"/><rect x="677" y="545" width="32" height="30"/><rect x="714" y="545" width="32" height="30"/><rect x="751" y="545" width="32" height="30"/><rect x="788" y="545" width="32" height="30"/><rect x="825" y="545" width="32" height="30"/><rect x="862" y="545" width="32" height="30"/><rect x="899" y="545" width="32" height="30"/><rect x="936" y="545" width="32" height="30"/></g>
-<g fill="#d6dce5"><rect x="468" y="554" width="4" height="13"/><rect x="505" y="556" width="4" height="11"/><rect x="542" y="551" width="4" height="16"/><rect x="690" y="552" width="4" height="15"/></g>
-<g stroke="#aab2bd" stroke-width="2"><path d="M625 552v22"/><path d="M662 552v22"/><path d="M699 552v22"/><path d="M736 552v22"/></g><rect x="620" y="559" width="12" height="8" fill="#ffd84a"/><rect x="694" y="553" width="12" height="8" fill="#ff5b4d"/></g>
-<g><rect x="1070" y="455" width="72" height="105" rx="4" fill="#202630" stroke="#69717e" stroke-width="4"/><rect x="1082" y="469" width="48" height="23" fill="#07110b"/><text x="1106" y="486" text-anchor="middle" fill="#62ff9c" font-size="12">COM</text><circle cx="1090" cy="515" r="6" fill="#e74b43"/><circle cx="1110" cy="515" r="6" fill="#45d88a"/><path d="M1105 455V428" stroke="#adb5c0" stroke-width="4"/></g>
-<g><rect x="1110" y="615" width="62" height="55" fill="#eee8d9" stroke="#777" stroke-width="3"/><text x="1141" y="648" text-anchor="middle" fill="#222" font-size="12">MiCo</text><rect x="1180" y="625" width="55" height="28" rx="8" fill="#b98431"/><circle cx="1207" cy="639" r="8" fill="#222"/></g>
-<g><circle cx="350" cy="405" r="27" fill="#9d6b45"/><path d="M325 404Q350 365 375 404" fill="#5b3523"/><rect x="326" y="430" width="48" height="92" rx="7" fill="#171b20"/><text x="350" y="468" text-anchor="middle" fill="#fff" font-size="11">STAFF</text><rect x="333" y="520" width="15" height="70" fill="#314055"/><rect x="355" y="520" width="15" height="70" fill="#314055"/><rect x="327" y="588" width="25" height="8" fill="#08090b"/><rect x="357" y="588" width="25" height="8" fill="#08090b"/><path d="M326 450L305 490L315 500" fill="none" stroke="#9d6b45" stroke-width="12"/><path d="M374 450L397 482L410 476" fill="none" stroke="#9d6b45" stroke-width="12"/></g>
-<g fill="#e9b64a" font-size="15" font-weight="bold"><text x="235" y="650">PATCH</text><text x="405" y="650">DSP / RACK</text><text x="1040" y="650">COMMS</text></g>
-<rect x="1175" y="85" width="80" height="245" fill="#34251f" stroke="#777" stroke-width="5"/><rect x="1190" y="100" width="50" height="90" fill="#6b4328"/><circle cx="1225" cy="220" r="5" fill="#e5c266"/><text x="1215" y="115" text-anchor="middle" fill="#fff" font-size="12">BACK</text><text x="1215" y="132" text-anchor="middle" fill="#fff" font-size="12">STAGE</text>
-<rect x="510" y="615" width="150" height="65" fill="#e9c44c" transform="rotate(-3 585 647)"/><text x="585" y="641" text-anchor="middle" fill="#1d1710" font-size="15" font-weight="bold">NO</text><text x="585" y="660" text-anchor="middle" fill="#1d1710" font-size="15" font-weight="bold">FEEDBACK!</text>
-<g id="panic" visibility="hidden"><rect width="1280" height="720" fill="#a00000" opacity=".38"/><text x="640" y="170" text-anchor="middle" fill="#ff5252" font-size="52" font-weight="bold">FIIIIIIIIIIII!</text><text x="640" y="215" text-anchor="middle" fill="#fff" font-size="24" font-weight="bold">PANICO IN REGIA!</text></g>
-<g id="solved" visibility="hidden"><rect width="1280" height="720" fill="#00551f" opacity=".28"/><text x="640" y="170" text-anchor="middle" fill="#8cffad" font-size="36" font-weight="bold">HAI SALVATO IL CONGRESSO!</text></g>
-</svg>
-<div class="hot" data-name="mixer" style="left:32%;top:57%;width:49%;height:28%"></div>
-<div class="hot" data-name="fader" style="left:53%;top:75%;width:7%;height:10%"></div>
-<div class="hot" data-name="radio" style="left:83%;top:61%;width:8%;height:16%"></div>
-<div class="hot" data-name="monitor" style="left:19%;top:48%;width:17%;height:16%"></div>
-<div class="hot" data-name="door" style="left:91%;top:11%;width:9%;height:35%"></div>
-<div class="hot" data-name="coffee" style="left:86%;top:82%;width:7%;height:12%"></div>
+<img id="bg" src="Regia Gold_ caos in console.png" alt="Regia Gold MiCo">
+<div class="hot" data-name="mixer" style="left:30%;top:52%;width:53%;height:38%"></div>
+<div class="hot" data-name="fader" style="left:54%;top:69%;width:10%;height:17%"></div>
+<div class="hot" data-name="radio" style="left:83%;top:54%;width:10%;height:22%"></div>
+<div class="hot" data-name="monitor" style="left:18%;top:45%;width:19%;height:23%"></div>
+<div class="hot" data-name="door" style="left:89%;top:10%;width:11%;height:38%"></div>
+<div class="hot" data-name="coffee" style="left:84%;top:78%;width:11%;height:18%"></div>
 </div>
 <div id="ui"><div id="msg">Benvenuto alla REGIA GOLD. Il congresso sta per iniziare...</div><div id="verbs"></div><div id="inv">Inventario: • nessun oggetto</div></div>
 </div>
