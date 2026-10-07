@@ -39,48 +39,122 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 <div id="ui"><div id="msg">Benvenuto alla REGIA GOLD. Il congresso sta per iniziare...</div><div id="verbs"></div><div id="inv">Inventario: • nessun oggetto</div></div>
 </div>
 <script>
-const msg=document.getElementById('msg'), panic=document.getElementById('panicOverlay');
-let verb='GUARDA',radioCalled=false,channelSearching=false,panicked=false,inventory=[];
-const radioHot=document.querySelector('.hot[data-name="radio"]');
-const verbs=['GUARDA','PRENDI','USA','PARLA','APRI','CHIUDI','DAI','SPINGI'];
-document.getElementById('verbs').innerHTML=verbs.map(v=>'<button class="'+(v===verb?'sel':'')+'" onclick="setVerb(\''+v+'\')">'+v+'</button>').join('');
-function setVerb(v){verb=v;document.querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.textContent===v));say(v+' selezionato. Clicca un oggetto nella regia.')}
-function say(t){msg.textContent=t}
-function radioCall(){
-  if(radioCalled)return;
-  radioCalled=true;
-  if(radioHot){radioHot.style.outline='3px solid #ff3b30';setTimeout(()=>radioHot.style.outline='',1200);}
+const msg = document.getElementById('msg');
+const panic = document.getElementById('panicOverlay');
+const verbsEl = document.getElementById('verbs');
+const invEl = document.getElementById('inv');
+const radioHot = document.querySelector('[data-name="radio"]');
+
+let verb = 'GUARDA';
+let radioCalled = false;
+let panicked = false;
+let inventory = [];
+
+const verbs = ['GUARDA','PRENDI','USA','PARLA','APRI','CHIUDI','DAI','SPINGI'];
+
+function say(text) {
+  msg.textContent = text;
+}
+
+function setVerb(v) {
+  verb = v;
+  document.querySelectorAll('#verbs button').forEach(b => {
+    b.classList.toggle('sel', b.dataset.verb === v);
+  });
+  say(v + ' selezionato. Ora clicca un oggetto nella Regia Gold.');
+}
+
+function beep() {
+  try {
+    const a = new (window.AudioContext || window.webkitAudioContext)();
+    const o = a.createOscillator();
+    const g = a.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(480, a.currentTime);
+    o.frequency.linearRampToValueAtTime(1450, a.currentTime + .8);
+    g.gain.setValueAtTime(.0001, a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.28, a.currentTime + .04);
+    g.gain.exponentialRampToValueAtTime(.0001, a.currentTime + 1.1);
+    o.connect(g).connect(a.destination);
+    o.start();
+    o.stop(a.currentTime + 1.15);
+  } catch(e) {}
+}
+
+function radioCall() {
+  if (radioCalled) return;
+  radioCalled = true;
+  radioHot.style.outline = '3px solid #ff3b30';
+  setTimeout(() => radioHot.style.outline = '', 1500);
   say('📻 RADIO — TECNICO DI PALCO: «Regia, regia... qui palco! Abbiamo un problema con il microfono del relatore! Non si sente in sala!»');
   beep();
 }
-setTimeout(radioCall,2500);
-function beep(){try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.type='sawtooth';o.frequency.setValueAtTime(480,a.currentTime);o.frequency.linearRampToValueAtTime(1450,a.currentTime+.8);g.gain.setValueAtTime(.0001,a.currentTime);g.gain.exponentialRampToValueAtTime(.28,a.currentTime+.04);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+1.1);o.connect(g).connect(a.destination);o.start();o.stop(a.currentTime+1.15)}catch(e){}}
-function act(n){
-if(n==='radio'){
-  radioCalled=true;
-  say('📻 RADIO — TECNICO DI PALCO: «Regia, regia... qui palco! Abbiamo un problema con il microfono del relatore! Non si sente in sala!»');
-  beep();
-}
-else if(n==='mixer'){
-  if(!radioCalled) say('Il RIVAGE è pronto. Ma prima devo sapere se c’è qualche problema sul palco.');
-  else {channelSearching=true;say('Cerco il canale del relatore sul RIVAGE... eccolo. Devo solo stare attento al fader giusto.');}
-}
-else if(n==='fader'){
-  if(!radioCalled) say('Non posso toccare il RIVAGE a caso. Aspetto indicazioni dal palco.');
-  else if(!panicked){
-    panicked=true;
-    panic.style.display='flex';
-    beep();
-    say('HAI CLICCATO IL FADER SBAGLIATO! FIIIIIIIIIIII! PANICO IN REGIA!');
+
+function act(name) {
+  if (name === 'radio') {
+    radioCall();
+    return;
+  }
+
+  if (name === 'mixer') {
+    if (!radioCalled) {
+      say('Il RIVAGE è pronto. Ma non tocco niente finché dal palco non arriva una chiamata.');
+    } else {
+      say('Trovo il canale del relatore sul RIVAGE. Eccolo... adesso devo agire sul fader giusto.');
+    }
+    return;
+  }
+
+  if (name === 'fader') {
+    if (!radioCalled) {
+      say('Non tocco il fader a caso. Prima devo sapere cosa succede sul palco.');
+      return;
+    }
+
+    if (!panicked) {
+      panicked = true;
+      panic.style.display = 'flex';
+      beep();
+      say('FADER SBAGLIATO! FIIIIIIIIIIII! PANICO IN REGIA!');
+    }
+    return;
+  }
+
+  if (name === 'monitor') {
+    say('Sul monitor: RELATORE PRONTO • PLENARIA • STREAMING OK. Per ora...');
+    return;
+  }
+
+  if (name === 'door') {
+    say('Backstage. Cavi, relatori, runner e almeno tre persone che cercano qualcuno.');
+    return;
+  }
+
+  if (name === 'coffee') {
+    if (!inventory.includes('CAFFÈ')) {
+      inventory.push('CAFFÈ');
+      invEl.textContent = 'Inventario: • CAFFÈ';
+      say('Prendi il caffè. La vera alimentazione del fonico.');
+    } else {
+      say('Il caffè è già nel tuo inventario.');
+    }
   }
 }
-else if(n==='monitor')say('Sul monitor: RELATORE PRONTO • PLENARIA • STREAMING OK. Per ora...');
-else if(n==='door')say('Backstage. Cavi, relatori, runner e almeno tre persone che cercano qualcuno.');
-else if(n==='coffee'){
-  if(!inventory.includes('CAFFÈ')){
-    inventory.push('CAFFÈ');
-    document.getElementById('inv').textContent='Inventario: • CAFFÈ';
-    say('Prendi il caffè. La vera alimentazione del fonico.');
-  } else say('Il caffè è già nel tuo inventario.');
-}
-}>
+
+verbs.forEach(v => {
+  const b = document.createElement('button');
+  b.textContent = v;
+  b.dataset.verb = v;
+  if (v === verb) b.classList.add('sel');
+  b.addEventListener('click', () => setVerb(v));
+  verbsEl.appendChild(b);
+});
+
+document.querySelectorAll('.hot').forEach(h => {
+  h.addEventListener('click', () => act(h.dataset.name));
+});
+
+setTimeout(radioCall, 2500);
+</script>
+</body>
+</html>
