@@ -41,15 +41,25 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 <script>
 const msg=document.getElementById('msg'), panic=document.getElementById('panicOverlay');
 let verb='GUARDA',radioCalled=false,channelSearching=false,panicked=false,inventory=[];
+const radioHot=document.querySelector('.hot[data-name="radio"]');
 const verbs=['GUARDA','PRENDI','USA','PARLA','APRI','CHIUDI','DAI','SPINGI'];
 document.getElementById('verbs').innerHTML=verbs.map(v=>'<button class="'+(v===verb?'sel':'')+'" onclick="setVerb(\''+v+'\')">'+v+'</button>').join('');
 function setVerb(v){verb=v;document.querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.textContent===v));say(v+' selezionato. Clicca un oggetto nella regia.')}
 function say(t){msg.textContent=t}
+function radioCall(){
+  if(radioCalled)return;
+  radioCalled=true;
+  if(radioHot){radioHot.style.outline='3px solid #ff3b30';setTimeout(()=>radioHot.style.outline='',1200);}
+  say('📻 RADIO — TECNICO DI PALCO: «Regia, regia... qui palco! Abbiamo un problema con il microfono del relatore! Non si sente in sala!»');
+  beep();
+}
+setTimeout(radioCall,2500);
 function beep(){try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.type='sawtooth';o.frequency.setValueAtTime(480,a.currentTime);o.frequency.linearRampToValueAtTime(1450,a.currentTime+.8);g.gain.setValueAtTime(.0001,a.currentTime);g.gain.exponentialRampToValueAtTime(.28,a.currentTime+.04);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+1.1);o.connect(g).connect(a.destination);o.start();o.stop(a.currentTime+1.15)}catch(e){}}
 function act(n){
 if(n==='radio'){
   radioCalled=true;
-  say('RADIO — TECNICO DI PALCO: «Regia, regia... qui palco! Abbiamo un problema con il microfono del relatore! Non si sente in sala!»');
+  say('📻 RADIO — TECNICO DI PALCO: «Regia, regia... qui palco! Abbiamo un problema con il microfono del relatore! Non si sente in sala!»');
+  beep();
 }
 else if(n==='mixer'){
   if(!radioCalled) say('Il RIVAGE è pronto. Ma prima devo sapere se c’è qualche problema sul palco.');
