@@ -17,6 +17,10 @@ body{display:flex;align-items:center;justify-content:center}
 button{font:bold 12px monospace;background:#252a34;color:#fff;border:2px solid #657080;padding:7px 9px;margin:2px;cursor:pointer}
 button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 #inv{font-size:12px;color:#aeb7c4;padding-top:4px}
+#panicOverlay{position:absolute;inset:0;background:rgba(170,0,0,.42);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:5;pointer-events:none}
+.panicText{font-size:clamp(28px,6vw,68px);font-weight:bold;color:#ff4545;text-shadow:4px 4px #000;animation:shake .08s infinite alternate}
+.panicSub{font-size:clamp(16px,2.5vw,30px);font-weight:bold;color:#fff;text-shadow:3px 3px #000;margin-top:12px}
+@keyframes shake{from{transform:translateX(-3px)}to{transform:translateX(3px)}}
 @media(max-width:600px){#wrap{padding:2px}#msg{font-size:12px}button{font-size:10px;padding:6px 7px}}
 </style>
 </head>
@@ -30,24 +34,43 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 <div class="hot" data-name="monitor" style="left:18%;top:45%;width:19%;height:23%"></div>
 <div class="hot" data-name="door" style="left:89%;top:10%;width:11%;height:38%"></div>
 <div class="hot" data-name="coffee" style="left:84%;top:78%;width:11%;height:18%"></div>
+<div id="panicOverlay"><div class="panicText">FIIIIIIIIIIII!</div><div class="panicSub">PANICO IN REGIA!</div></div>
 </div>
 <div id="ui"><div id="msg">Benvenuto alla REGIA GOLD. Il congresso sta per iniziare...</div><div id="verbs"></div><div id="inv">Inventario: • nessun oggetto</div></div>
 </div>
 <script>
-const msg=document.getElementById('msg'), panic=document.getElementById('panic'), solved=document.getElementById('solved');
-let verb='GUARDA',panicked=false,fixed=false,inventory=[];
+const msg=document.getElementById('msg'), panic=document.getElementById('panicOverlay');
+let verb='GUARDA',radioCalled=false,channelSearching=false,panicked=false,inventory=[];
 const verbs=['GUARDA','PRENDI','USA','PARLA','APRI','CHIUDI','DAI','SPINGI'];
 document.getElementById('verbs').innerHTML=verbs.map(v=>'<button class="'+(v===verb?'sel':'')+'" onclick="setVerb(\''+v+'\')">'+v+'</button>').join('');
 function setVerb(v){verb=v;document.querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.textContent===v));say(v+' selezionato. Clicca un oggetto nella regia.')}
 function say(t){msg.textContent=t}
 function beep(){try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.type='sawtooth';o.frequency.setValueAtTime(480,a.currentTime);o.frequency.linearRampToValueAtTime(1450,a.currentTime+.8);g.gain.setValueAtTime(.0001,a.currentTime);g.gain.exponentialRampToValueAtTime(.28,a.currentTime+.04);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+1.1);o.connect(g).connect(a.destination);o.start();o.stop(a.currentTime+1.15)}catch(e){}}
 function act(n){
-if(n==='fader'){if(verb==='USA'||verb==='SPINGI'){if(!panicked&&!fixed){panicked=true;panic.setAttribute('visibility','visible');beep();say('HAI PRESO IL FADER SBAGLIATO! FIIIIIIII! La sala impazzisce!')}else if(panicked&&!fixed){panicked=false;fixed=true;panic.setAttribute('visibility','hidden');solved.setAttribute('visibility','visible');say('Corretto! Il RIVAGE torna stabile. La conferenza è salva!')}}else say('È un fader del RIVAGE. Qui basta un millimetro per scatenare l’inferno.')}
-else if(n==='mixer')say(panicked?'Sul RIVAGE lampeggia il canale incriminato. Devi rimettere a posto il fader!':'Yamaha RIVAGE. Una macchina meravigliosa... finché nessuno sbaglia fader.')
-else if(n==='radio')say('RADIO: «Regia Gold, mi ricevi? Tra tre minuti si parte!»')
-else if(n==='monitor')say('Sul monitor: RELATORE PRONTO • PLENARIA • STREAMING OK. Per ora...')
-else if(n==='door')say('Backstage. Cavi, relatori, runner e almeno tre persone che cercano qualcuno.')
-else if(n==='coffee'){if(!inventory.includes('CAFFÈ')){inventory.push('CAFFÈ');document.getElementById('inv').textContent='Inventario: • CAFFÈ';say('Prendi il caffè. La vera alimentazione del fonico.')}else say('Il caffè è già nel tuo inventario.')}}
-document.querySelectorAll('.hot').forEach(h=>h.addEventListener('click',()=>act(h.dataset.name)));
-</script>
-</body></html>
+if(n==='radio'){
+  radioCalled=true;
+  say('RADIO — TECNICO DI PALCO: «Regia, regia... qui palco! Abbiamo un problema con il microfono del relatore! Non si sente in sala!»');
+}
+else if(n==='mixer'){
+  if(!radioCalled) say('Il RIVAGE è pronto. Ma prima devo sapere se c’è qualche problema sul palco.');
+  else {channelSearching=true;say('Cerco il canale del relatore sul RIVAGE... eccolo. Devo solo stare attento al fader giusto.');}
+}
+else if(n==='fader'){
+  if(!radioCalled) say('Non posso toccare il RIVAGE a caso. Aspetto indicazioni dal palco.');
+  else if(!panicked){
+    panicked=true;
+    panic.style.display='flex';
+    beep();
+    say('HAI CLICCATO IL FADER SBAGLIATO! FIIIIIIIIIIII! PANICO IN REGIA!');
+  }
+}
+else if(n==='monitor')say('Sul monitor: RELATORE PRONTO • PLENARIA • STREAMING OK. Per ora...');
+else if(n==='door')say('Backstage. Cavi, relatori, runner e almeno tre persone che cercano qualcuno.');
+else if(n==='coffee'){
+  if(!inventory.includes('CAFFÈ')){
+    inventory.push('CAFFÈ');
+    document.getElementById('inv').textContent='Inventario: • CAFFÈ';
+    say('Prendi il caffè. La vera alimentazione del fonico.');
+  } else say('Il caffè è già nel tuo inventario.');
+}
+}>
