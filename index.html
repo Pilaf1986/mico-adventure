@@ -36,6 +36,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="postit" style="left:47%;top:70%;width:15%;height:13%;z-index:10" title="NO FEEDBACK"></div>
     <div id="faderHint"></div>
     <div class="hot" data-name="radio" style="left:83%;top:54%;width:10%;height:22%"></div>
+    <div class="hot" data-name="phone" style="left:74%;top:55%;width:9%;height:18%;z-index:10" title="TELEFONO"></div>
     <div class="hot" data-name="monitor" style="left:18%;top:45%;width:19%;height:23%"></div>
     <div class="hot" data-name="door" style="left:89%;top:10%;width:11%;height:38%"></div>
     <div class="hot" data-name="cable" style="left:52%;top:78%;width:18%;height:20%;z-index:10" title="CAVO DMX"></div>
@@ -79,6 +80,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let responsibleCalled = false;
   let cableDiagnosed = false;
   let cableFixed = false;
+  let phoneConversationStarted = false;
   let inventory = [];
 
   function say(text){
@@ -197,6 +199,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(name === 'fader') return say('Il primo fader a sinistra del RIVAGE. È quello che devo manovrare.');
       if(name === 'postit') return say('Il post-it dice: NO FEEDBACK! Un consiglio che arriva sempre troppo tardi.');
       if(name === 'radio') return say('La radio di servizio. Da qui arrivano le chiamate dal palco.');
+      if(name === 'phone') return say('Il telefono della regia. Quando qualcosa va storto, qualcuno finisce sempre per chiamare il responsabile.');
       if(name === 'monitor') return say('RELATORE PRONTO • PLENARIA • STREAMING OK. Per ora...');
       if(name === 'door') return say('Backstage. Cavi, relatori, runner e almeno tre persone che cercano qualcuno.');
       if(name === 'cable') return say('Un groviglio di cavi sotto la console. Uno di questi va verso il sistema luci.');
@@ -222,6 +225,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(name === 'radio') return panicked ? callResponsible() : radioCall();
       if(name === 'mixer') return useMixer();
       if(name === 'fader') return useFader();
+      if(name === 'phone') return callResponsible();
       if(name === 'cable') return fixCable();
       if(name === 'coffee') return say('Il caffè si usa in modo molto semplice: bevendolo.');
       return say('Non posso usarlo così.');
@@ -229,6 +233,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
     if(verb === 'PARLA'){
       if(name === 'radio') return panicked ? callResponsible() : radioCall();
+      if(name === 'phone') return callResponsible();
       if(name === 'cable') return cableDiagnosed ? say('«È quello! Il cavo era finito nel DMX delle luci.»') : say('«Che succede con questi cavi?» — Il tecnico di palco sta ancora cercando di capire.');
       if(name === 'door') return say('«Che succede sul palco?» — Nessuna risposta. Il backstage è nel caos.');
       return say('Non c’è nessuno con cui parlare qui.');
