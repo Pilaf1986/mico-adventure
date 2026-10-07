@@ -9,8 +9,8 @@ html,body{margin:0;background:#07090e;color:#fff;font-family:monospace;height:10
 body{display:flex;align-items:center;justify-content:center}
 #wrap{width:min(1100px,100vw);padding:8px;box-sizing:border-box}
 #scene{position:relative;aspect-ratio:16/9;border:3px solid #69717e;background:#111;overflow:hidden;box-shadow:0 0 30px #000}
-#bg{width:100%;height:100%;display:block;object-fit:cover;image-rendering:auto}
-.hot{position:absolute;cursor:pointer;background:transparent;border:0}
+#bg{width:100%;height:100%;display:block;object-fit:cover}
+.hot{position:absolute;cursor:pointer;background:transparent;border:0;z-index:2}
 .hot:hover{outline:2px dashed #ffd84a;outline-offset:-2px}
 #ui{background:#11151d;border:3px solid #69717e;border-top:0;padding:7px}
 #msg{min-height:34px;font-size:14px;line-height:1.25;margin-bottom:5px}
@@ -26,135 +26,192 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 </head>
 <body>
 <div id="wrap">
-<div id="scene">
-<img id="bg" src="Regia Gold_ caos in console.png" alt="Regia Gold MiCo">
-<div class="hot" data-name="mixer" style="left:30%;top:52%;width:53%;height:38%"></div>
-<div class="hot" data-name="fader" style="left:54%;top:69%;width:10%;height:17%"></div>
-<div class="hot" data-name="radio" style="left:83%;top:54%;width:10%;height:22%"></div>
-<div class="hot" data-name="monitor" style="left:18%;top:45%;width:19%;height:23%"></div>
-<div class="hot" data-name="door" style="left:89%;top:10%;width:11%;height:38%"></div>
-<div class="hot" data-name="coffee" style="left:84%;top:78%;width:11%;height:18%"></div>
-<div id="panicOverlay"><div class="panicText">FIIIIIIIIIIII!</div><div class="panicSub">PANICO IN REGIA!</div></div>
+  <div id="scene">
+    <img id="bg" src="Regia Gold_ caos in console.png" alt="Regia Gold MiCo">
+
+    <div class="hot" data-name="mixer" style="left:30%;top:52%;width:53%;height:38%"></div>
+    <div class="hot" data-name="fader" style="left:54%;top:69%;width:10%;height:17%"></div>
+    <div class="hot" data-name="radio" style="left:83%;top:54%;width:10%;height:22%"></div>
+    <div class="hot" data-name="monitor" style="left:18%;top:45%;width:19%;height:23%"></div>
+    <div class="hot" data-name="door" style="left:89%;top:10%;width:11%;height:38%"></div>
+    <div class="hot" data-name="coffee" style="left:84%;top:78%;width:11%;height:18%"></div>
+
+    <div id="panicOverlay">
+      <div class="panicText">FIIIIIIIIIIII!</div>
+      <div class="panicSub">PANICO IN REGIA!</div>
+    </div>
+  </div>
+
+  <div id="ui">
+    <div id="msg">Benvenuto alla REGIA GOLD. Il congresso sta per iniziare...</div>
+    <div id="verbs">
+      <button type="button" data-verb="GUARDA">GUARDA</button>
+      <button type="button" data-verb="PRENDI">PRENDI</button>
+      <button type="button" data-verb="USA">USA</button>
+      <button type="button" data-verb="PARLA">PARLA</button>
+      <button type="button" data-verb="APRI">APRI</button>
+      <button type="button" data-verb="CHIUDI">CHIUDI</button>
+      <button type="button" data-verb="DAI">DAI</button>
+      <button type="button" data-verb="SPINGI">SPINGI</button>
+    </div>
+    <div id="inv">Inventario: • nessun oggetto</div>
+  </div>
 </div>
-<div id="ui"><div id="msg">Benvenuto alla REGIA GOLD. Il congresso sta per iniziare...</div><div id="verbs"></div><div id="inv">Inventario: • nessun oggetto</div></div>
-</div>
+
 <script>
-const msg = document.getElementById('msg');
-const panic = document.getElementById('panicOverlay');
-const verbsEl = document.getElementById('verbs');
-const invEl = document.getElementById('inv');
-const radioHot = document.querySelector('[data-name="radio"]');
+(function(){
+  'use strict';
 
-let verb = 'GUARDA';
-let radioCalled = false;
-let panicked = false;
-let inventory = [];
+  const msg = document.getElementById('msg');
+  const panic = document.getElementById('panicOverlay');
+  const invEl = document.getElementById('inv');
+  const buttons = Array.from(document.querySelectorAll('#verbs button'));
+  const hotspots = Array.from(document.querySelectorAll('.hot'));
 
-const verbs = ['GUARDA','PRENDI','USA','PARLA','APRI','CHIUDI','DAI','SPINGI'];
+  let verb = 'GUARDA';
+  let radioCalled = false;
+  let panicked = false;
+  let inventory = [];
 
-function say(text) {
-  msg.textContent = text;
-}
-
-function setVerb(v) {
-  verb = v;
-  document.querySelectorAll('#verbs button').forEach(b => {
-    b.classList.toggle('sel', b.dataset.verb === v);
-  });
-  say(v + ' selezionato. Ora clicca un oggetto nella Regia Gold.');
-}
-
-function beep() {
-  try {
-    const a = new (window.AudioContext || window.webkitAudioContext)();
-    const o = a.createOscillator();
-    const g = a.createGain();
-    o.type = 'sawtooth';
-    o.frequency.setValueAtTime(480, a.currentTime);
-    o.frequency.linearRampToValueAtTime(1450, a.currentTime + .8);
-    g.gain.setValueAtTime(.0001, a.currentTime);
-    g.gain.exponentialRampToValueAtTime(.28, a.currentTime + .04);
-    g.gain.exponentialRampToValueAtTime(.0001, a.currentTime + 1.1);
-    o.connect(g).connect(a.destination);
-    o.start();
-    o.stop(a.currentTime + 1.15);
-  } catch(e) {}
-}
-
-function radioCall() {
-  if (radioCalled) return;
-  radioCalled = true;
-  radioHot.style.outline = '3px solid #ff3b30';
-  setTimeout(() => radioHot.style.outline = '', 1500);
-  say('📻 RADIO — TECNICO DI PALCO: «Regia, regia... qui palco! Abbiamo un problema con il microfono del relatore! Non si sente in sala!»');
-  beep();
-}
-
-function act(name) {
-  if (name === 'radio') {
-    radioCall();
-    return;
+  function say(text){
+    msg.textContent = text;
   }
 
-  if (name === 'mixer') {
-    if (!radioCalled) {
-      say('Il RIVAGE è pronto. Ma non tocco niente finché dal palco non arriva una chiamata.');
-    } else {
-      say('Trovo il canale del relatore sul RIVAGE. Eccolo... adesso devo agire sul fader giusto.');
+  function setVerb(nextVerb){
+    verb = nextVerb;
+    buttons.forEach(function(button){
+      button.classList.toggle('sel', button.dataset.verb === verb);
+    });
+    say(verb + ' selezionato. Ora clicca un oggetto nella Regia Gold.');
+  }
+
+  function beep(){
+    try{
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if(!AudioCtx) return;
+      const audio = new AudioCtx();
+      const osc = audio.createOscillator();
+      const gain = audio.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(480, audio.currentTime);
+      osc.frequency.linearRampToValueAtTime(1450, audio.currentTime + 0.8);
+      gain.gain.setValueAtTime(0.0001, audio.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.25, audio.currentTime + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 1.1);
+      osc.connect(gain);
+      gain.connect(audio.destination);
+      osc.start();
+      osc.stop(audio.currentTime + 1.15);
+    }catch(e){}
+  }
+
+  function radioCall(){
+    if(radioCalled) return;
+    radioCalled = true;
+    say('📻 RADIO — TECNICO DI PALCO: «Regia, regia... qui palco! Abbiamo un problema con il microfono del relatore! Non si sente in sala!»');
+    const radio = document.querySelector('[data-name="radio"]');
+    if(radio){
+      radio.style.outline = '3px solid #ff3b30';
+      setTimeout(function(){ radio.style.outline = ''; }, 1500);
     }
-    return;
   }
 
-  if (name === 'fader') {
-    if (!radioCalled) {
+  function useMixer(){
+    if(!radioCalled){
+      say('Il RIVAGE è pronto. Non tocco niente finché dal palco non arriva una chiamata.');
+      return;
+    }
+    say('Trovo il canale del relatore sul RIVAGE. Eccolo... adesso devo agire sul fader giusto.');
+  }
+
+  function useFader(){
+    if(!radioCalled){
       say('Non tocco il fader a caso. Prima devo sapere cosa succede sul palco.');
       return;
     }
-
-    if (!panicked) {
+    if(!panicked){
       panicked = true;
       panic.style.display = 'flex';
-      beep();
       say('FADER SBAGLIATO! FIIIIIIIIIIII! PANICO IN REGIA!');
-    }
-    return;
-  }
-
-  if (name === 'monitor') {
-    say('Sul monitor: RELATORE PRONTO • PLENARIA • STREAMING OK. Per ora...');
-    return;
-  }
-
-  if (name === 'door') {
-    say('Backstage. Cavi, relatori, runner e almeno tre persone che cercano qualcuno.');
-    return;
-  }
-
-  if (name === 'coffee') {
-    if (!inventory.includes('CAFFÈ')) {
-      inventory.push('CAFFÈ');
-      invEl.textContent = 'Inventario: • CAFFÈ';
-      say('Prendi il caffè. La vera alimentazione del fonico.');
-    } else {
-      say('Il caffè è già nel tuo inventario.');
+      beep();
     }
   }
-}
 
-verbs.forEach(v => {
-  const b = document.createElement('button');
-  b.textContent = v;
-  b.dataset.verb = v;
-  if (v === verb) b.classList.add('sel');
-  b.addEventListener('click', () => setVerb(v));
-  verbsEl.appendChild(b);
-});
+  function act(name){
+    if(verb === 'GUARDA'){
+      if(name === 'mixer') return say('Yamaha RIVAGE. La regia è pronta per la plenaria.');
+      if(name === 'fader') return say('Un fader del RIVAGE. Meglio sapere quale canale sto toccando...');
+      if(name === 'radio') return say('La radio di servizio. Da qui arrivano le chiamate dal palco.');
+      if(name === 'monitor') return say('RELATORE PRONTO • PLENARIA • STREAMING OK. Per ora...');
+      if(name === 'door') return say('Backstage. Cavi, relatori, runner e almeno tre persone che cercano qualcuno.');
+      if(name === 'coffee') return say('Caffè. L’unica cosa veramente indispensabile in regia.');
+    }
 
-document.querySelectorAll('.hot').forEach(h => {
-  h.addEventListener('click', () => act(h.dataset.name));
-});
+    if(verb === 'PRENDI'){
+      if(name === 'coffee'){
+        if(inventory.indexOf('CAFFÈ') === -1){
+          inventory.push('CAFFÈ');
+          invEl.textContent = 'Inventario: • CAFFÈ';
+          say('Prendi il caffè. La vera alimentazione del fonico.');
+        }else{
+          say('Il caffè è già nel tuo inventario.');
+        }
+      }else{
+        say('Non posso prendere quello.');
+      }
+      return;
+    }
 
-setTimeout(radioCall, 2500);
+    if(verb === 'USA'){
+      if(name === 'radio') return radioCall();
+      if(name === 'mixer') return useMixer();
+      if(name === 'fader') return useFader();
+      if(name === 'coffee') return say('Il caffè si usa in modo molto semplice: bevendolo.');
+      return say('Non posso usarlo così.');
+    }
+
+    if(verb === 'PARLA'){
+      if(name === 'radio') return radioCall();
+      if(name === 'door') return say('«Che succede sul palco?» — Nessuna risposta. Il backstage è nel caos.');
+      return say('Non c’è nessuno con cui parlare qui.');
+    }
+
+    if(verb === 'APRI'){
+      if(name === 'door') return say('Apro la porta verso il backstage.');
+      return say('Non si apre.');
+    }
+
+    if(verb === 'CHIUDI'){
+      if(name === 'door') return say('Chiudo la porta della regia. Meglio concentrarsi.');
+      return say('Non posso chiuderlo.');
+    }
+
+    if(verb === 'SPINGI'){
+      if(name === 'fader') return useFader();
+      return say('Non è qualcosa da spingere.');
+    }
+
+    if(verb === 'DAI'){
+      if(name === 'radio' && inventory.indexOf('CAFFÈ') !== -1) return say('«Un caffè?» — No. Dalla radio non arriva nessuna risposta.');
+      return say('A chi dovrei darlo?');
+    }
+  }
+
+  buttons.forEach(function(button){
+    button.classList.toggle('sel', button.dataset.verb === verb);
+    button.addEventListener('click', function(){
+      setVerb(button.dataset.verb);
+    });
+  });
+
+  hotspots.forEach(function(hotspot){
+    hotspot.addEventListener('click', function(){
+      act(hotspot.dataset.name);
+    });
+  });
+
+  setTimeout(radioCall, 2500);
+})();
 </script>
 </body>
 </html>
