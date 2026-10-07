@@ -153,26 +153,32 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(!panicked){
       return say('Prima devo avere un problema serio da segnalare.');
     }
-    if(!responsibleCalled){
-      responsibleCalled = true;
-      panic.style.display = 'none';
-      say('📞 TELEFONO — FONICO: «Ehi, il mixer della plenaria non risponde, fischia tutto!»');
-      setTimeout(function(){
-        say('📞 RESPONSABILE: «Ma che cazzo dici, impara a lavorare!»');
-      }, 1100);
-      setTimeout(function(){
-        say('Il responsabile riattacca. In regia rimaniamo solo io e il tecnico di palco.');
-      }, 2500);
-      setTimeout(function(){
-        say('🎙️ TECNICO DI PALCO: «Aspetta... ho capito qual è il problema.»');
-      }, 3900);
-      setTimeout(function(){
-        cableDiagnosed = true;
-        say('🎙️ TECNICO DI PALCO: «Il cavo del microfono è finito nel DMX delle luci! Lo ricollego subito.»');
-      }, 5100);
-    }else{
-      say('Il responsabile ha già risposto. Ora il tecnico di palco sta sistemando il cavo.');
+    if(phoneConversationStarted){
+      return say('Il responsabile ha già riattaccato. Ora bisogna risolvere il problema.');
     }
+
+    phoneConversationStarted=true;
+    panic.style.display='none';
+
+    say('📞 FONICO: «Ehi, il mixer della plenaria non risponde, fischia tutto!»');
+
+    // Ogni battuta resta abbastanza a lungo per essere letta.
+    setTimeout(function(){
+      say('📞 RESPONSABILE: «Ma che cazzo dici, impara a lavorare!»');
+    }, 5000);
+
+    setTimeout(function(){
+      say('Il responsabile riattacca. In regia rimaniamo solo io e il tecnico di palco.');
+    }, 10000);
+
+    setTimeout(function(){
+      say('🎙️ TECNICO DI PALCO: «Aspetta... ho capito qual è il problema.»');
+    }, 15000);
+
+    setTimeout(function(){
+      cableDiagnosed=true;
+      say('🎙️ TECNICO DI PALCO: «Il cavo del microfono è finito nel DMX delle luci! Lo ricollego subito.»');
+    }, 20000);
   }
 
   function fixCable(){
@@ -180,14 +186,16 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       return say('Sono solo cavi sotto la console. Non so ancora quale sia il problema.');
     }
     if(!cableFixed){
-      cableFixed = true;
+      cableFixed=true;
       say('🔌 TECNICO DI PALCO: «Eccolo! Era collegato al DMX delle luci.» Ricollega il cavo del microfono.');
+
       setTimeout(function(){
         say('🎙️ TECNICO DI PALCO: «Prova adesso.»');
-      }, 1400);
+      }, 5000);
+
       setTimeout(function(){
-        say('🎤 MICROFONO RELATORE: OK. «Uno, due... mi sentite?» — Perfetto. Il congresso può partire.');
-      }, 2800);
+        say('🎤 MICROFONO RELATORE: «Uno, due... mi sentite?» — Perfetto. Il congresso può partire.');
+      }, 10000);
     }else{
       say('Il cavo è già ricollegato. Il microfono funziona.');
     }
