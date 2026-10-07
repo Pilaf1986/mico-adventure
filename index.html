@@ -30,7 +30,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <img id="bg" src="Regia Gold_ caos in console.png" alt="Regia Gold MiCo">
 
     <div class="hot" data-name="mixer" style="left:30%;top:52%;width:53%;height:38%"></div>
-    <div class="hot" data-name="fader" style="left:35%;top:62%;width:5%;height:9%" title="PRIMO FADER"></div>\n    <div id="faderHint"></div>
+    <div class="hot" data-name="fader" style="left:33%;top:58%;width:9%;height:16%;z-index:10" title="PRIMO FADER"></div>\n    <div class="hot" data-name="postit" style="left:47%;top:70%;width:15%;height:13%;z-index:10" title="NO FEEDBACK"></div>\n    <div id="faderHint"></div>
     <div class="hot" data-name="radio" style="left:83%;top:54%;width:10%;height:22%"></div>
     <div class="hot" data-name="monitor" style="left:18%;top:45%;width:19%;height:23%"></div>
     <div class="hot" data-name="door" style="left:89%;top:10%;width:11%;height:38%"></div>
@@ -140,7 +140,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function act(name){
     if(verb === 'GUARDA'){
       if(name === 'mixer') return say('Yamaha RIVAGE. La regia è pronta per la plenaria.');
-      if(name === 'fader') return say('Un fader del RIVAGE. Meglio sapere quale canale sto toccando...');
+      if(name === 'fader') return say('Il primo fader a sinistra del RIVAGE. È quello che devo manovrare.');\n      if(name === 'postit') return say('Il post-it dice: NO FEEDBACK! Un consiglio che arriva sempre troppo tardi.');
       if(name === 'radio') return say('La radio di servizio. Da qui arrivano le chiamate dal palco.');
       if(name === 'monitor') return say('RELATORE PRONTO • PLENARIA • STREAMING OK. Per ora...');
       if(name === 'door') return say('Backstage. Cavi, relatori, runner e almeno tre persone che cercano qualcuno.');
