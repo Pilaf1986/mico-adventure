@@ -40,6 +40,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 #saveSlots{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
 #saveSlots .slotBtn{margin:0;font-size:11px;padding:6px 4px}
 #saveSlots .slotBtn.sel{border-color:#ffd84a;color:#ffd84a}
+.warehouseItem{display:none}
 </style>
 </head>
 <body>
@@ -57,6 +58,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="door" title="PORTA BACKSTAGE" style="left:21%;top:0%;width:13%;height:34%"></div>
     <div class="hot" data-name="cable" title="CAVO DMX" style="left:50%;top:70%;width:18%;height:14%;z-index:10"></div>
     <div class="hot" data-name="coffee" title="CAFFÈ" style="left:82%;top:63%;width:6%;height:11%"></div>
+
+    <!-- SCENA 4 — CARRELLO IN PRIMO PIANO: tre oggetti prendibili -->
+    <div class="hot warehouseItem" data-name="greenTape" title="NASTRO ADESIVO VERDE" style="left:40.5%;top:68%;width:6%;height:12%;z-index:20"></div>
+    <div class="hot warehouseItem" data-name="blackMarker" title="PENNARELLO NERO" style="left:46.8%;top:67%;width:5%;height:11%;z-index:20"></div>
+    <div class="hot warehouseItem" data-name="leatherman" title="LEATHERMAN" style="left:52.2%;top:68%;width:7%;height:12%;z-index:20"></div>
 
     <button type="button" id="goWarehouse">🚪 VAI IN MAGAZZINO</button>
     <button type="button" id="goBarrier">🚧 VAI ALLA SBARRA</button>
@@ -207,7 +213,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const itemDescriptions = {
     'CAFFÈ': '☕ CAFFÈ — Un caffè della macchinetta del MiCo. È tiepido, leggermente bruciato e probabilmente è qui da almeno mezz\'ora. Ma per un fonico è carburante puro.',
     'CELLULARE': '📱 CELLULARE — Lo smartphone di Andriu. Batteria sufficiente e linea presente. Può essere usato per chiamare la cooperativa.',
-    'PASS': '🪪 PASS MICO — Il badge di Andriu. È il documento che serve per superare i controlli di accesso.'
+    'PASS': '🪪 PASS MICO — Il badge di Andriu. È il documento che serve per superare i controlli di accesso.',
+    'NASTRO VERDE': '🟢 NASTRO ADESIVO VERDE — Nastro telato da tecnico. Serve per fissare, segnare e mettere ordine nei cavi.',
+    'PENNARELLO NERO': '🖊️ PENNARELLO NERO — Indelebile. Il classico pennarello da fonico per segnare cavi, flight case e qualsiasi cosa serva.',
+    'LEATHERMAN': '🛠️ LEATHERMAN — Multi-tool da tecnico. Pinze, lame, cacciaviti e tutto quello che può salvarti durante un allestimento.'
   };
 
   function presentPassToGuard(){
@@ -311,12 +320,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       monitor: {title:'RIUNIONE TECNICA', style:'left:67%;top:25%;width:30%;height:45%'},
       door:    {title:'USCITA MAGAZZINO', style:'left:42%;top:12%;width:18%;height:30%'},
       cable:   {title:'CAVI A/V', style:'left:72%;top:65%;width:25%;height:20%'},
-      coffee:  {title:'BAULE', style:'left:40%;top:65%;width:16%;height:20%'}
+      coffee:  {title:'BAULE', style:'left:40%;top:65%;width:16%;height:20%'},
+      greenTape:   {title:'NASTRO ADESIVO VERDE', style:'left:40.5%;top:68%;width:6%;height:12%;z-index:20'},
+      blackMarker: {title:'PENNARELLO NERO', style:'left:46.8%;top:67%;width:5%;height:11%;z-index:20'},
+      leatherman:  {title:'LEATHERMAN', style:'left:52.2%;top:68%;width:7%;height:12%;z-index:20'}
     };
     hotspots.forEach(function(h){
       const name=h.dataset.name;
+      if(h.classList.contains('warehouseItem')) h.style.display='none';
       if(config[name]){
         h.style.cssText=config[name].style;
+        h.style.display='block';
         h.style.zIndex='10';
         h.title=config[name].title;
       }
@@ -324,6 +338,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   function configureBarrierHotspots(){
+    hotspots.forEach(function(h){
+      if(h.classList.contains('warehouseItem')) h.style.display='none';
+    });
     const config = {
       // Sbarra: la barra rossa attraversa orizzontalmente il centro della scena.
       mixer:   {title:'SBARRA AUTOMATICA', style:'left:36%;top:43%;width:48%;height:12%'},
@@ -881,6 +898,18 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
 
     if(verb === 'PRENDI'){
+      if(name === 'greenTape' || name === 'blackMarker' || name === 'leatherman'){
+        const itemMap = {greenTape:'NASTRO VERDE', blackMarker:'PENNARELLO NERO', leatherman:'LEATHERMAN'};
+        const item = itemMap[name];
+        if(inventory.indexOf(item) === -1){
+          inventory.push(item);
+          renderInventory();
+          say('Hai preso: ' + item + '.');
+        }else{
+          say(item + ' è già nel tuo inventario.');
+        }
+        return;
+      }
       if(name === 'coffee'){
         if(inventory.indexOf('CAFFÈ') === -1){
           inventory.push('CAFFÈ');
