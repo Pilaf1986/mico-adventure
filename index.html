@@ -153,6 +153,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let warehouseConversationStarted = false;
   let barrierReached = false;
   let passChecked = false;
+  let cooperativeCleared = false;
+  let accessGranted = false;
   let selectedItem = '';
 
   function later(fn, ms){
@@ -192,22 +194,54 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   };
 
   function presentPassToGuard(){
-    if(passChecked) return say('👮 GUARDIA: «Questo l’ho già controllato. Il sistema dice che il PASS è revocato.»');
-    passChecked=true;
-    say('🪪 Andriu consegna il PASS alla guardia. La guardia lo appoggia sul lettore.');
+    if(accessGranted) return say('👮 GUARDIA: «Tutto a posto. Puoi entrare.»');
+    if(!cooperativeCleared){
+      if(passChecked) return say('👮 GUARDIA: «Questo l’ho già controllato. Il sistema dice che il PASS è revocato.»');
+      passChecked=true;
+      say('🪪 Andriu consegna il PASS alla guardia. La guardia lo appoggia sul lettore.');
+      later(function(){
+        say('📟 LETTORE PASS: «ACCESSO NEGATO — PASS REVOCATO.»');
+      },1800);
+      later(function(){
+        say('👮 GUARDIA: «Eh, carissimo... qui il sistema dice che non puoi entrare.»');
+      },3600);
+      return;
+    }
+    accessGranted=true;
+    selectedItem='';
+    say('🪪 Andriu ridà il PASS alla guardia. La guardia lo passa sul lettore.');
     later(function(){
-      say('📟 LETTORE PASS: «ACCESSO NEGATO — PASS REVOCATO.»');
+      say('📟 LETTORE PASS: «AUTORIZZAZIONE CONFERMATA — ACCESSO CONSENTITO.»');
     },1800);
     later(function(){
-      say('👮 GUARDIA: «Eh, carissimo... qui il sistema dice che non puoi entrare.»');
+      say('👮 GUARDIA: «Tutto a posto, carissimo. Puoi entrare.»');
     },3600);
+    later(function(){
+      say('🚧 La sbarra si alza. Andriu può rientrare al MiCo.');
+      goWarehouse.textContent='🚪 VAI AL MAGAZZINO';
+      goWarehouse.style.display='block';
+    },5000);
   }
 
   function callCooperative(){
+    if(cooperativeCleared) return say('📱 La cooperativa ha già risolto la situazione. Ora devi dare di nuovo il PASS alla guardia.');
     say('📱 CHIAMATA ALLA COOPERATIVA — «Pronto? Sono Andriu. Mi hanno revocato il pass e sono alla sbarra del MiCo.»');
     later(function(){
       say('📞 COOPERATIVA: «Ricevuto Andriu. Aspetta alla sbarra, verifichiamo la situazione e ti richiamiamo.»');
     },3500);
+    later(function(){
+      cooperativeCleared=true;
+      say('📞 COOPERATIVA: «Ho sentito l’ufficio passi.»');
+    },7000);
+    later(function(){
+      say('📞 COOPERATIVA: «Devi averla combinata grossa, ho dovuto ungere molti ingranaggi.»');
+    },10000);
+    later(function(){
+      say('📞 COOPERATIVA: «Comunque ora puoi entrare.»');
+    },13000);
+    later(function(){
+      say('📱 CHIAMATA TERMINATA — Ora devi ridare il PASS alla guardia.');
+    },15000);
   }
 
   function renderInventory(){
@@ -506,6 +540,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       warehouseConversationStarted: warehouseConversationStarted,
       barrierReached: barrierReached,
       passChecked: passChecked,
+      cooperativeCleared: cooperativeCleared,
+      accessGranted: accessGranted,
       selectedItem: selectedItem,
       verb: verb,
       radioCalled: radioCalled,
@@ -554,6 +590,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       warehouseConversationStarted=!!data.warehouseConversationStarted;
       barrierReached=!!data.barrierReached;
       passChecked=!!data.passChecked;
+      cooperativeCleared=!!data.cooperativeCleared;
+      accessGranted=!!data.accessGranted;
       selectedItem=data.selectedItem || '';
       goWarehouse.style.display='none';
       goBarrier.style.display='none';
@@ -602,6 +640,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       panic.style.display=data.panicVisible || 'none';
       if(scene === 'warehouse' && warehouseConversationStarted){
         goBarrier.style.display='block';
+      }
+      if(scene === 'barrier' && accessGranted){
+        goWarehouse.textContent='🚪 VAI AL MAGAZZINO';
+        goWarehouse.style.display='block';
       }
       renderInventory();
       buttons.forEach(function(button){
