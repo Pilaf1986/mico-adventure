@@ -18,7 +18,18 @@ body{display:flex;align-items:center;justify-content:center}
 #msg{min-height:34px;font-size:14px;line-height:1.25;margin-bottom:5px}
 button{font:bold 12px monospace;background:#252a34;color:#fff;border:2px solid #657080;padding:7px 9px;margin:2px;cursor:pointer}
 button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
-#inv{font-size:12px;color:#aeb7c4;padding-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}\n#player{position:absolute;left:47%;top:39%;width:30px;height:54px;z-index:20;display:none;pointer-events:none;transform-origin:50% 100%}\n#player .head{position:absolute;left:9px;top:0;width:12px;height:12px;border-radius:50%;background:#d9a066;border:2px solid #111}\n#player .body{position:absolute;left:7px;top:13px;width:16px;height:25px;background:#ffd84a;border:2px solid #111}\n#player .leg{position:absolute;top:36px;width:7px;height:18px;background:#252a34;border:2px solid #111}\n#player .leg.left{left:7px}.leg.right{left:17px}\n#player.walk{display:block;animation:walkToCoffee 1.8s cubic-bezier(.4,0,.2,1) forwards}\n#player.walk .leg{animation:steps .18s infinite alternate}\n#player.drink{display:block;animation:drinkAtCoffee .9s ease-in-out forwards}\n@keyframes walkToCoffee{from{left:47%;top:39%}to{left:82%;top:55%}}\n@keyframes steps{from{transform:rotate(18deg)}to{transform:rotate(-18deg)}}\n@keyframes drinkAtCoffee{0%{transform:rotate(0)}45%{transform:rotate(-12deg) translateY(4px)}100%{transform:rotate(0)}}
+#inv{font-size:12px;color:#aeb7c4;padding-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#player{position:absolute;left:47%;top:39%;width:30px;height:54px;z-index:20;display:none;pointer-events:none;transform-origin:50% 100%}
+#player .head{position:absolute;left:9px;top:0;width:12px;height:12px;border-radius:50%;background:#d9a066;border:2px solid #111}
+#player .body{position:absolute;left:7px;top:13px;width:16px;height:25px;background:#ffd84a;border:2px solid #111}
+#player .leg{position:absolute;top:36px;width:7px;height:18px;background:#252a34;border:2px solid #111}
+#player .leg.left{left:7px}.leg.right{left:17px}
+#player.walk{display:block;animation:walkToCoffee 1.8s cubic-bezier(.4,0,.2,1) forwards}
+#player.walk .leg{animation:steps .18s infinite alternate}
+#player.drink{display:block;animation:drinkAtCoffee .9s ease-in-out forwards}
+@keyframes walkToCoffee{from{left:47%;top:39%}to{left:82%;top:55%}}
+@keyframes steps{from{transform:rotate(18deg)}to{transform:rotate(-18deg)}}
+@keyframes drinkAtCoffee{0%{transform:rotate(0)}45%{transform:rotate(-12deg) translateY(4px)}100%{transform:rotate(0)}}
 .invLabel{color:#aeb7c4}
 .invItem{font:bold 11px monospace;background:#252a34;color:#fff;border:2px solid #657080;padding:4px 7px;margin:0;cursor:pointer}
 .invItem:hover{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
@@ -54,7 +65,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="monitor" title="MONITOR" style="left:36%;top:22%;width:17%;height:13%"></div>
     <div class="hot" data-name="door" title="PORTA BACKSTAGE" style="left:21%;top:0%;width:13%;height:34%"></div>
     <div class="hot" data-name="cable" title="CAVO DMX" style="left:50%;top:70%;width:18%;height:14%;z-index:10"></div>
-    <div class="hot" data-name="coffee" title="CAFFÈ" style="left:82%;top:63%;width:6%;height:11%"></div>\n\n    <div id="player" aria-hidden="true"><div class="head"></div><div class="body"></div><div class="leg left"></div><div class="leg right"></div></div>
+    <div class="hot" data-name="coffee" title="CAFFÈ" style="left:82%;top:63%;width:6%;height:11%"></div>
+
+    <div id="player" aria-hidden="true"><div class="head"></div><div class="body"></div><div class="leg left"></div><div class="leg right"></div></div>
 
     <div id="panicOverlay">
       <div class="panicText">FIIIIIIIIIIII!</div>
@@ -140,7 +153,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let phoneConversationStarted = false;
   let inventory = [];
   let selectedSlot = 1;
-  let timers = [];\n  let coffeeDrunk = false;
+  let timers = [];
+  let coffeeDrunk = false;
 
   function later(fn, ms){
     const id = setTimeout(function(){
@@ -201,7 +215,29 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
 
-  function drinkCoffee(){\n    if(coffeeDrunk) return say('☕ Ho già bevuto il caffè. Ora sono pronto a lavorare.');\n    if(inventory.indexOf('CAFFÈ') === -1) return say('Non ho nessun caffè da bere.');\n    clearTimers();\n    const player = document.getElementById('player');\n    player.classList.remove('drink','walk');\n    void player.offsetWidth;\n    player.classList.add('walk');\n    say('☕ Mi avvicino alla tazza di caffè...');\n    later(function(){\n      player.classList.remove('walk');\n      player.classList.add('drink');\n      say('☕ Prendo la tazza... finalmente un caffè.');\n    }, 1800);\n    later(function(){\n      coffeeDrunk=true;\n      inventory=inventory.filter(function(item){ return item !== 'CAFFÈ'; });\n      renderInventory();\n      say('☕ Bevo il caffè. Ahhh... adesso sì che si lavora!');\n    }, 2700);\n  }\n\n  function beep(){
+  function drinkCoffee(){
+    if(coffeeDrunk) return say('☕ Ho già bevuto il caffè. Ora sono pronto a lavorare.');
+    if(inventory.indexOf('CAFFÈ') === -1) return say('Non ho nessun caffè da bere.');
+    clearTimers();
+    const player = document.getElementById('player');
+    player.classList.remove('drink','walk');
+    void player.offsetWidth;
+    player.classList.add('walk');
+    say('☕ Mi avvicino alla tazza di caffè...');
+    later(function(){
+      player.classList.remove('walk');
+      player.classList.add('drink');
+      say('☕ Prendo la tazza... finalmente un caffè.');
+    }, 1800);
+    later(function(){
+      coffeeDrunk=true;
+      inventory=inventory.filter(function(item){ return item !== 'CAFFÈ'; });
+      renderInventory();
+      say('☕ Bevo il caffè. Ahhh... adesso sì che si lavora!');
+    }, 2700);
+  }
+
+  function beep(){
     try{
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if(!AudioCtx) return;
