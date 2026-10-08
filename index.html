@@ -239,6 +239,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function enterWarehouse(){
     clearTimers();
     scene='warehouse';
+    if(typeof loungeAudio !== 'undefined'){
+      loungeAudio.pause();
+      loungeAudio.currentTime = 0;
+      loungeStarted = false;
+    }
     panic.style.display='none';
     goWarehouse.style.display='none';
     const bg=document.getElementById('bg');
