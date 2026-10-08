@@ -96,7 +96,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         <div style="display:flex;gap:6px;margin-top:6px">
           <button type="button" id="saveBtn" style="flex:1">SALVA</button>
           <button type="button" id="loadBtn" style="flex:1">CARICA</button>
-          <button type="button" id="deleteBtn" style="flex:1">CANCELLA</button>
+          <button type="button" id="deleteBtn" style="flex:1">CANCELLA</button><button type="button" id="renameBtn" style="flex:1">RINOMINA</button>
         </div>
         <button type="button" id="exitBtn">TORNA AL GIOCO</button>
         <div id="saveStatus">Seleziona uno slot.</div>
@@ -149,6 +149,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const saveBtn = document.getElementById('saveBtn');
   const loadBtn = document.getElementById('loadBtn');
   const deleteBtn = document.getElementById('deleteBtn');
+  const renameBtn = document.getElementById('renameBtn');
   const saveName = document.getElementById('saveName');
   const slotButtons = Array.from(document.querySelectorAll('.slotBtn'));
 
@@ -612,6 +613,30 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
   }
 
+  function renameGame(){
+    const key='micoAdventureSave'+selectedSlot;
+    const name=saveName.value.trim();
+    if(!name){
+      saveStatus.textContent='INSERISCI UN NOME PER LO SLOT '+selectedSlot+'.';
+      saveName.focus();
+      return;
+    }
+    const raw=localStorage.getItem(key);
+    if(!raw){
+      saveStatus.textContent='LO SLOT '+selectedSlot+' È VUOTO. SALVA PRIMA LA PARTITA.';
+      return;
+    }
+    try{
+      const data=JSON.parse(raw);
+      data.saveName=name;
+      localStorage.setItem(key, JSON.stringify(data));
+      saveStatus.textContent='SLOT '+selectedSlot+' RINOMINATO IN «'+name+'».';
+      updateSlotButtons();
+    }catch(e){
+      saveStatus.textContent='ERRORE NELLA RINOMINA DELLO SLOT.';
+    }
+  }
+
   function deleteGame(){
     const key='micoAdventureSave'+selectedSlot;
     if(!localStorage.getItem(key)){
@@ -776,6 +801,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   saveBtn.addEventListener('click', saveGame);
   loadBtn.addEventListener('click', loadGame);
   deleteBtn.addEventListener('click', deleteGame);
+  renameBtn.addEventListener('click', renameGame);
   exitBtn.addEventListener('click', function(){
     menuOverlay.style.display='none';
   });
