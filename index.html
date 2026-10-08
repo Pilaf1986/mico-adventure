@@ -832,9 +832,6 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       }
       msg.textContent=data.message || 'Partita caricata.';
       panic.style.display=data.panicVisible || 'none';
-      if(scene === 'warehouse' && warehouseConversationStarted){
-        goBarrier.style.display='block';
-      }
       if(scene === 'barrier' && accessGranted){
         goWarehouse.textContent='🚪 VAI AL MAGAZZINO';
         goWarehouse.style.display='block';
