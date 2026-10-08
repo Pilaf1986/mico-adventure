@@ -494,10 +494,6 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     function talkOnSiteManager(){
     if(!warehouseConversationStarted){
       warehouseConversationStarted=true;
-      if(inventory.indexOf('PLANIMETRIA NORD') === -1){
-        inventory.push('PLANIMETRIA NORD');
-        renderInventory();
-      }
       say('🎙️ FRANK — ON SITE MANAGER: «Buongiorno Andriu, sono Frank il tuo ON SITE MANAGER.»');
       later(function(){
         say('🎙️ FRANK: «Sì, in sostanza sono il direttore di produzione.»');
@@ -509,7 +505,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         say('📐 FRANK: «Ecco a te la PLANIMETRIA NORD di questo labirinto chiamato MiCo. Cerca di non perderti.»');
       },21000);
       later(function(){
-        say('📐 PLANIMETRIA NORD consegnata. Puoi selezionarla nell’inventario e usare GUARDA.');
+        if(inventory.indexOf('PLANIMETRIA NORD') === -1){
+          inventory.push('PLANIMETRIA NORD');
+          renderInventory();
+        }
+        say('📐 FRANK ti consegna la PLANIMETRIA NORD. È entrata nell’inventario: puoi selezionarla e usare GUARDA.');
       },28000);
       return;
     }
