@@ -446,15 +446,107 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     });
   });
 
-  // Musica lounge reale della Regia Gold.
-  const loungeAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/regia-gold-lounge.opus');
-  loungeAudio.loop = true;
-  loungeAudio.volume = 0.28;
-  loungeAudio.preload = 'auto';
+  // Musica lounge ambientale della Regia Gold: batteria morbida + basso + pad + synth.
+  let loungeStarted = false;
+  let loungeCtx = null;
+  let loungeTimer = null;
+  const BPM = 92;
+  const BEAT = 60 / BPM;
+  const CHORDS = [
+    [146.83,174.61,220.00,261.63], // Dm7
+    [196.00,246.94,293.66,329.63], // G7
+    [130.81,164.81,196.00,246.94], // Cmaj7
+    [110.00,146.83,164.81,220.00]  // Am7
+  ];
+  const BASS = [73.42,98.00,65.41,55.00];
 
-  async function startLounge(){
+  function loungeTone(ctx, freq, start, dur, type, gainValue, filterFreq){
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, start);
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(filterFreq || 1800, start);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(gainValue, start + 0.025);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.05);
+  }
+
+  function loungeKick(ctx, start){
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type='sine';
+    osc.frequency.setValueAtTime(105,start);
+    osc.frequency.exponentialRampToValueAtTime(48,start+0.12);
+    gain.gain.setValueAtTime(0.0001,start);
+    gain.gain.exponentialRampToValueAtTime(0.22,start+0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001,start+0.18);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(start); osc.stop(start+0.2);
+  }
+
+  function loungeHat(ctx, start){
+    const buffer=ctx.createBuffer(1,ctx.sampleRate*0.055,ctx.sampleRate);
+    const data=buffer.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*(1-i/data.length);
+    const src=ctx.createBufferSource();
+    const filter=ctx.createBiquadFilter();
+    const gain=ctx.createGain();
+    src.buffer=buffer;
+    filter.type='highpass'; filter.frequency.value=5200;
+    gain.gain.value=0.035;
+    src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    src.start(start);
+  }
+
+  function scheduleLoungeLoop(ctx, start){
+    const bar=BEAT*4;
+    const loopLength=bar*8;
+    for(let b=0;b<8;b++){
+      const chord=CHORDS[Math.floor(b/2)];
+      const bass=BASS[Math.floor(b/2)];
+      const barStart=start+b*bar;
+
+      loungeKick(ctx,barStart);
+      loungeKick(ctx,barStart+BEAT*2.5);
+      if(b%2===1) loungeKick(ctx,barStart+BEAT*3.5);
+
+      for(let h=0;h<8;h++) loungeHat(ctx,barStart+h*BEAT/2);
+
+      chord.forEach((f,i)=>{
+        loungeTone(ctx,f,barStart,bar*0.92,'sawtooth',0.018,1100-i*80);
+      });
+
+      loungeTone(ctx,bass,barStart,BEAT*1.8,'triangle',0.075,700);
+      loungeTone(ctx,bass*1.5,barStart+BEAT*2,BEAT*1.5,'triangle',0.055,650);
+
+      const melody=[1.25,1.5,1.75,2.0][b%4];
+      loungeTone(ctx,melody*146.83,barStart+BEAT*0.75,BEAT*0.65,'sine',0.028,2200);
+      loungeTone(ctx,melody*164.81,barStart+BEAT*2.75,BEAT*0.5,'sine',0.022,2200);
+    }
+    return loopLength;
+  }
+
+  function startLounge(){
+    if(loungeStarted) return;
+    loungeStarted=true;
     try{
-      await loungeAudio.play();
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(!AudioCtx) return;
+      loungeCtx=new AudioCtx();
+      const start=loungeCtx.currentTime+0.08;
+      const loopLength=scheduleLoungeLoop(loungeCtx,start);
+      loungeTimer=setTimeout(function loop(){
+        if(!loungeCtx) return;
+        const next=scheduleLoungeLoop(loungeCtx,loungeCtx.currentTime+0.05);
+        loungeTimer=setTimeout(loop,Math.max(1000,(next-0.05)*1000));
+      },Math.max(1000,(loopLength-0.08)*1000));
     }catch(e){}
   }
 
