@@ -696,6 +696,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       say('FRANK: «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
       frankBriefingComplete=true;
       frankBriefingRunning=false;
+      goBarrier.textContent='🚧 VAI ALLA SBARRA';
+      goBarrier.style.display='block';
     },56000);
   }
 
@@ -873,6 +875,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       whatsappChatDelivered=!!data.whatsappChatDelivered;
       frankBriefingComplete=!!data.frankBriefingComplete;
       frankBriefingRunning=false;
+      if(scene === 'warehouse' && frankBriefingComplete){
+        goBarrier.textContent='🚧 VAI ALLA SBARRA';
+        goBarrier.style.display='block';
+      }
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
       if(!planimetryDelivered){
         inventory=inventory.filter(function(item){ return item !== 'PLANIMETRIA NORD'; });
