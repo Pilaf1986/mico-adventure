@@ -95,6 +95,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         <div style="display:flex;gap:6px;margin-top:10px">
           <button type="button" id="saveBtn" style="flex:1">SALVA</button>
           <button type="button" id="loadBtn" style="flex:1">CARICA</button>
+          <button type="button" id="deleteBtn" style="flex:1">CANCELLA</button>
         </div>
         <button type="button" id="exitBtn">TORNA AL GIOCO</button>
         <div id="saveStatus">Seleziona uno slot.</div>
@@ -146,6 +147,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const saveStatus = document.getElementById('saveStatus');
   const saveBtn = document.getElementById('saveBtn');
   const loadBtn = document.getElementById('loadBtn');
+  const deleteBtn = document.getElementById('deleteBtn');
   const slotButtons = Array.from(document.querySelectorAll('.slotBtn'));
 
   let verb = 'GUARDA';
@@ -597,6 +599,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
   }
 
+  function deleteGame(){
+    const key='micoAdventureSave'+selectedSlot;
+    if(!localStorage.getItem(key)){
+      saveStatus.textContent='LO SLOT '+selectedSlot+' È GIÀ VUOTO.';
+      return;
+    }
+    localStorage.removeItem(key);
+    saveStatus.textContent='SALVATAGGIO DELLO SLOT '+selectedSlot+' CANCELLATO.';
+    updateSlotButtons();
+  }
+
   function loadGame(){
     try{
       const raw=localStorage.getItem('micoAdventureSave'+selectedSlot);
@@ -726,6 +739,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   });
   saveBtn.addEventListener('click', saveGame);
   loadBtn.addEventListener('click', loadGame);
+  deleteBtn.addEventListener('click', deleteGame);
   exitBtn.addEventListener('click', function(){
     menuOverlay.style.display='none';
   });
