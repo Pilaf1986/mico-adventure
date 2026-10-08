@@ -515,6 +515,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       },28000);
       return;
     }
+    if(!planimetryDelivered){
+      planimetryDelivered=true;
+      if(inventory.indexOf('PLANIMETRIA NORD') === -1){
+        inventory.push('PLANIMETRIA NORD');
+        renderInventory();
+      }
+      say('📐 FRANK ti consegna la PLANIMETRIA NORD. È entrata nell’inventario: puoi selezionarla e usare GUARDA.');
+      return;
+    }
     say('🎙️ FRANK — ON SITE MANAGER: «La PLANIMETRIA NORD è nell’inventario. Guardala per orientarti nel North Wing, Level 2.»');
   }
   function drinkCoffee(){
