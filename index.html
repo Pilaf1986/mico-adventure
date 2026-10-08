@@ -41,6 +41,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 #saveSlots .slotBtn{margin:0;font-size:11px;padding:6px 4px}
 #saveSlots .slotBtn.sel{border-color:#ffd84a;color:#ffd84a}
 .warehouseItem{display:none}
+#planimetryOverlay{position:absolute;inset:0;background:rgba(5,7,12,.96);z-index:60;display:none;align-items:center;justify-content:center;flex-direction:column;padding:10px;box-sizing:border-box}
+#planimetryBox{position:relative;width:min(100%,1050px);height:min(100%,720px);display:flex;align-items:center;justify-content:center}
+#planimetryImage{max-width:100%;max-height:100%;object-fit:contain;display:block;border:2px solid #69717e;background:#fff}
+#closePlanimetry{position:absolute;right:8px;top:8px;z-index:5}
+.northRoom{position:absolute;display:none;font:bold 11px monospace;padding:6px 8px;border:2px solid #ffd84a;background:#252a34;color:#fff;box-shadow:0 0 8px #000}
+.northRoom:hover{background:#3e4654;color:#ffd84a}
+#northOcean1{left:12%;top:38%}#northOcean2{left:22%;top:38%}#northOcean3{left:12%;top:53%}#northOcean4{left:22%;top:53%}
+#northAqua1{left:36%;top:45%}#northAqua2{left:43%;top:38%}#northAqua3{left:36%;top:55%}#northAqua4{left:43%;top:49%}
+#northSky1{left:55%;top:55%}#northSky2{left:55%;top:38%}
+#northMeeting{right:3%;top:35%}#northSuites{left:5%;bottom:12%}#northBlue{left:62%;top:55%}
+@media(max-width:600px){.northRoom{font-size:9px;padding:4px 5px}}
 </style>
 </head>
 <body>
@@ -116,6 +127,26 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         <button type="button" id="resumeBtn">RIPRENDI PARTITA</button>
       </div>
     </div>
+
+    <div id="planimetryOverlay">
+      <div id="planimetryBox">
+        <img id="planimetryImage" src="assets/Planimetria-NORD.webp" alt="PLANIMETRIA NORD">
+        <button type="button" id="closePlanimetry">✕ CHIUDI</button>
+        <button type="button" class="northRoom" id="northOcean1">OCEAN 1</button>
+        <button type="button" class="northRoom" id="northOcean2">OCEAN 2</button>
+        <button type="button" class="northRoom" id="northOcean3">OCEAN 3</button>
+        <button type="button" class="northRoom" id="northOcean4">OCEAN 4</button>
+        <button type="button" class="northRoom" id="northAqua1">AQUA 1</button>
+        <button type="button" class="northRoom" id="northAqua2">AQUA 2</button>
+        <button type="button" class="northRoom" id="northAqua3">AQUA 3</button>
+        <button type="button" class="northRoom" id="northAqua4">AQUA 4</button>
+        <button type="button" class="northRoom" id="northSky1">SKY 1</button>
+        <button type="button" class="northRoom" id="northSky2">SKY 2</button>
+        <button type="button" class="northRoom" id="northMeeting">MEETING N1–N9</button>
+        <button type="button" class="northRoom" id="northSuites">SUITES N1–N7</button>
+        <button type="button" class="northRoom" id="northBlue">BLUE AREA</button>
+      </div>
+    </div>
   </div>
 
   <div id="ui">
@@ -158,6 +189,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const renameBtn = document.getElementById('renameBtn');
   const audioBtn = document.getElementById('audioBtn');
   const saveName = document.getElementById('saveName');
+  const planimetryOverlay = document.getElementById('planimetryOverlay');
+  const closePlanimetry = document.getElementById('closePlanimetry');
   const slotButtons = Array.from(document.querySelectorAll('.slotBtn'));
 
   let verb = 'GUARDA';
@@ -216,7 +249,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     'PASS': '🪪 PASS MICO — Il badge di Andriu. È il documento che serve per superare i controlli di accesso.',
     'NASTRO VERDE': '🟢 NASTRO ADESIVO VERDE — Nastro telato da tecnico. Serve per fissare, segnare e mettere ordine nei cavi.',
     'PENNARELLO NERO': '🖊️ PENNARELLO NERO — Indelebile. Il classico pennarello da fonico per segnare cavi, flight case e qualsiasi cosa serva.',
-    'LEATHERMAN': '🛠️ LEATHERMAN — Multi-tool da tecnico. Pinze, lame, cacciaviti e tutto quello che può salvarti durante un allestimento.'
+    'LEATHERMAN': '🛠️ LEATHERMAN — Multi-tool da tecnico. Pinze, lame, cacciaviti e tutto quello che può salvarti durante un allestimento.',
+    'PLANIMETRIA NORD': '📐 PLANIMETRIA NORD — North Wing, Level 2 del MiCo. Qui sono indicate OCEAN 1–4, AQUA 1–4, SKY 1–2, Meeting N1–N9, Suites N1–N7 e Blue Area.'
   };
 
   function presentPassToGuard(){
@@ -292,6 +326,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       itemButton.textContent = item;
       itemButton.title = 'Esamina ' + item;
       itemButton.addEventListener('click', function(){
+        if(verb === 'GUARDA' && item === 'PLANIMETRIA NORD') return openNorthPlanimetry();
         if(verb === 'USA'){
           selectedItem = item;
           if(item === 'CELLULARE' && scene === 'barrier') return callCooperative();
@@ -405,6 +440,21 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     say('🚧 LA SBARRA — Andriu è uscito dal magazzino. Davanti a lui, la barriera d’ingresso del MiCo.');
   }
 
+  function openNorthPlanimetry(){
+    planimetryOverlay.style.display='flex';
+    document.querySelectorAll('.northRoom').forEach(function(btn){ btn.style.display='block'; });
+  }
+
+  function closeNorthPlanimetry(){
+    planimetryOverlay.style.display='none';
+    document.querySelectorAll('.northRoom').forEach(function(btn){ btn.style.display='none'; });
+  }
+
+  function chooseNorthRoom(room){
+    closeNorthPlanimetry();
+    say('📐 PLANIMETRIA NORD — Destinazione selezionata: ' + room + '.');
+  }
+
   function enterWarehouse(){
     clearTimers();
     scene='warehouse';
@@ -434,21 +484,30 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     say('MAGAZZINO MICO A/V — Andriu è arrivato al livello iniziale della sua nuova carriera.');
   }
 
-  function talkOnSiteManager(){
-    if(warehouseConversationStarted){
-      return say('ON SITE MANAGER: «Il pass è revocato. Devi uscire, sentire la cooperativa e poi rientrare.»');
+    function talkOnSiteManager(){
+    if(!warehouseConversationStarted){
+      warehouseConversationStarted=true;
+      if(inventory.indexOf('PLANIMETRIA NORD') === -1){
+        inventory.push('PLANIMETRIA NORD');
+        renderInventory();
+      }
+      say('🎙️ FRANK — ON SITE MANAGER: «Buongiorno Andriu, sono Frank il tuo ON SITE MANAGER.»');
+      later(function(){
+        say('🎙️ FRANK: «Sì, in sostanza sono il direttore di produzione.»');
+      },7000);
+      later(function(){
+        say('🎙️ FRANK: «Ti spiegherò cosa faremo oggi. Siamo di montaggio salette, perciò portati i DPI.»');
+      },14000);
+      later(function(){
+        say('📐 FRANK: «Ecco a te la PLANIMETRIA NORD di questo labirinto chiamato MiCo. Cerca di non perderti.»');
+      },21000);
+      later(function(){
+        say('📐 PLANIMETRIA NORD consegnata. Puoi selezionarla nell’inventario e usare GUARDA.');
+      },28000);
+      return;
     }
-    warehouseConversationStarted=true;
-    say('🎙️ ON SITE MANAGER: «Andriu, hai sbagliato. Il pass di ingresso è stato revocato.»');
-    later(function(){
-      say('🎙️ ON SITE MANAGER: «Devi uscire, sentire la cooperativa e poi rientrare. Segui le procedure e buon lavoro.»');
-    },7000);
-    later(function(){
-      say('🚧 Fine briefing. Andriu deve andare alla sbarra.');
-      goBarrier.style.display='block';
-    },14000);
+    say('🎙️ FRANK — ON SITE MANAGER: «La PLANIMETRIA NORD è nell’inventario. Guardala per orientarti nel North Wing, Level 2.»');
   }
-
   function drinkCoffee(){
     if(coffeeDrunk) return say('☕ Ho già bevuto il caffè. Ora sono pronto a lavorare.');
     clearTimers();
@@ -849,6 +908,20 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   resumeBtn.addEventListener('click', function(){
     exitScreen.style.display='none';
   });
+  closePlanimetry.addEventListener('click', closeNorthPlanimetry);
+  document.getElementById('northOcean1').addEventListener('click', function(){chooseNorthRoom('OCEAN 1');});
+  document.getElementById('northOcean2').addEventListener('click', function(){chooseNorthRoom('OCEAN 2');});
+  document.getElementById('northOcean3').addEventListener('click', function(){chooseNorthRoom('OCEAN 3');});
+  document.getElementById('northOcean4').addEventListener('click', function(){chooseNorthRoom('OCEAN 4');});
+  document.getElementById('northAqua1').addEventListener('click', function(){chooseNorthRoom('AQUA 1');});
+  document.getElementById('northAqua2').addEventListener('click', function(){chooseNorthRoom('AQUA 2');});
+  document.getElementById('northAqua3').addEventListener('click', function(){chooseNorthRoom('AQUA 3');});
+  document.getElementById('northAqua4').addEventListener('click', function(){chooseNorthRoom('AQUA 4');});
+  document.getElementById('northSky1').addEventListener('click', function(){chooseNorthRoom('SKY 1');});
+  document.getElementById('northSky2').addEventListener('click', function(){chooseNorthRoom('SKY 2');});
+  document.getElementById('northMeeting').addEventListener('click', function(){chooseNorthRoom('MEETING N1–N9');});
+  document.getElementById('northSuites').addEventListener('click', function(){chooseNorthRoom('SUITES N1–N7');});
+  document.getElementById('northBlue').addEventListener('click', function(){chooseNorthRoom('BLUE AREA');});
 
   function act(name){
     if(scene === 'barrier'){
