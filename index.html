@@ -209,6 +209,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let coffeeDrunk = false;
   let scene = 'regia';
   let warehouseConversationStarted = false;
+  let planimetryDelivered = false;
   let barrierReached = false;
   let passChecked = false;
   let cooperativeCleared = false;
@@ -505,6 +506,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         say('📐 FRANK: «Ecco a te la PLANIMETRIA NORD di questo labirinto chiamato MiCo. Cerca di non perderti.»');
       },21000);
       later(function(){
+        planimetryDelivered=true;
         if(inventory.indexOf('PLANIMETRIA NORD') === -1){
           inventory.push('PLANIMETRIA NORD');
           renderInventory();
@@ -662,6 +664,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       cableDiagnosed: cableDiagnosed,
       cableFixed: cableFixed,
       phoneConversationStarted: phoneConversationStarted,
+      planimetryDelivered: planimetryDelivered,
       inventory: inventory.slice(),
       message: msg.textContent,
       panicVisible: panic.style.display
@@ -809,7 +812,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       cableDiagnosed=!!data.cableDiagnosed;
       cableFixed=!!data.cableFixed;
       phoneConversationStarted=!!data.phoneConversationStarted;
+      planimetryDelivered=!!data.planimetryDelivered;
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
+      if(!planimetryDelivered){
+        inventory=inventory.filter(function(item){ return item !== 'PLANIMETRIA NORD'; });
+      }
       if(scene === 'barrier'){
         if(inventory.indexOf('CELLULARE') === -1) inventory.push('CELLULARE');
         if(inventory.indexOf('PASS') === -1) inventory.push('PASS');
