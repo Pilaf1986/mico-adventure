@@ -1,6 +1,10 @@
 name: Controllo audio
 
 on:
+  push:
+    paths:
+      - "regia-gold-lounge-v2.mp3"
+      - ".github/workflows/check-audio.yml"
   workflow_dispatch:
 
 permissions:
