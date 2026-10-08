@@ -24,6 +24,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 .panicSub{font-size:clamp(16px,2.5vw,30px);font-weight:bold;color:#fff;text-shadow:3px 3px #000;margin-top:12px}
 @keyframes shake{from{transform:translateX(-3px)}to{transform:translateX(3px)}}
 @media(max-width:600px){#wrap{padding:2px}#msg{font-size:12px}button{font-size:10px;padding:6px 7px}}
+
+#menuBar{display:flex;justify-content:flex-end;margin-bottom:5px}
+#menuBtn{font-size:11px;padding:5px 12px}
+#menuOverlay,#exitScreen{position:absolute;inset:0;background:rgba(5,7,12,.94);z-index:50;display:none;align-items:center;justify-content:center;flex-direction:column}
+.menuBox{border:3px solid #69717e;background:#11151d;padding:22px;min-width:220px;text-align:center;box-shadow:0 0 35px #000}
+.menuTitle{font-size:24px;font-weight:bold;color:#ffd84a;margin-bottom:18px}
+.menuBox button{display:block;width:100%;margin:7px 0}
+#saveStatus{font-size:11px;color:#aeb7c4;margin-top:10px;min-height:14px}
 </style>
 </head>
 <body>
@@ -46,9 +54,28 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       <div class="panicText">FIIIIIIIIIIII!</div>
       <div class="panicSub">PANICO IN REGIA!</div>
     </div>
+
+    <div id="menuOverlay">
+      <div class="menuBox">
+        <div class="menuTitle">MI CO ADVENTURE</div>
+        <button type="button" id="saveBtn">SALVA PARTITA</button>
+        <button type="button" id="loadBtn">CARICA PARTITA</button>
+        <button type="button" id="exitBtn">ESCI</button>
+        <div id="saveStatus"></div>
+      </div>
+    </div>
+
+    <div id="exitScreen">
+      <div class="menuBox">
+        <div class="menuTitle">MI CO ADVENTURE</div>
+        <div style="margin-bottom:18px">SEI USCITO DALLA REGIA GOLD.</div>
+        <button type="button" id="resumeBtn">RIPRENDI PARTITA</button>
+      </div>
+    </div>
   </div>
 
   <div id="ui">
+    <div id="menuBar"><button type="button" id="menuBtn">☰ MENU</button></div>
     <div id="msg">Benvenuto alla REGIA GOLD. Il congresso sta per iniziare...</div>
     <div id="verbs">
       <button type="button" data-verb="GUARDA">GUARDA</button>
@@ -73,6 +100,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const invEl = document.getElementById('inv');
   const buttons = Array.from(document.querySelectorAll('#verbs button'));
   const hotspots = Array.from(document.querySelectorAll('.hot'));
+  const menuOverlay = document.getElementById('menuOverlay');
+  const exitScreen = document.getElementById('exitScreen');
+  const saveStatus = document.getElementById('saveStatus');
+  const menuBtn = document.getElementById('menuBtn');
+  const saveBtn = document.getElementById('saveBtn');
+  const loadBtn = document.getElementById('loadBtn');
+  const exitBtn = document.getElementById('exitBtn');
+  const resumeBtn = document.getElementById('resumeBtn');
 
   let verb = 'GUARDA';
   let radioCalled = false;
@@ -82,6 +117,21 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let cableFixed = false;
   let phoneConversationStarted = false;
   let inventory = [];
+  let timers = [];
+
+  function later(fn, ms){
+    const id = later(function(){
+      timers = timers.filter(function(t){ return t !== id; });
+      fn();
+    }, ms);
+    timers.push(id);
+    return id;
+  }
+
+  function clearTimers(){
+    timers.forEach(function(id){ clearTimeout(id); });
+    timers = [];
+  }
 
   function say(text){
     msg.textContent = text;
@@ -122,7 +172,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     const radio = document.querySelector('[data-name="radio"]');
     if(radio){
       radio.style.outline = '3px solid #ff3b30';
-      setTimeout(function(){ radio.style.outline = ''; }, 1500);
+      later(function(){ radio.style.outline = ''; }, 1500);
     }
   }
 
@@ -163,19 +213,19 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     say('📞 FONICO: «Ehi, il mixer della plenaria non risponde, fischia tutto!»');
 
     // Ogni battuta resta abbastanza a lungo per essere letta.
-    setTimeout(function(){
+    later(function(){
       say('📞 RESPONSABILE: «Ma che cazzo dici, impara a lavorare!»');
     }, 5000);
 
-    setTimeout(function(){
+    later(function(){
       say('Il responsabile riattacca. In regia rimaniamo solo io e il tecnico di palco.');
     }, 10000);
 
-    setTimeout(function(){
+    later(function(){
       say('🎙️ TECNICO DI PALCO: «Aspetta... ho capito qual è il problema.»');
     }, 15000);
 
-    setTimeout(function(){
+    later(function(){
       cableDiagnosed=true;
       say('🎙️ TECNICO DI PALCO: «Il cavo del microfono è finito nel DMX delle luci! Lo ricollego subito.»');
     }, 20000);
@@ -189,17 +239,95 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       cableFixed=true;
       say('🔌 TECNICO DI PALCO: «Eccolo! Era collegato al DMX delle luci.» Ricollega il cavo del microfono.');
 
-      setTimeout(function(){
+      later(function(){
         say('🎙️ TECNICO DI PALCO: «Prova adesso.»');
       }, 5000);
 
-      setTimeout(function(){
+      later(function(){
         say('🎤 MICROFONO RELATORE: «Uno, due... mi sentite?» — Perfetto. Il congresso può partire.');
       }, 10000);
     }else{
       say('Il cavo è già ricollegato. Il microfono funziona.');
     }
   }
+
+  function getSaveData(){
+    return {
+      version: 1,
+      verb: verb,
+      radioCalled: radioCalled,
+      panicked: panicked,
+      responsibleCalled: responsibleCalled,
+      cableDiagnosed: cableDiagnosed,
+      cableFixed: cableFixed,
+      phoneConversationStarted: phoneConversationStarted,
+      inventory: inventory.slice(),
+      message: msg.textContent,
+      panicVisible: panic.style.display
+    };
+  }
+
+  function saveGame(){
+    try{
+      localStorage.setItem('micoAdventureSave', JSON.stringify(getSaveData()));
+      saveStatus.textContent='PARTITA SALVATA.';
+      say('Partita salvata.');
+    }catch(e){
+      saveStatus.textContent='ERRORE DI SALVATAGGIO.';
+      say('Non riesco a salvare la partita.');
+    }
+  }
+
+  function loadGame(){
+    try{
+      const raw=localStorage.getItem('micoAdventureSave');
+      if(!raw){
+        saveStatus.textContent='NESSUN SALVATAGGIO.';
+        say('Non c’è nessuna partita salvata.');
+        return;
+      }
+      clearTimers();
+      const data=JSON.parse(raw);
+      verb=data.verb || 'GUARDA';
+      radioCalled=!!data.radioCalled;
+      panicked=!!data.panicked;
+      responsibleCalled=!!data.responsibleCalled;
+      cableDiagnosed=!!data.cableDiagnosed;
+      cableFixed=!!data.cableFixed;
+      phoneConversationStarted=!!data.phoneConversationStarted;
+      inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
+      msg.textContent=data.message || 'Partita caricata.';
+      panic.style.display=data.panicVisible || 'none';
+      invEl.textContent=inventory.length ? 'Inventario: • '+inventory.join(' • ') : 'Inventario: • nessun oggetto';
+      buttons.forEach(function(button){
+        button.classList.toggle('sel', button.dataset.verb === verb);
+      });
+      saveStatus.textContent='PARTITA CARICATA.';
+    }catch(e){
+      saveStatus.textContent='SALVATAGGIO DANNEGGIATO.';
+      say('Non riesco a caricare la partita.');
+    }
+  }
+
+  function openMenu(){
+    menuOverlay.style.display='flex';
+    saveStatus.textContent='';
+  }
+
+  function closeMenu(){
+    menuOverlay.style.display='none';
+  }
+
+  menuBtn.addEventListener('click', openMenu);
+  saveBtn.addEventListener('click', saveGame);
+  loadBtn.addEventListener('click', loadGame);
+  exitBtn.addEventListener('click', function(){
+    menuOverlay.style.display='none';
+    exitScreen.style.display='flex';
+  });
+  resumeBtn.addEventListener('click', function(){
+    exitScreen.style.display='none';
+  });
 
   function act(name){
     if(verb === 'GUARDA'){
@@ -282,7 +410,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     });
   });
 
-  setTimeout(radioCall, 2500);
+  later(radioCall, 2500);
 })();
 </script>
 </body>
