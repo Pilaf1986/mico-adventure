@@ -92,7 +92,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           <button type="button" class="slotBtn" data-slot="19">SLOT 19</button>
           <button type="button" class="slotBtn" data-slot="20">SLOT 20</button>
         </div>
-        <div style="display:flex;gap:6px;margin-top:10px">
+        <input type="text" id="saveName" maxlength="40" placeholder="Nome del salvataggio..." style="width:100%;box-sizing:border-box;background:#0b0e14;color:#fff;border:2px solid #657080;padding:7px;font:12px monospace;margin-top:10px">
+        <div style="display:flex;gap:6px;margin-top:6px">
           <button type="button" id="saveBtn" style="flex:1">SALVA</button>
           <button type="button" id="loadBtn" style="flex:1">CARICA</button>
           <button type="button" id="deleteBtn" style="flex:1">CANCELLA</button>
@@ -148,6 +149,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const saveBtn = document.getElementById('saveBtn');
   const loadBtn = document.getElementById('loadBtn');
   const deleteBtn = document.getElementById('deleteBtn');
+  const saveName = document.getElementById('saveName');
   const slotButtons = Array.from(document.querySelectorAll('.slotBtn'));
 
   let verb = 'GUARDA';
@@ -558,7 +560,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function getSaveData(){
     return {
-      version: 2,
+      version: 3,
+      saveName: saveName.value.trim(),
       scene: scene,
       warehouseConversationStarted: warehouseConversationStarted,
       barrierReached: barrierReached,
@@ -582,13 +585,23 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function updateSlotButtons(){
     slotButtons.forEach(function(button){
       button.classList.toggle('sel', Number(button.dataset.slot) === selectedSlot);
-      const exists=!!localStorage.getItem('micoAdventureSave'+button.dataset.slot);
-      button.textContent='SLOT '+button.dataset.slot+(exists ? ' • SALVATO' : '');
+      const raw=localStorage.getItem('micoAdventureSave'+button.dataset.slot);
+      let label='SLOT '+button.dataset.slot;
+      if(raw){
+        try{
+          const data=JSON.parse(raw);
+          label += ' • ' + (data.saveName || 'SALVATO');
+        }catch(e){
+          label += ' • SALVATO';
+        }
+      }
+      button.textContent=label;
     });
   }
 
   function saveGame(){
     try{
+      if(!saveName.value.trim()) saveName.value='Salvataggio '+selectedSlot;
       localStorage.setItem('micoAdventureSave'+selectedSlot, JSON.stringify(getSaveData()));
       saveStatus.textContent='PARTITA SALVATA NELLO SLOT '+selectedSlot+'.';
       say('Partita salvata nello slot '+selectedSlot+'.');
@@ -620,6 +633,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       }
       clearTimers();
       const data=JSON.parse(raw);
+      saveName.value=data.saveName || ('Salvataggio '+selectedSlot);
       scene=data.scene || 'regia';
       warehouseConversationStarted=!!data.warehouseConversationStarted;
       barrierReached=!!data.barrierReached;
@@ -714,6 +728,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function openMenu(){
     menuOverlay.style.display='flex';
     updateSlotButtons();
+    const raw=localStorage.getItem('micoAdventureSave'+selectedSlot);
+    if(raw){
+      try{
+        const data=JSON.parse(raw);
+        saveName.value=data.saveName || '';
+      }catch(e){
+        saveName.value='';
+      }
+    }else{
+      saveName.value='';
+    }
     saveStatus.textContent='SLOT '+selectedSlot+' SELEZIONATO.';
   }
 
@@ -733,6 +758,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   slotButtons.forEach(function(button){
     button.addEventListener('click', function(){
       selectedSlot=Number(button.dataset.slot);
+      const raw=localStorage.getItem('micoAdventureSave'+selectedSlot);
+      if(raw){
+        try{
+          const data=JSON.parse(raw);
+          saveName.value=data.saveName || '';
+        }catch(e){
+          saveName.value='';
+        }
+      }else{
+        saveName.value='';
+      }
       updateSlotButtons();
       saveStatus.textContent='SLOT '+selectedSlot+' SELEZIONATO.';
     });
