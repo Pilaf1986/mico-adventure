@@ -96,7 +96,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         <div style="display:flex;gap:6px;margin-top:6px">
           <button type="button" id="saveBtn" style="flex:1">SALVA</button>
           <button type="button" id="loadBtn" style="flex:1">CARICA</button>
-          <button type="button" id="deleteBtn" style="flex:1">CANCELLA</button><button type="button" id="renameBtn" style="flex:1">RINOMINA</button>
+          <button type="button" id="deleteBtn" style="flex:1">CANCELLA</button><button type="button" id="renameBtn" style="flex:1">RINOMINA</button><button type="button" id="audioBtn" style="flex:1">🔊 AUDIO ON</button>
         </div>
         <button type="button" id="exitBtn">TORNA AL GIOCO</button>
         <div id="saveStatus">Seleziona uno slot.</div>
@@ -150,6 +150,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const loadBtn = document.getElementById('loadBtn');
   const deleteBtn = document.getElementById('deleteBtn');
   const renameBtn = document.getElementById('renameBtn');
+  const audioBtn = document.getElementById('audioBtn');
   const saveName = document.getElementById('saveName');
   const slotButtons = Array.from(document.querySelectorAll('.slotBtn'));
 
@@ -171,6 +172,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let cooperativeCleared = false;
   let accessGranted = false;
   let selectedItem = '';
+  let audioMuted = false;
 
   function later(fn, ms){
     const id = setTimeout(function(){
@@ -361,7 +363,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       warehouseAudio.currentTime=0;
       warehouseStarted=false;
     }
-    if(typeof barrierAudio !== 'undefined'){
+    if(!audioMuted && typeof barrierAudio !== 'undefined'){
       barrierAudio.currentTime=0;
       barrierAudio.play().catch(function(){});
       barrierStarted=true;
@@ -750,6 +752,27 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
   }
 
+  function updateAudioButton(){
+    audioBtn.textContent = audioMuted ? '🔇 AUDIO OFF' : '🔊 AUDIO ON';
+    audioBtn.style.borderColor = audioMuted ? '#ff4545' : '';
+    audioBtn.style.color = audioMuted ? '#ff4545' : '';
+  }
+
+  function setAudioMuted(muted){
+    audioMuted = muted;
+    if(audioMuted){
+      loungeAudio.pause();
+      warehouseAudio.pause();
+      barrierAudio.pause();
+    }else{
+      if(scene === 'warehouse') warehouseAudio.play().catch(function(){});
+      else if(scene === 'barrier') barrierAudio.play().catch(function(){});
+      else loungeAudio.play().catch(function(){});
+    }
+    updateAudioButton();
+    saveStatus.textContent = audioMuted ? 'AUDIO DISATTIVATO.' : 'AUDIO RIATTIVATO.';
+  }
+
   function openMenu(){
     menuOverlay.style.display='flex';
     updateSlotButtons();
@@ -780,6 +803,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   });
 
   menuBtn.addEventListener('click', openMenu);
+  audioBtn.addEventListener('click', function(){ setAudioMuted(!audioMuted); });
   slotButtons.forEach(function(button){
     button.addEventListener('click', function(){
       selectedSlot=Number(button.dataset.slot);
@@ -925,6 +949,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   });
 
   renderInventory();
+  updateAudioButton();
 
   // Rumore ambientale del Magazzino Mico A/V.
   const warehouseAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/magazzino_urban_ferraglia_loop.wav');
@@ -952,6 +977,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let loungeStarted = false;
 
   async function startLounge(){
+    if(audioMuted) return;
     if(loungeStarted) return;
     try{
       loungeAudio.pause();
