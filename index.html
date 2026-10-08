@@ -65,23 +65,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div id="menuOverlay">
       <div class="menuBox">
         <div class="menuTitle">MI CO ADVENTURE</div>
-        <div style="font-size:11px;color:#aeb7c4;margin-bottom:8px">SCEGLI UNO SLOT</div>
-        <div id="saveSlots">
-          <button type="button" class="slotBtn" data-slot="1">SLOT 1</button>
-          <button type="button" class="slotBtn" data-slot="2">SLOT 2</button>
-          <button type="button" class="slotBtn" data-slot="3">SLOT 3</button>
-          <button type="button" class="slotBtn" data-slot="4">SLOT 4</button>
-          <button type="button" class="slotBtn" data-slot="5">SLOT 5</button>
-          <button type="button" class="slotBtn" data-slot="6">SLOT 6</button>
-          <button type="button" class="slotBtn" data-slot="7">SLOT 7</button>
-          <button type="button" class="slotBtn" data-slot="8">SLOT 8</button>
-          <button type="button" class="slotBtn" data-slot="9">SLOT 9</button>
-          <button type="button" class="slotBtn" data-slot="10">SLOT 10</button>
-        </div>
-        <div style="display:flex;gap:6px;margin-top:10px">
-          <button type="button" id="saveBtn" style="flex:1">SALVA</button>
-          <button type="button" id="loadBtn" style="flex:1">CARICA</button>
-        </div>
+        <div style="font-size:11px;color:#aeb7c4;margin-bottom:8px">MENU DI GIOCO</div>
         <button type="button" id="exitBtn">ESCI</button>
         <div id="saveStatus">Seleziona uno slot.</div>
       </div>
@@ -126,7 +110,6 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const hotspots = Array.from(document.querySelectorAll('.hot'));
   const menuOverlay = document.getElementById('menuOverlay');
   const exitScreen = document.getElementById('exitScreen');
-  const saveStatus = document.getElementById('saveStatus');
   const menuBtn = document.getElementById('menuBtn');
   const saveBtn = document.getElementById('saveBtn');
   const loadBtn = document.getElementById('loadBtn');
@@ -539,7 +522,6 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function openMenu(){
     menuOverlay.style.display='flex';
-    saveStatus.textContent='';
   }
 
   function closeMenu(){
