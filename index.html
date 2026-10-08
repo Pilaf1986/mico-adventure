@@ -18,7 +18,10 @@ body{display:flex;align-items:center;justify-content:center}
 #msg{min-height:34px;font-size:14px;line-height:1.25;margin-bottom:5px}
 button{font:bold 12px monospace;background:#252a34;color:#fff;border:2px solid #657080;padding:7px 9px;margin:2px;cursor:pointer}
 button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
-#inv{font-size:12px;color:#aeb7c4;padding-top:4px}
+#inv{font-size:12px;color:#aeb7c4;padding-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.invLabel{color:#aeb7c4}
+.invItem{font:bold 11px monospace;background:#252a34;color:#fff;border:2px solid #657080;padding:4px 7px;margin:0;cursor:pointer}
+.invItem:hover{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 #panicOverlay{position:absolute;inset:0;background:rgba(170,0,0,.42);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:5;pointer-events:none}
 .panicText{font-size:clamp(28px,6vw,68px);font-weight:bold;color:#ff4545;text-shadow:4px 4px #000;animation:shake .08s infinite alternate}
 .panicSub{font-size:clamp(16px,2.5vw,30px);font-weight:bold;color:#fff;text-shadow:3px 3px #000;margin-top:12px}
@@ -105,7 +108,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       <button type="button" data-verb="DAI">DAI</button>
       <button type="button" data-verb="SPINGI">SPINGI</button>
     </div>
-    <div id="inv">Inventario: • nessun oggetto</div>
+    <div id="inv"><span class="invLabel">Inventario:</span><span class="invLabel">• nessun oggetto</span></div>
   </div>
 </div>
 
@@ -164,6 +167,39 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     });
     say(verb + ' selezionato. Ora clicca un oggetto nella Regia Gold.');
   }
+
+  const itemDescriptions = {
+    'CAFFÈ': '☕ CAFFÈ — Un caffè della macchinetta del MiCo. È tiepido, leggermente bruciato e probabilmente è qui da almeno mezz\'ora. Ma per un fonico è carburante puro.'
+  };
+
+  function renderInventory(){
+    invEl.innerHTML = '';
+    const label = document.createElement('span');
+    label.className = 'invLabel';
+    label.textContent = 'Inventario:';
+    invEl.appendChild(label);
+
+    if(!inventory.length){
+      const empty = document.createElement('span');
+      empty.className = 'invLabel';
+      empty.textContent = '• nessun oggetto';
+      invEl.appendChild(empty);
+      return;
+    }
+
+    inventory.forEach(function(item){
+      const itemButton = document.createElement('button');
+      itemButton.type = 'button';
+      itemButton.className = 'invItem';
+      itemButton.textContent = item;
+      itemButton.title = 'Esamina ' + item;
+      itemButton.addEventListener('click', function(){
+        say(itemDescriptions[item] || 'Non c’è niente di particolarmente interessante da notare.');
+      });
+      invEl.appendChild(itemButton);
+    });
+  }
+
 
   function beep(){
     try{
@@ -327,7 +363,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
       msg.textContent=data.message || 'Partita caricata.';
       panic.style.display=data.panicVisible || 'none';
-      invEl.textContent=inventory.length ? 'Inventario: • '+inventory.join(' • ') : 'Inventario: • nessun oggetto';
+      renderInventory();
       buttons.forEach(function(button){
         button.classList.toggle('sel', button.dataset.verb === verb);
       });
@@ -382,7 +418,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(name === 'coffee'){
         if(inventory.indexOf('CAFFÈ') === -1){
           inventory.push('CAFFÈ');
-          invEl.textContent = 'Inventario: • CAFFÈ';
+          renderInventory();
           say('Prendi il caffè. La vera alimentazione del fonico.');
         }else{
           say('Il caffè è già nel tuo inventario.');
@@ -445,6 +481,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       act(hotspot.dataset.name);
     });
   });
+
+  renderInventory();
 
   // Musica lounge ambientale della Regia Gold.
   const loungeAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/regia-gold-lounge-v2.opus');
