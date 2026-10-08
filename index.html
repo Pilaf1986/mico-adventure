@@ -201,10 +201,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       say('🪪 Andriu consegna il PASS alla guardia. La guardia lo appoggia sul lettore.');
       later(function(){
         say('📟 LETTORE PASS: «ACCESSO NEGATO — PASS REVOCATO.»');
-      },1800);
+      },7000);
       later(function(){
         say('👮 GUARDIA: «Eh, carissimo... qui il sistema dice che non puoi entrare.»');
-      },3600);
+      },14000);
       return;
     }
     accessGranted=true;
@@ -212,15 +212,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     say('🪪 Andriu ridà il PASS alla guardia. La guardia lo passa sul lettore.');
     later(function(){
       say('📟 LETTORE PASS: «AUTORIZZAZIONE CONFERMATA — ACCESSO CONSENTITO.»');
-    },1800);
+    },7000);
     later(function(){
       say('👮 GUARDIA: «Tutto a posto, carissimo. Puoi entrare.»');
-    },3600);
+    },14000);
     later(function(){
       say('🚧 La sbarra si alza. Andriu può rientrare al MiCo.');
       goWarehouse.textContent='🚪 VAI AL MAGAZZINO';
       goWarehouse.style.display='block';
-    },5000);
+    },21000);
   }
 
   function callCooperative(){
@@ -228,20 +228,20 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     say('📱 CHIAMATA ALLA COOPERATIVA — «Pronto? Sono Andriu. Mi hanno revocato il pass e sono alla sbarra del MiCo.»');
     later(function(){
       say('📞 COOPERATIVA: «Ricevuto Andriu. Aspetta alla sbarra, verifichiamo la situazione e ti richiamiamo.»');
-    },3500);
+    },7000);
     later(function(){
       cooperativeCleared=true;
       say('📞 COOPERATIVA: «Ho sentito l’ufficio PASS.»');
-    },7000);
+    },14000);
     later(function(){
       say('📞 COOPERATIVA: «Devi averla combinata grossa, ho dovuto ungere molti ingranaggi.»');
-    },10000);
+    },21000);
     later(function(){
       say('📞 COOPERATIVA: «Comunque ora puoi entrare.»');
-    },13000);
+    },28000);
     later(function(){
       say('📱 CHIAMATA TERMINATA — Ora devi ridare il PASS alla guardia.');
-    },15000);
+    },35000);
   }
 
   function renderInventory(){
@@ -408,11 +408,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     say('🎙️ ON SITE MANAGER: «Andriu, hai sbagliato. Il pass di ingresso è stato revocato.»');
     later(function(){
       say('🎙️ ON SITE MANAGER: «Devi uscire, sentire la cooperativa e poi rientrare. Segui le procedure e buon lavoro.»');
-    },5000);
+    },7000);
     later(function(){
       say('🚧 Fine briefing. Andriu deve andare alla sbarra.');
       goBarrier.style.display='block';
-    },7000);
+    },14000);
   }
 
   function drinkCoffee(){
@@ -494,20 +494,20 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     // Ogni battuta resta abbastanza a lungo per essere letta.
     later(function(){
       say('📞 RESPONSABILE: «Ma che cazzo dici, impara a lavorare!»');
-    }, 5000);
+    }, 7000);
 
     later(function(){
       say('Il responsabile riattacca. In regia rimaniamo solo io e il tecnico di palco.');
-    }, 10000);
+    }, 14000);
 
     later(function(){
       say('🎙️ TECNICO DI PALCO: «Aspetta... ho capito qual è il problema.»');
-    }, 15000);
+    }, 21000);
 
     later(function(){
       cableDiagnosed=true;
       say('🎙️ TECNICO DI PALCO: «Il cavo del microfono è finito nel DMX delle luci! Lo ricollego subito.»');
-    }, 20000);
+    }, 28000);
   }
 
   function fixCable(){
@@ -520,24 +520,24 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
       later(function(){
         say('🎙️ TECNICO DI PALCO: «Prova adesso.»');
-      }, 5000);
+      }, 7000);
 
       later(function(){
         say('🎤 MICROFONO RELATORE: «Uno, due... mi sentite?» — Perfetto. Il congresso può partire.');
-      }, 10000);
+      }, 14000);
 
       later(function(){
         say('📞 TELEFONO REGIA — RESPONSABILE: «Hai sbagliato, ha fischiato tutto, sei stato degradato, devi ricominciare la tua carriera dal livello iniziale di voi sottoposti, la SALETTA.»');
-      }, 15000);
+      }, 21000);
 
       later(function(){
         say('📞 RESPONSABILE: «Vai in magazzino, segui le istruzioni dell’ON SITE MANAGER e buon divertimento. Che la tua carriera abbia un nuovo inizio.»');
-      }, 20000);
+      }, 28000);
 
       later(function(){
         say('🚪 FINE REGIA GOLD — Vai in magazzino. La tua nuova carriera comincia dalla SALETTA.');
         goWarehouse.style.display='block';
-      }, 25000);
+      }, 35000);
     }else{
       say('Il cavo è già ricollegato. Il microfono funziona.');
     }
