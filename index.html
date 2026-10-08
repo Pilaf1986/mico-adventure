@@ -147,6 +147,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let selectedSlot = 1;
   let timers = [];
   let coffeeDrunk = false;
+  let scene = 'regia';
+  let warehouseConversationStarted = false;
 
   function later(fn, ms){
     const id = setTimeout(function(){
@@ -206,6 +208,56 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     });
   }
 
+
+  const warehouseBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/magazzino-mico-av.png';
+  const regiaBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/Regia%20Gold_%20caos%20in%20console.png';
+
+  function configureWarehouseHotspots(){
+    const config = {
+      mixer:   {title:'BAULI MICO A/V', style:'left:0%;top:25%;width:28%;height:55%'},
+      fader:   {title:'ATTREZZATURA', style:'left:1%;top:55%;width:18%;height:25%'},
+      postit:  {title:'MATERIALI', style:'left:25%;top:62%;width:20%;height:20%'},
+      radio:   {title:'RADIO', style:'left:70%;top:43%;width:7%;height:18%'},
+      phone:   {title:'ON SITE MANAGER', style:'left:52%;top:30%;width:20%;height:42%'},
+      monitor: {title:'RIUNIONE TECNICA', style:'left:67%;top:25%;width:30%;height:45%'},
+      door:    {title:'USCITA MAGAZZINO', style:'left:42%;top:12%;width:18%;height:30%'},
+      cable:   {title:'CAVI A/V', style:'left:72%;top:65%;width:25%;height:20%'},
+      coffee:  {title:'BAULE', style:'left:40%;top:65%;width:16%;height:20%'}
+    };
+    hotspots.forEach(function(h){
+      const name=h.dataset.name;
+      if(config[name]){
+        h.style.cssText=config[name].style;
+        h.style.zIndex='10';
+        h.title=config[name].title;
+      }
+    });
+  }
+
+  function enterWarehouse(){
+    clearTimers();
+    scene='warehouse';
+    panic.style.display='none';
+    goWarehouse.style.display='none';
+    const bg=document.getElementById('bg');
+    bg.src=warehouseBackground;
+    bg.onerror=function(){
+      bg.src=regiaBackground;
+    };
+    configureWarehouseHotspots();
+    say('MAGAZZINO MICO A/V — Andriu è arrivato al livello iniziale della sua nuova carriera.');
+  }
+
+  function talkOnSiteManager(){
+    if(warehouseConversationStarted){
+      return say('ON SITE MANAGER: «Il pass è revocato. Devi uscire, sentire la cooperativa e poi rientrare.»');
+    }
+    warehouseConversationStarted=true;
+    say('🎙️ ON SITE MANAGER: «Andriu, hai sbagliato. Il pass di ingresso è stato revocato.»');
+    later(function(){
+      say('🎙️ ON SITE MANAGER: «Devi uscire, sentire la cooperativa e poi rientrare. Segui le procedure e buon lavoro.»');
+    },5000);
+  }
 
   function drinkCoffee(){
     if(coffeeDrunk) return say('☕ Ho già bevuto il caffè. Ora sono pronto a lavorare.');
@@ -337,7 +389,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function getSaveData(){
     return {
-      version: 1,
+      version: 2,
+      scene: scene,
+      warehouseConversationStarted: warehouseConversationStarted,
       verb: verb,
       radioCalled: radioCalled,
       panicked: panicked,
@@ -381,6 +435,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       }
       clearTimers();
       const data=JSON.parse(raw);
+      scene=data.scene || 'regia';
+      warehouseConversationStarted=!!data.warehouseConversationStarted;
+      if(scene === 'warehouse'){
+        document.getElementById('bg').src=warehouseBackground;
+        configureWarehouseHotspots();
+      }else{
+        document.getElementById('bg').src=regiaBackground;
+      }
       verb=data.verb || 'GUARDA';
       radioCalled=!!data.radioCalled;
       panicked=!!data.panicked;
@@ -412,8 +474,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   goWarehouse.addEventListener('click', function(){
-    goWarehouse.style.display='none';
-    say('🚪 Ti dirigi verso il MAGAZZINO. La SALETTA ti aspetta...');
+    enterWarehouse();
   });
 
   menuBtn.addEventListener('click', openMenu);
@@ -435,6 +496,22 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   });
 
   function act(name){
+    if(scene === 'warehouse'){
+      if(verb === 'GUARDA'){
+        if(name === 'phone') return say('È l’ON SITE MANAGER. Sta facendo il briefing con la squadra tecnica.');
+        if(name === 'mixer') return say('Pile di bauli Mico A/V. Tutto il necessario per allestire un evento.');
+        if(name === 'monitor') return say('La squadra tecnica è riunita. Nastri, pinze, radio e attrezzatura sono pronti.');
+        if(name === 'door') return say('L’uscita del magazzino. Da qui Andriu deve uscire per contattare la cooperativa.');
+        if(name === 'cable') return say('Cavi A/V arrotolati e pronti per il prossimo allestimento.');
+        return say('Un angolo del magazzino pieno di attrezzatura A/V.');
+      }
+      if(verb === 'PARLA' && name === 'phone') return talkOnSiteManager();
+      if(verb === 'USA' && name === 'phone') return talkOnSiteManager();
+      if(verb === 'APRI' && name === 'door') return say('Apro l’uscita del magazzino. Prima devo parlare con la cooperativa.');
+      if(verb === 'CHIUDI' && name === 'door') return say('Meglio non chiudere l’uscita. Devo tornare fuori.');
+      return say('Non c’è niente da fare con questo oggetto, per ora.');
+    }
+
     if(verb === 'GUARDA'){
       if(name === 'mixer') return say('Yamaha RIVAGE. La regia è pronta per la plenaria.');
       if(name === 'fader') return say('Il primo fader a sinistra del RIVAGE. È quello che devo manovrare.');
