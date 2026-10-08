@@ -446,6 +446,76 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     });
   });
 
+  // Musica lounge ambientale della Regia Gold. Parte al primo click/tocco per rispettare le policy autoplay del browser.
+  let loungeStarted = false;
+  let loungeCtx = null;
+  let loungeTimer = null;
+
+  function startLounge(){
+    if(loungeStarted) return;
+    loungeStarted = true;
+    try{
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if(!AudioCtx) return;
+      loungeCtx = new AudioCtx();
+      if(loungeCtx.state === 'suspended') loungeCtx.resume();
+
+      const master = loungeCtx.createGain();
+      master.gain.value = 0.055;
+      master.connect(loungeCtx.destination);
+
+      const chords = [
+        [261.63,329.63,392.00,493.88], // Cmaj7
+        [220.00,261.63,329.63,392.00], // Am7
+        [174.61,220.00,261.63,329.63], // Fmaj7
+        [196.00,246.94,293.66,349.23]  // G7
+      ];
+      const bass = [130.81,110.00,87.31,98.00];
+      const loopLength = 12;
+
+      function note(freq, when, duration, volume, type){
+        const osc = loungeCtx.createOscillator();
+        const gain = loungeCtx.createGain();
+        const filter = loungeCtx.createBiquadFilter();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, when);
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(type === 'sine' ? 700 : 1500, when);
+        filter.Q.value = 0.35;
+        gain.gain.setValueAtTime(0.0001, when);
+        gain.gain.linearRampToValueAtTime(volume, when + 0.35);
+        gain.gain.setValueAtTime(volume * 0.82, when + Math.max(0.36,duration - 0.55));
+        gain.gain.exponentialRampToValueAtTime(0.0001, when + duration);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(master);
+        osc.start(when);
+        osc.stop(when + duration + 0.08);
+      }
+
+      function playLoop(){
+        if(!loungeCtx) return;
+        const now = loungeCtx.currentTime + 0.08;
+        chords.forEach(function(chord, i){
+          const start = now + i * 3;
+          chord.forEach(function(freq, j){
+            note(freq, start, 2.85, 0.018, j === 0 ? 'triangle' : 'sine');
+            note(freq * 2, start + 1.48, 1.25, 0.0045, 'sine');
+          });
+          note(bass[i], start, 2.65, 0.025, 'sine');
+          note(bass[i] * 2, start + 1.5, 0.75, 0.008, 'sine');
+        });
+        loungeTimer = setTimeout(playLoop, 11400);
+      }
+
+      playLoop();
+    }catch(e){
+      loungeStarted = false;
+    }
+  }
+
+  document.getElementById('scene').addEventListener('pointerdown', startLounge, {passive:true});
+
   later(radioCall, 2500);
 })();
 </script>
