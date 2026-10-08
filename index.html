@@ -210,6 +210,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let scene = 'regia';
   let warehouseConversationStarted = false;
   let planimetryDelivered = false;
+  let assemblySchemaDelivered = false;
+  let frankBriefingComplete = false;
   let barrierReached = false;
   let passChecked = false;
   let cooperativeCleared = false;
@@ -254,7 +256,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     'NASTRO VERDE': '🟢 NASTRO ADESIVO VERDE — Nastro telato da tecnico. Serve per fissare, segnare e mettere ordine nei cavi.',
     'PENNARELLO NERO': '🖊️ PENNARELLO NERO — Indelebile. Il classico pennarello da fonico per segnare cavi, flight case e qualsiasi cosa serva.',
     'LEATHERMAN': '🛠️ LEATHERMAN — Multi-tool da tecnico. Pinze, lame, cacciaviti e tutto quello che può salvarti durante un allestimento.',
-    'PLANIMETRIA NORD': '📐 PLANIMETRIA NORD — North Wing, Level 2 del MiCo. Qui sono indicate OCEAN 1–4, AQUA 1–4, SKY 1–2, Meeting N1–N9, Suites N1–N7 e Blue Area.'
+    'PLANIMETRIA NORD': '📐 PLANIMETRIA NORD — North Wing, Level 2 del MiCo. Qui sono indicate OCEAN 1–4, AQUA 1–4, SKY 1–2, Meeting N1–N9, Suites N1–N7 e Blue Area.',
+    'SCHEMA DI MONTAGGIO': '📋 SCHEMA DI MONTAGGIO — Le istruzioni operative per l’allestimento delle salette assegnate alla squadra.'
   };
 
   function presentPassToGuard(){
@@ -494,6 +497,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
     function talkOnSiteManager(){
+    if(frankBriefingComplete){
+      say('🎙️ FRANK — ON SITE MANAGER: «Forza Andriu, vai in OCEAN 3 e segui la planimetria. Se hai bisogno, sono sulla chat di WhatsApp.»');
+      return;
+    }
+
     if(!warehouseConversationStarted){
       warehouseConversationStarted=true;
       say('🎙️ FRANK — ON SITE MANAGER: «Buongiorno Andriu, sono Frank il tuo ON SITE MANAGER.»');
@@ -514,8 +522,39 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         }
         say('📐 FRANK ti consegna la PLANIMETRIA NORD. È entrata nell’inventario: puoi selezionarla e usare GUARDA.');
       },28000);
+      later(function(){
+        say('🎙️ FRANK: «Visto che hai fatto una cazzata in plenaria...»');
+      },35000);
+      later(function(){
+        say('🎙️ FRANK: «...la direzione mi ha detto di farti partire con la sala più lontana.»');
+      },42000);
+      later(function(){
+        say('🎙️ FRANK: «Ti vogliono far sgobbare.»');
+      },49000);
+      later(function(){
+        say('🎙️ FRANK: «Io sono a disposizione per chiarimenti nella chat di WhatsApp.»');
+      },56000);
+      later(function(){
+        assemblySchemaDelivered=true;
+        if(inventory.indexOf('SCHEMA DI MONTAGGIO') === -1){
+          inventory.push('SCHEMA DI MONTAGGIO');
+          renderInventory();
+        }
+        say('📋 FRANK: «Questo è lo schema di montaggio.» Lo schema è entrato nell’inventario.');
+      },63000);
+      later(function(){
+        say('🎙️ FRANK: «Forza Andriu, questa è la squadra del montaggio, sono tutti sul pezzo.»');
+      },70000);
+      later(function(){
+        say('🎙️ FRANK: «Li conoscerai tutti bene durante la giornata.»');
+      },77000);
+      later(function(){
+        say('🎙️ FRANK: «Vai, prendi il materiale e vai in OCEAN 3. Segui la planimetria.»');
+        frankBriefingComplete=true;
+      },84000);
       return;
     }
+
     if(!planimetryDelivered){
       planimetryDelivered=true;
       if(inventory.indexOf('PLANIMETRIA NORD') === -1){
@@ -525,7 +564,19 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       say('📐 FRANK ti consegna la PLANIMETRIA NORD. È entrata nell’inventario: puoi selezionarla e usare GUARDA.');
       return;
     }
-    say('🎙️ FRANK — ON SITE MANAGER: «La PLANIMETRIA NORD è nell’inventario. Guardala per orientarti nel North Wing, Level 2.»');
+
+    if(!assemblySchemaDelivered){
+      assemblySchemaDelivered=true;
+      if(inventory.indexOf('SCHEMA DI MONTAGGIO') === -1){
+        inventory.push('SCHEMA DI MONTAGGIO');
+        renderInventory();
+      }
+      say('📋 FRANK: «Questo è lo schema di montaggio.» Lo schema è entrato nell’inventario.');
+      return;
+    }
+
+    frankBriefingComplete=true;
+    say('🎙️ FRANK — ON SITE MANAGER: «Forza Andriu, vai in OCEAN 3 e segui la planimetria. Se hai bisogno, sono sulla chat di WhatsApp.»');
   }
   function drinkCoffee(){
     if(coffeeDrunk) return say('☕ Ho già bevuto il caffè. Ora sono pronto a lavorare.');
@@ -675,6 +726,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       cableFixed: cableFixed,
       phoneConversationStarted: phoneConversationStarted,
       planimetryDelivered: planimetryDelivered,
+      assemblySchemaDelivered: assemblySchemaDelivered,
+      frankBriefingComplete: frankBriefingComplete,
       inventory: inventory.slice(),
       message: msg.textContent,
       panicVisible: panic.style.display
@@ -823,6 +876,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       cableFixed=!!data.cableFixed;
       phoneConversationStarted=!!data.phoneConversationStarted;
       planimetryDelivered=!!data.planimetryDelivered;
+      assemblySchemaDelivered=!!data.assemblySchemaDelivered;
+      frankBriefingComplete=!!data.frankBriefingComplete;
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
       if(!planimetryDelivered){
         inventory=inventory.filter(function(item){ return item !== 'PLANIMETRIA NORD'; });
