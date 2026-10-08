@@ -22,8 +22,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 .invLabel{color:#aeb7c4}
 .invItem{font:bold 11px monospace;background:#252a34;color:#fff;border:2px solid #657080;padding:4px 7px;margin:0;cursor:pointer}
 .invItem:hover{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
-#goWarehouse{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);z-index:30;display:none;font-size:15px;padding:10px 18px;background:#252a34;color:#fff;border:3px solid #ffd84a;box-shadow:0 0 18px #000;cursor:pointer;font-family:monospace;font-weight:bold}
-#goWarehouse:hover{background:#3e4654;color:#ffd84a}
+#goWarehouse,#goBarrier{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);z-index:30;display:none;font-size:15px;padding:10px 18px;background:#252a34;color:#fff;border:3px solid #ffd84a;box-shadow:0 0 18px #000;cursor:pointer;font-family:monospace;font-weight:bold}
+#goWarehouse:hover,#goBarrier:hover{background:#3e4654;color:#ffd84a}
 #panicOverlay{position:absolute;inset:0;background:rgba(170,0,0,.42);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:5;pointer-events:none}
 .panicText{font-size:clamp(28px,6vw,68px);font-weight:bold;color:#ff4545;text-shadow:4px 4px #000;animation:shake .08s infinite alternate}
 .panicSub{font-size:clamp(16px,2.5vw,30px);font-weight:bold;color:#fff;text-shadow:3px 3px #000;margin-top:12px}
@@ -59,6 +59,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="coffee" title="CAFFÈ" style="left:82%;top:63%;width:6%;height:11%"></div>
 
     <button type="button" id="goWarehouse">🚪 VAI IN MAGAZZINO</button>
+    <button type="button" id="goBarrier">🚧 VAI ALLA SBARRA</button>
 
     <div id="panicOverlay">
       <div class="panicText">FIIIIIIIIIIII!</div>
@@ -123,6 +124,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const msg = document.getElementById('msg');
   const panic = document.getElementById('panicOverlay');
   const goWarehouse = document.getElementById('goWarehouse');
+  const goBarrier = document.getElementById('goBarrier');
   const invEl = document.getElementById('inv');
   const buttons = Array.from(document.querySelectorAll('#verbs button'));
   const hotspots = Array.from(document.querySelectorAll('.hot'));
@@ -149,6 +151,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let coffeeDrunk = false;
   let scene = 'regia';
   let warehouseConversationStarted = false;
+  let barrierReached = false;
 
   function later(fn, ms){
     const id = setTimeout(function(){
@@ -175,7 +178,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     });
     say(scene === 'warehouse'
       ? verb + ' selezionato. Ora clicca un oggetto nel Magazzino.'
-      : verb + ' selezionato. Ora clicca un oggetto nella Regia Gold.');
+      : scene === 'barrier'
+        ? verb + ' selezionato. Ora clicca un oggetto alla Sbarra.'
+        : verb + ' selezionato. Ora clicca un oggetto nella Regia Gold.');
   }
 
   const itemDescriptions = {
@@ -212,6 +217,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
 
   const warehouseBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/magazzino-mico-av.png';
+  const barrierBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/la-sbarra-mico.png';
   const regiaBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/Regia%20Gold_%20caos%20in%20console.png';
 
   function configureWarehouseHotspots(){
@@ -234,6 +240,54 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         h.title=config[name].title;
       }
     });
+  }
+
+  function configureBarrierHotspots(){
+    const config = {
+      mixer:   {title:'SBARRA AUTOMATICA', style:'left:35%;top:38%;width:35%;height:28%'},
+      fader:   {title:'GUARDIOLA', style:'left:8%;top:25%;width:25%;height:55%'},
+      postit:  {title:'CARTELLO FORNITORI', style:'left:2%;top:35%;width:20%;height:28%'},
+      radio:   {title:'TELECAMERA', style:'left:39%;top:8%;width:10%;height:22%'},
+      phone:   {title:'CABINA DI CONTROLLO', style:'left:8%;top:15%;width:28%;height:60%'},
+      monitor: {title:'INGRESSO MICO', style:'left:48%;top:15%;width:45%;height:45%'},
+      door:    {title:'USCITA', style:'left:75%;top:55%;width:20%;height:35%'},
+      cable:   {title:'CAVI ELETTRICI', style:'left:25%;top:68%;width:30%;height:18%'},
+      coffee:  {title:'BLOCCO DI CEMENTO', style:'left:0%;top:70%;width:25%;height:25%'}
+    };
+    hotspots.forEach(function(h){
+      const name=h.dataset.name;
+      if(config[name]){
+        h.style.cssText=config[name].style;
+        h.style.zIndex='10';
+        h.title=config[name].title;
+      }
+    });
+  }
+
+  function enterBarrier(){
+    clearTimers();
+    scene='barrier';
+    barrierReached=true;
+    if(typeof warehouseAudio !== 'undefined'){
+      warehouseAudio.pause();
+      warehouseAudio.currentTime=0;
+      warehouseStarted=false;
+    }
+    if(typeof loungeAudio !== 'undefined'){
+      loungeAudio.pause();
+      loungeAudio.currentTime=0;
+      loungeStarted=false;
+    }
+    goWarehouse.style.display='none';
+    goBarrier.style.display='none';
+    panic.style.display='none';
+    const bg=document.getElementById('bg');
+    bg.src=barrierBackground;
+    bg.onerror=function(){
+      bg.src=warehouseBackground;
+    };
+    configureBarrierHotspots();
+    say('🚧 LA SBARRA — Andriu è uscito dal magazzino. Davanti a lui, la barriera d’ingresso del MiCo.');
   }
 
   function enterWarehouse(){
@@ -269,6 +323,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     later(function(){
       say('🎙️ ON SITE MANAGER: «Devi uscire, sentire la cooperativa e poi rientrare. Segui le procedure e buon lavoro.»');
     },5000);
+    later(function(){
+      say('🚧 Fine briefing. Andriu deve andare alla sbarra.');
+      goBarrier.style.display='block';
+    },7000);
   }
 
   function drinkCoffee(){
@@ -404,6 +462,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       version: 2,
       scene: scene,
       warehouseConversationStarted: warehouseConversationStarted,
+      barrierReached: barrierReached,
       verb: verb,
       radioCalled: radioCalled,
       panicked: panicked,
@@ -449,7 +508,18 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       const data=JSON.parse(raw);
       scene=data.scene || 'regia';
       warehouseConversationStarted=!!data.warehouseConversationStarted;
-      if(scene === 'warehouse'){
+      barrierReached=!!data.barrierReached;
+      goWarehouse.style.display='none';
+      goBarrier.style.display='none';
+      if(scene === 'barrier'){
+        document.getElementById('bg').src=barrierBackground;
+        configureBarrierHotspots();
+        if(typeof warehouseAudio !== 'undefined'){
+          warehouseAudio.pause();
+          warehouseAudio.currentTime=0;
+          warehouseStarted=false;
+        }
+      }else if(scene === 'warehouse'){
         document.getElementById('bg').src=warehouseBackground;
         configureWarehouseHotspots();
         if(typeof loungeAudio !== 'undefined'){
@@ -480,6 +550,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
       msg.textContent=data.message || 'Partita caricata.';
       panic.style.display=data.panicVisible || 'none';
+      if(scene === 'warehouse' && warehouseConversationStarted){
+        goBarrier.style.display='block';
+      }
       renderInventory();
       buttons.forEach(function(button){
         button.classList.toggle('sel', button.dataset.verb === verb);
@@ -504,6 +577,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     enterWarehouse();
   });
 
+  goBarrier.addEventListener('click', function(){
+    enterBarrier();
+  });
+
   menuBtn.addEventListener('click', openMenu);
   slotButtons.forEach(function(button){
     button.addEventListener('click', function(){
@@ -523,6 +600,21 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   });
 
   function act(name){
+    if(scene === 'barrier'){
+      if(verb === 'GUARDA'){
+        if(name === 'mixer') return say('🚧 La sbarra è abbassata. Senza pass, Andriu non entra.');
+        if(name === 'phone') return say('👷 La guardiola del controllo accessi. Qualcuno potrebbe aiutare Andriu.');
+        if(name === 'monitor') return say('🏢 Ingresso MiCo. Dentro si lavora, ma per ora Andriu è fuori.');
+        if(name === 'radio') return say('📹 Una telecamera controlla ogni ingresso. Perfetto.');
+        if(name === 'door') return say('🚪 L’uscita pedonale. Meglio non allontanarsi dal MiCo.');
+        return say('Un dettaglio dell’ingresso del MiCo.');
+      }
+      if(verb === 'PARLA' && name === 'phone') return say('👷 CONTROLLO ACCESSI: «Buongiorno. Mi dica.»');
+      if(verb === 'USA' && name === 'phone') return say('📋 Il badge non è più valido. Devo risolvere la situazione con la cooperativa.');
+      if(verb === 'APRI' && name === 'mixer') return say('🚧 La sbarra non si apre. Serve un’autorizzazione.');
+      return say('Non c’è niente da fare con questo oggetto, per ora.');
+    }
+
     if(scene === 'warehouse'){
       if(verb === 'GUARDA'){
         if(name === 'phone') return say('È l’ON SITE MANAGER. Sta facendo il briefing con la squadra tecnica.');
