@@ -346,6 +346,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       warehouseAudio.currentTime=0;
       warehouseStarted=false;
     }
+    if(typeof barrierAudio !== 'undefined'){
+      barrierAudio.currentTime=0;
+      barrierAudio.play().catch(function(){});
+      barrierStarted=true;
+    }
     if(typeof loungeAudio !== 'undefined'){
       loungeAudio.pause();
       loungeAudio.currentTime=0;
@@ -373,6 +378,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       loungeAudio.pause();
       loungeAudio.currentTime = 0;
       loungeStarted = false;
+    }
+    if(typeof barrierAudio !== 'undefined'){
+      barrierAudio.pause();
+      barrierAudio.currentTime=0;
+      barrierStarted=false;
     }
     if(typeof warehouseAudio !== 'undefined'){
       warehouseAudio.currentTime = 0;
@@ -598,10 +608,20 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(scene === 'barrier'){
         document.getElementById('bg').src=barrierBackground;
         configureBarrierHotspots();
+        if(typeof barrierAudio !== 'undefined'){
+          barrierAudio.currentTime=0;
+          barrierAudio.play().catch(function(){});
+          barrierStarted=true;
+        }
         if(typeof warehouseAudio !== 'undefined'){
           warehouseAudio.pause();
           warehouseAudio.currentTime=0;
           warehouseStarted=false;
+        }
+        if(typeof barrierAudio !== 'undefined'){
+          barrierAudio.pause();
+          barrierAudio.currentTime=0;
+          barrierStarted=false;
         }
       }else if(scene === 'warehouse'){
         document.getElementById('bg').src=warehouseBackground;
@@ -611,6 +631,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           loungeAudio.currentTime = 0;
           loungeStarted = false;
         }
+        if(typeof barrierAudio !== 'undefined'){
+          barrierAudio.pause();
+          barrierAudio.currentTime=0;
+          barrierStarted=false;
+        }
         if(typeof warehouseAudio !== 'undefined'){
           warehouseAudio.currentTime = 0;
           warehouseAudio.play().catch(function(){});
@@ -618,6 +643,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         }
       }else{
         document.getElementById('bg').src=regiaBackground;
+        if(typeof barrierAudio !== 'undefined'){
+          barrierAudio.pause();
+          barrierAudio.currentTime=0;
+          barrierStarted=false;
+        }
         if(typeof warehouseAudio !== 'undefined'){
           warehouseAudio.pause();
           warehouseAudio.currentTime = 0;
@@ -815,6 +845,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   warehouseAudio.preload = 'auto';
   warehouseAudio.playsInline = true;
   let warehouseStarted = false;
+
+  // Rumore stradale della Sbarra: auto, motorini e traffico urbano.
+  const barrierAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/sbarra-traffico-urbano-loop.mp3');
+  barrierAudio.loop = true;
+  barrierAudio.volume = 0.42;
+  barrierAudio.preload = 'auto';
+  barrierAudio.playsInline = true;
+  let barrierStarted = false;
 
   // Musica lounge ambientale della Regia Gold.
   const loungeAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/regia-gold-lounge-v2.mp3');
