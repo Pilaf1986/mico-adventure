@@ -870,6 +870,35 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
 
     if(scene === 'warehouse'){
+      if(verb === 'PRENDI'){
+        const itemMap = {
+          greenTape: 'NASTRO VERDE',
+          blackMarker: 'PENNARELLO NERO',
+          leatherman: 'LEATHERMAN'
+        };
+        if(itemMap[name]){
+          const item = itemMap[name];
+          if(inventory.indexOf(item) === -1){
+            inventory.push(item);
+            renderInventory();
+            say('Hai preso: ' + item + '.');
+          }else{
+            say(item + ' è già nel tuo inventario.');
+          }
+          return;
+        }
+        if(name === 'coffee'){
+          if(inventory.indexOf('CAFFÈ') === -1){
+            inventory.push('CAFFÈ');
+            renderInventory();
+            say('Prendi il caffè. La vera alimentazione del fonico.');
+          }else{
+            say('Il caffè è già nel tuo inventario.');
+          }
+          return;
+        }
+        return say('Non posso prendere quello.');
+      }
       if(verb === 'GUARDA'){
         if(name === 'phone') return say('È l’ON SITE MANAGER. Sta facendo il briefing con la squadra tecnica.');
         if(name === 'mixer') return say('Pile di bauli Mico A/V. Tutto il necessario per allestire un evento.');
