@@ -120,7 +120,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let timers = [];
 
   function later(fn, ms){
-    const id = later(function(){
+    const id = setTimeout(function(){
       timers = timers.filter(function(t){ return t !== id; });
       fn();
     }, ms);
