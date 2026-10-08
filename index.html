@@ -36,6 +36,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 .menuBox{border:3px solid #69717e;background:#11151d;padding:22px;min-width:220px;text-align:center;box-shadow:0 0 35px #000}
 .menuTitle{font-size:24px;font-weight:bold;color:#ffd84a;margin-bottom:18px}
 .menuBox button{display:block;width:100%;margin:7px 0}
+#saveStatus{font-size:11px;color:#aeb7c4;margin-top:10px;min-height:14px}
+#saveSlots{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+#saveSlots .slotBtn{margin:0;font-size:11px;padding:6px 4px}
+#saveSlots .slotBtn.sel{border-color:#ffd84a;color:#ffd84a}
 </style>
 </head>
 <body>
@@ -65,8 +69,25 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div id="menuOverlay">
       <div class="menuBox">
         <div class="menuTitle">MI CO ADVENTURE</div>
-        <div style="font-size:11px;color:#aeb7c4;margin-bottom:8px">MENU DI GIOCO</div>
-        <button type="button" id="exitBtn">ESCI</button>
+        <div style="font-size:11px;color:#aeb7c4;margin-bottom:8px">SCEGLI UNO SLOT</div>
+        <div id="saveSlots">
+          <button type="button" class="slotBtn" data-slot="1">SLOT 1</button>
+          <button type="button" class="slotBtn" data-slot="2">SLOT 2</button>
+          <button type="button" class="slotBtn" data-slot="3">SLOT 3</button>
+          <button type="button" class="slotBtn" data-slot="4">SLOT 4</button>
+          <button type="button" class="slotBtn" data-slot="5">SLOT 5</button>
+          <button type="button" class="slotBtn" data-slot="6">SLOT 6</button>
+          <button type="button" class="slotBtn" data-slot="7">SLOT 7</button>
+          <button type="button" class="slotBtn" data-slot="8">SLOT 8</button>
+          <button type="button" class="slotBtn" data-slot="9">SLOT 9</button>
+          <button type="button" class="slotBtn" data-slot="10">SLOT 10</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button type="button" id="saveBtn" style="flex:1">SALVA</button>
+          <button type="button" id="loadBtn" style="flex:1">CARICA</button>
+        </div>
+        <button type="button" id="exitBtn">TORNA AL GIOCO</button>
+        <div id="saveStatus">Seleziona uno slot.</div>
       </div>
     </div>
 
@@ -112,6 +133,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const menuBtn = document.getElementById('menuBtn');
   const exitBtn = document.getElementById('exitBtn');
   const resumeBtn = document.getElementById('resumeBtn');
+  const saveStatus = document.getElementById('saveStatus');
+  const saveBtn = document.getElementById('saveBtn');
+  const loadBtn = document.getElementById('loadBtn');
+  const slotButtons = Array.from(document.querySelectorAll('.slotBtn'));
 
   let verb = 'GUARDA';
   let radioCalled = false;
@@ -121,6 +146,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let cableFixed = false;
   let phoneConversationStarted = false;
   let inventory = [];
+  let selectedSlot = 1;
   let timers = [];
   let coffeeDrunk = false;
   let scene = 'regia';
@@ -517,8 +543,155 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
   }
 
+
+  function getSaveData(){
+    return {
+      version: 2,
+      scene: scene,
+      warehouseConversationStarted: warehouseConversationStarted,
+      barrierReached: barrierReached,
+      passChecked: passChecked,
+      cooperativeCleared: cooperativeCleared,
+      accessGranted: accessGranted,
+      selectedItem: selectedItem,
+      verb: verb,
+      radioCalled: radioCalled,
+      panicked: panicked,
+      responsibleCalled: responsibleCalled,
+      cableDiagnosed: cableDiagnosed,
+      cableFixed: cableFixed,
+      phoneConversationStarted: phoneConversationStarted,
+      inventory: inventory.slice(),
+      message: msg.textContent,
+      panicVisible: panic.style.display
+    };
+  }
+
+  function updateSlotButtons(){
+    slotButtons.forEach(function(button){
+      button.classList.toggle('sel', Number(button.dataset.slot) === selectedSlot);
+      const exists=!!localStorage.getItem('micoAdventureSave'+button.dataset.slot);
+      button.textContent='SLOT '+button.dataset.slot+(exists ? ' • SALVATO' : '');
+    });
+  }
+
+  function saveGame(){
+    try{
+      localStorage.setItem('micoAdventureSave'+selectedSlot, JSON.stringify(getSaveData()));
+      saveStatus.textContent='PARTITA SALVATA NELLO SLOT '+selectedSlot+'.';
+      say('Partita salvata nello slot '+selectedSlot+'.');
+      updateSlotButtons();
+    }catch(e){
+      saveStatus.textContent='ERRORE DI SALVATAGGIO.';
+      say('Non riesco a salvare la partita.');
+    }
+  }
+
+  function loadGame(){
+    try{
+      const raw=localStorage.getItem('micoAdventureSave'+selectedSlot);
+      if(!raw){
+        saveStatus.textContent='LO SLOT '+selectedSlot+' È VUOTO.';
+        say('Lo slot '+selectedSlot+' è vuoto.');
+        return;
+      }
+      clearTimers();
+      const data=JSON.parse(raw);
+      scene=data.scene || 'regia';
+      warehouseConversationStarted=!!data.warehouseConversationStarted;
+      barrierReached=!!data.barrierReached;
+      passChecked=!!data.passChecked;
+      cooperativeCleared=!!data.cooperativeCleared;
+      accessGranted=!!data.accessGranted;
+      selectedItem=data.selectedItem || '';
+      goWarehouse.style.display='none';
+      goBarrier.style.display='none';
+      if(scene === 'barrier'){
+        document.getElementById('bg').src=barrierBackground;
+        configureBarrierHotspots();
+        if(typeof warehouseAudio !== 'undefined'){
+          warehouseAudio.pause();
+          warehouseAudio.currentTime=0;
+          warehouseStarted=false;
+        }
+        if(typeof loungeAudio !== 'undefined'){
+          loungeAudio.pause();
+          loungeAudio.currentTime=0;
+          loungeStarted=false;
+        }
+        if(typeof barrierAudio !== 'undefined'){
+          barrierAudio.currentTime=0;
+          barrierAudio.play().catch(function(){});
+          barrierStarted=true;
+        }
+      }else if(scene === 'warehouse'){
+        document.getElementById('bg').src=warehouseBackground;
+        configureWarehouseHotspots();
+        if(typeof loungeAudio !== 'undefined'){
+          loungeAudio.pause();
+          loungeAudio.currentTime=0;
+          loungeStarted=false;
+        }
+        if(typeof barrierAudio !== 'undefined'){
+          barrierAudio.pause();
+          barrierAudio.currentTime=0;
+          barrierStarted=false;
+        }
+        if(typeof warehouseAudio !== 'undefined'){
+          warehouseAudio.currentTime=0;
+          warehouseAudio.play().catch(function(){});
+          warehouseStarted=true;
+        }
+      }else{
+        document.getElementById('bg').src=regiaBackground;
+        if(typeof barrierAudio !== 'undefined'){
+          barrierAudio.pause();
+          barrierAudio.currentTime=0;
+          barrierStarted=false;
+        }
+        if(typeof warehouseAudio !== 'undefined'){
+          warehouseAudio.pause();
+          warehouseAudio.currentTime=0;
+          warehouseStarted=false;
+        }
+      }
+      verb=data.verb || 'GUARDA';
+      radioCalled=!!data.radioCalled;
+      panicked=!!data.panicked;
+      responsibleCalled=!!data.responsibleCalled;
+      cableDiagnosed=!!data.cableDiagnosed;
+      cableFixed=!!data.cableFixed;
+      phoneConversationStarted=!!data.phoneConversationStarted;
+      inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
+      if(scene === 'barrier'){
+        if(inventory.indexOf('CELLULARE') === -1) inventory.push('CELLULARE');
+        if(inventory.indexOf('PASS') === -1) inventory.push('PASS');
+      }
+      msg.textContent=data.message || 'Partita caricata.';
+      panic.style.display=data.panicVisible || 'none';
+      if(scene === 'warehouse' && warehouseConversationStarted){
+        goBarrier.style.display='block';
+      }
+      if(scene === 'barrier' && accessGranted){
+        goWarehouse.textContent='🚪 VAI AL MAGAZZINO';
+        goWarehouse.style.display='block';
+      }
+      renderInventory();
+      buttons.forEach(function(button){
+        button.classList.toggle('sel', button.dataset.verb === verb);
+      });
+      saveStatus.textContent='SLOT '+selectedSlot+' CARICATO.';
+      updateSlotButtons();
+    }catch(e){
+      saveStatus.textContent='SALVATAGGIO DANNEGGIATO.';
+      say('Non riesco a caricare la partita.');
+    }
+  }
+
   function openMenu(){
     menuOverlay.style.display='flex';
+    updateSlotButtons();
+    saveStatus.textContent='SLOT '+selectedSlot+' SELEZIONATO.';
   }
 
   function closeMenu(){
@@ -534,6 +707,18 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   });
 
   menuBtn.addEventListener('click', openMenu);
+  slotButtons.forEach(function(button){
+    button.addEventListener('click', function(){
+      selectedSlot=Number(button.dataset.slot);
+      updateSlotButtons();
+      saveStatus.textContent='SLOT '+selectedSlot+' SELEZIONATO.';
+    });
+  });
+  saveBtn.addEventListener('click', saveGame);
+  loadBtn.addEventListener('click', loadGame);
+  exitBtn.addEventListener('click', function(){
+    menuOverlay.style.display='none';
+  });
   resumeBtn.addEventListener('click', function(){
     exitScreen.style.display='none';
   });
@@ -654,9 +839,6 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   });
 
   renderInventory();
-
-  // Elimina eventuali vecchi salvataggi della versione precedente.
-  for(let i=1;i<=10;i++) localStorage.removeItem('micoAdventureSave'+i);
 
   // Rumore ambientale del Magazzino Mico A/V.
   const warehouseAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/magazzino_urban_ferraglia_loop.wav');
