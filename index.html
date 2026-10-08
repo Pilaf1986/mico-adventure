@@ -284,6 +284,103 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     'CHAT WHATSAPP': '💬 CHAT WHATSAPP — Il contatto operativo di Frank per chiarimenti durante il montaggio.'
   };
 
+  function radioCall(){
+    if(radioCalled) return say('📻 La radio ripete il problema del microfono della plenaria.');
+    radioCalled=true;
+    say('📻 PALCO: «Regia, abbiamo un problema con il microfono della plenaria!»');
+    later(function(){
+      say('🎤 TECNICO DI PALCO: «Controllo subito il microfono.»');
+    },5000);
+    later(function(){
+      say('🎙️ TECNICO: «Andriu, guarda il mixer. Il microfono non risponde.»');
+    },10000);
+  }
+
+  function useMixer(){
+    say('🎚️ Yamaha RIVAGE — Andriu si avvicina alla console per controllare il segnale del microfono.');
+    later(function(){
+      say('🎚️ Il segnale sembra presente. Forse basta intervenire sul primo fader.');
+    },3000);
+  }
+
+  function useFader(){
+    if(cableFixed){
+      return say('Il primo fader è già stato sistemato. Il microfono ora funziona.');
+    }
+    if(panicked){
+      return say('Il primo fader è già stato mosso. In regia è ancora tutto nel caos.');
+    }
+
+    panicked=true;
+    say('🎚️ Andriu muove il PRIMO FADER...');
+    later(function(){
+      say('💥 FIIIIIIIIIIII! — Il fader era quello sbagliato!');
+      panic.style.display='flex';
+    },2500);
+    later(function(){
+      say('📞 TELEFONO REGIA — «Il mixer della plenaria non risponde, fischia tutto!»');
+    },7000);
+    later(function(){
+      callResponsible();
+    },10000);
+  }
+
+  function callResponsible(){
+    if(responsibleCalled) return say('📞 Il responsabile ha già ricevuto la chiamata.');
+    responsibleCalled=true;
+    say('📞 FONICO: «Ehi, il mixer della plenaria non risponde, fischia tutto.»');
+    later(function(){
+      say('📞 RESPONSABILE: «Ma che cazzo dici, impara a lavorare.»');
+    },5000);
+    later(function(){
+      say('📞 Il responsabile riattacca.');
+    },10000);
+    later(function(){
+      panic.style.display='none';
+      say('🎤 TECNICO DI PALCO: «Aspetta... il cavo del microfono è collegato al DMX delle luci!»');
+      cableDiagnosed=true;
+    },15000);
+    later(function(){
+      say('💡 Il tecnico ricollega il cavo del microfono nel posto giusto.');
+      cableFixed=true;
+    },20000);
+    later(function(){
+      say('🎤 MICROFONO RELATORE: «Uno, due... mi sentite?» — Perfetto. Il congresso può partire.');
+    },27000);
+    later(function(){
+      say('📞 TELEFONO REGIA — RESPONSABILE: «Hai sbagliato, ha fischiato tutto, sei stato degradato, devi ricominciare la tua carriera dal livello iniziale di voi sottoposti, la SALETTA.»');
+    },34000);
+    later(function(){
+      say('📞 RESPONSABILE: «Vai in magazzino, segui le istruzioni dell’ON SITE MANAGER e buon divertimento. Che la tua carriera abbia un nuovo inizio.»');
+    },41000);
+    later(function(){
+      say('🚪 FINE REGIA GOLD — Vai in magazzino. La tua nuova carriera comincia dalla SALETTA.');
+      goWarehouse.style.display='block';
+    },48000);
+  }
+
+  function fixCable(){
+    if(!cableDiagnosed) return say('🔌 Non ancora. Prima bisogna capire quale cavo sta causando il problema.');
+    if(cableFixed) return say('🔌 Il cavo del microfono è già stato ricollegato.');
+    cableFixed=true;
+    panic.style.display='none';
+    say('🔌 Andriu ricollega il cavo del microfono. Ora è collegato correttamente.');
+    later(function(){
+      say('🎤 «Prova adesso.»');
+    },5000);
+    later(function(){
+      say('🎤 MICROFONO RELATORE: «Uno, due... mi sentite?» — Perfetto. Il congresso può partire.');
+    },10000);
+  }
+
+  function drinkCoffee(){
+    if(coffeeDrunk) return say('☕ La tazza è già vuota.');
+    coffeeDrunk=true;
+    if(inventory.indexOf('CAFFÈ') === -1) inventory.push('CAFFÈ');
+    renderInventory();
+    say('☕ Andriu beve il caffè. La carriera può continuare.');
+  }
+
   function presentPassToGuard(){
     if(accessGranted) return say('👮 GUARDIA: «Tutto a posto. Puoi entrare.»');
     if(!cooperativeCleared){
