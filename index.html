@@ -32,6 +32,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 .menuTitle{font-size:24px;font-weight:bold;color:#ffd84a;margin-bottom:18px}
 .menuBox button{display:block;width:100%;margin:7px 0}
 #saveStatus{font-size:11px;color:#aeb7c4;margin-top:10px;min-height:14px}
+#saveSlots{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+#saveSlots .slotBtn{margin:0;font-size:11px;padding:6px 4px}
+#saveSlots .slotBtn.sel{border-color:#ffd84a;color:#ffd84a}
 </style>
 </head>
 <body>
@@ -58,10 +61,25 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div id="menuOverlay">
       <div class="menuBox">
         <div class="menuTitle">MI CO ADVENTURE</div>
-        <button type="button" id="saveBtn">SALVA PARTITA</button>
-        <button type="button" id="loadBtn">CARICA PARTITA</button>
+        <div style="font-size:11px;color:#aeb7c4;margin-bottom:8px">SCEGLI UNO SLOT</div>
+        <div id="saveSlots">
+          <button type="button" class="slotBtn" data-slot="1">SLOT 1</button>
+          <button type="button" class="slotBtn" data-slot="2">SLOT 2</button>
+          <button type="button" class="slotBtn" data-slot="3">SLOT 3</button>
+          <button type="button" class="slotBtn" data-slot="4">SLOT 4</button>
+          <button type="button" class="slotBtn" data-slot="5">SLOT 5</button>
+          <button type="button" class="slotBtn" data-slot="6">SLOT 6</button>
+          <button type="button" class="slotBtn" data-slot="7">SLOT 7</button>
+          <button type="button" class="slotBtn" data-slot="8">SLOT 8</button>
+          <button type="button" class="slotBtn" data-slot="9">SLOT 9</button>
+          <button type="button" class="slotBtn" data-slot="10">SLOT 10</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button type="button" id="saveBtn" style="flex:1">SALVA</button>
+          <button type="button" id="loadBtn" style="flex:1">CARICA</button>
+        </div>
         <button type="button" id="exitBtn">ESCI</button>
-        <div id="saveStatus"></div>
+        <div id="saveStatus">Seleziona uno slot.</div>
       </div>
     </div>
 
@@ -108,6 +126,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const loadBtn = document.getElementById('loadBtn');
   const exitBtn = document.getElementById('exitBtn');
   const resumeBtn = document.getElementById('resumeBtn');
+  const slotButtons = Array.from(document.querySelectorAll('.slotBtn'));
 
   let verb = 'GUARDA';
   let radioCalled = false;
@@ -117,6 +136,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let cableFixed = false;
   let phoneConversationStarted = false;
   let inventory = [];
+  let selectedSlot = 1;
   let timers = [];
 
   function later(fn, ms){
@@ -267,11 +287,20 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     };
   }
 
+  function updateSlotButtons(){
+    slotButtons.forEach(function(button){
+      button.classList.toggle('sel', Number(button.dataset.slot) === selectedSlot);
+      const exists=!!localStorage.getItem('micoAdventureSave'+button.dataset.slot);
+      button.textContent='SLOT '+button.dataset.slot+(exists ? ' • SALVATO' : '');
+    });
+  }
+
   function saveGame(){
     try{
-      localStorage.setItem('micoAdventureSave', JSON.stringify(getSaveData()));
-      saveStatus.textContent='PARTITA SALVATA.';
-      say('Partita salvata.');
+      localStorage.setItem('micoAdventureSave'+selectedSlot, JSON.stringify(getSaveData()));
+      saveStatus.textContent='PARTITA SALVATA NELLO SLOT '+selectedSlot+'.';
+      say('Partita salvata nello slot '+selectedSlot+'.');
+      updateSlotButtons();
     }catch(e){
       saveStatus.textContent='ERRORE DI SALVATAGGIO.';
       say('Non riesco a salvare la partita.');
@@ -280,10 +309,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function loadGame(){
     try{
-      const raw=localStorage.getItem('micoAdventureSave');
+      const raw=localStorage.getItem('micoAdventureSave'+selectedSlot);
       if(!raw){
-        saveStatus.textContent='NESSUN SALVATAGGIO.';
-        say('Non c’è nessuna partita salvata.');
+        saveStatus.textContent='LO SLOT '+selectedSlot+' È VUOTO.';
+        say('Lo slot '+selectedSlot+' è vuoto.');
         return;
       }
       clearTimers();
@@ -302,7 +331,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       buttons.forEach(function(button){
         button.classList.toggle('sel', button.dataset.verb === verb);
       });
-      saveStatus.textContent='PARTITA CARICATA.';
+      saveStatus.textContent='SLOT '+selectedSlot+' CARICATO.';
     }catch(e){
       saveStatus.textContent='SALVATAGGIO DANNEGGIATO.';
       say('Non riesco a caricare la partita.');
@@ -319,6 +348,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   menuBtn.addEventListener('click', openMenu);
+  slotButtons.forEach(function(button){
+    button.addEventListener('click', function(){
+      selectedSlot=Number(button.dataset.slot);
+      updateSlotButtons();
+      saveStatus.textContent='SLOT '+selectedSlot+' SELEZIONATO.';
+    });
+  });
   saveBtn.addEventListener('click', saveGame);
   loadBtn.addEventListener('click', loadGame);
   exitBtn.addEventListener('click', function(){
