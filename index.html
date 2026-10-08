@@ -153,6 +153,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let warehouseConversationStarted = false;
   let barrierReached = false;
   let passChecked = false;
+  let selectedItem = '';
 
   function later(fn, ms){
     const id = setTimeout(function(){
@@ -231,11 +232,12 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       itemButton.textContent = item;
       itemButton.title = 'Esamina ' + item;
       itemButton.addEventListener('click', function(){
-        if(item === 'CELLULARE' && verb === 'USA' && scene === 'barrier'){
-          return callCooperative();
-        }
-        if(item === 'PASS' && verb === 'USA' && scene === 'barrier'){
-          return presentPassToGuard();
+        if(verb === 'USA'){
+          selectedItem = item;
+          if(item === 'CELLULARE' && scene === 'barrier') return callCooperative();
+          if(item === 'PASS' && scene === 'barrier'){
+            return say('🪪 PASS selezionato. Ora clicca sulla GUARDIA per mostrarlo.');
+          }
         }
         say(itemDescriptions[item] || 'Non c’è niente di particolarmente interessante da notare.');
       });
@@ -495,6 +497,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       warehouseConversationStarted: warehouseConversationStarted,
       barrierReached: barrierReached,
       passChecked: passChecked,
+      selectedItem: selectedItem,
       verb: verb,
       radioCalled: radioCalled,
       panicked: panicked,
@@ -542,6 +545,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       warehouseConversationStarted=!!data.warehouseConversationStarted;
       barrierReached=!!data.barrierReached;
       passChecked=!!data.passChecked;
+      selectedItem=data.selectedItem || '';
       goWarehouse.style.display='none';
       goBarrier.style.display='none';
       if(scene === 'barrier'){
@@ -647,7 +651,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         return say('Un dettaglio dell’ingresso del MiCo.');
       }
       if(verb === 'PARLA' && name === 'phone') return say('👮 GUARDIA: «Ciao carissimo! Se fai sesso come parcheggi l\'accechi, dammi il PASS che te lo sparo.»');
-      if(verb === 'USA' && name === 'phone') return say('📋 La guardia allunga la mano verso il dispositivo. «Prima fammi vedere il PASS.»');
+      if(verb === 'USA' && name === 'phone'){
+        if(selectedItem === 'PASS') return presentPassToGuard();
+        return say('📋 La guardia allunga la mano verso il dispositivo. «Prima fammi vedere il PASS.»');
+      }
       if(verb === 'APRI' && name === 'mixer') return say('🚧 La sbarra non si apre. Serve un’autorizzazione.');
       return say('Non c’è niente da fare con questo oggetto, per ora.');
     }
