@@ -152,6 +152,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let scene = 'regia';
   let warehouseConversationStarted = false;
   let barrierReached = false;
+  let passChecked = false;
 
   function later(fn, ms){
     const id = setTimeout(function(){
@@ -185,8 +186,21 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   const itemDescriptions = {
     'CAFFÈ': '☕ CAFFÈ — Un caffè della macchinetta del MiCo. È tiepido, leggermente bruciato e probabilmente è qui da almeno mezz\'ora. Ma per un fonico è carburante puro.',
-    'CELLULARE': '📱 CELLULARE — Lo smartphone di Andriu. Batteria sufficiente e linea presente. Può essere usato per chiamare la cooperativa.'
+    'CELLULARE': '📱 CELLULARE — Lo smartphone di Andriu. Batteria sufficiente e linea presente. Può essere usato per chiamare la cooperativa.',
+    'PASS': '🪪 PASS MICO — Il badge di Andriu. È il documento che serve per superare i controlli di accesso.'
   };
+
+  function presentPassToGuard(){
+    if(passChecked) return say('👮 GUARDIA: «Questo l’ho già controllato. Il sistema dice che il PASS è revocato.»');
+    passChecked=true;
+    say('🪪 Andriu consegna il PASS alla guardia. La guardia lo appoggia sul lettore.');
+    later(function(){
+      say('📟 LETTORE PASS: «ACCESSO NEGATO — PASS REVOCATO.»');
+    },1800);
+    later(function(){
+      say('👮 GUARDIA: «Eh, carissimo... qui il sistema dice che non puoi entrare.»');
+    },3600);
+  }
 
   function callCooperative(){
     say('📱 CHIAMATA ALLA COOPERATIVA — «Pronto? Sono Andriu. Mi hanno revocato il pass e sono alla sbarra del MiCo.»');
@@ -217,8 +231,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       itemButton.textContent = item;
       itemButton.title = 'Esamina ' + item;
       itemButton.addEventListener('click', function(){
-        if(item === 'CELLULARE' && verb === 'USA'){
+        if(item === 'CELLULARE' && verb === 'USA' && scene === 'barrier'){
           return callCooperative();
+        }
+        if(item === 'PASS' && verb === 'USA' && scene === 'barrier'){
+          return presentPassToGuard();
         }
         say(itemDescriptions[item] || 'Non c’è niente di particolarmente interessante da notare.');
       });
@@ -228,7 +245,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
 
   const warehouseBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/magazzino-mico-av.png';
-  const barrierBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/la-sbarra-mico.png';
+  const barrierBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/La%20sbarra%20del%20MiCo%20al%20tramonto.png';
   const regiaBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/Regia%20Gold_%20caos%20in%20console.png';
 
   function configureWarehouseHotspots(){
@@ -298,10 +315,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       bg.src=warehouseBackground;
     };
     configureBarrierHotspots();
-    if(inventory.indexOf('CELLULARE') === -1){
-      inventory.push('CELLULARE');
-      renderInventory();
-    }
+    if(inventory.indexOf('CELLULARE') === -1) inventory.push('CELLULARE');
+    if(inventory.indexOf('PASS') === -1) inventory.push('PASS');
+    renderInventory();
     say('🚧 LA SBARRA — Andriu è uscito dal magazzino. Davanti a lui, la barriera d’ingresso del MiCo.');
   }
 
@@ -478,6 +494,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       scene: scene,
       warehouseConversationStarted: warehouseConversationStarted,
       barrierReached: barrierReached,
+      passChecked: passChecked,
       verb: verb,
       radioCalled: radioCalled,
       panicked: panicked,
@@ -524,6 +541,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       scene=data.scene || 'regia';
       warehouseConversationStarted=!!data.warehouseConversationStarted;
       barrierReached=!!data.barrierReached;
+      passChecked=!!data.passChecked;
       goWarehouse.style.display='none';
       goBarrier.style.display='none';
       if(scene === 'barrier'){
@@ -563,8 +581,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       cableFixed=!!data.cableFixed;
       phoneConversationStarted=!!data.phoneConversationStarted;
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
-      if(scene === 'barrier' && inventory.indexOf('CELLULARE') === -1){
-        inventory.push('CELLULARE');
+      if(scene === 'barrier'){
+        if(inventory.indexOf('CELLULARE') === -1) inventory.push('CELLULARE');
+        if(inventory.indexOf('PASS') === -1) inventory.push('PASS');
       }
       msg.textContent=data.message || 'Partita caricata.';
       panic.style.display=data.panicVisible || 'none';
