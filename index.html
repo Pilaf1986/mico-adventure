@@ -487,16 +487,23 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   // Musica lounge ambientale della Regia Gold.
   const loungeAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/regia-gold-lounge-v2.opus');
   loungeAudio.loop = true;
-  loungeAudio.volume = 0.55;
+  loungeAudio.volume = 0.32;
   loungeAudio.preload = 'auto';
+  loungeAudio.playsInline = true;
+
+  let loungeStarted = false;
 
   async function startLounge(){
+    if(loungeStarted) return;
     try{
+      loungeAudio.pause();
+      loungeAudio.currentTime = 0;
       await loungeAudio.play();
+      loungeStarted = true;
     }catch(e){}
   }
 
-  // L'audio parte al primo click/tocco, compatibile con le policy autoplay.
+  // Una sola partenza al primo gesto dell'utente.
   document.addEventListener('click', startLounge, {once:true});
   document.addEventListener('touchstart', startLounge, {once:true, passive:true});
 
