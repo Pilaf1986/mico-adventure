@@ -173,7 +173,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     buttons.forEach(function(button){
       button.classList.toggle('sel', button.dataset.verb === verb);
     });
-    say(verb + ' selezionato. Ora clicca un oggetto nella Regia Gold.');
+    say(scene === 'warehouse'
+      ? verb + ' selezionato. Ora clicca un oggetto nel Magazzino.'
+      : verb + ' selezionato. Ora clicca un oggetto nella Regia Gold.');
   }
 
   const itemDescriptions = {
