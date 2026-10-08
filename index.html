@@ -234,6 +234,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let assemblySchemaDelivered = false;
   let whatsappChatDelivered = false;
   let frankBriefingComplete = false;
+  let frankBriefingRunning = false;
   let barrierReached = false;
   let passChecked = false;
   let cooperativeCleared = false;
@@ -529,101 +530,76 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
     function talkOnSiteManager(){
+    // UN SOLO CLICK: il briefing parte e prosegue tutto automaticamente.
     if(frankBriefingComplete){
-      say('FRANK: «Vai, prendi il materiale e vai in OCEAN 3. Segui la planimetria.»');
+      say('FRANK: «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
       return;
     }
 
-    if(!warehouseConversationStarted){
-      warehouseConversationStarted=true;
-
-      // BLOCCO 1 — presentazione + consegna planimetria
-      say('FRANK — ON SITE MANAGER: «Buongiorno Andriu sono Frank il tuo ON SITE MANAGER.»');
-      later(function(){
-        say('FRANK: «Sì in sostanza sono il direttore di produzione.»');
-      },5000);
-      later(function(){
-        say('FRANK: «Ti spiegherò cosa faremo oggi, siamo di montaggio salette, perciò portati i DPI.»');
-      },10000);
-      later(function(){
-        say('FRANK: «Ecco a te la planimetria di questo labirinto chiamato MiCo, cerca di non perderti.»');
-      },15000);
-      later(function(){
-        planimetryDelivered=true;
-        if(inventory.indexOf('PLANIMETRIA NORD') === -1) inventory.push('PLANIMETRIA NORD');
-        renderInventory();
-        say('FRANK ti consegna un foglio A3 con la planimetria di tutta l’ala nord. PLANIMETRIA NORD aggiunta all’inventario.');
-      },20000);
-
-      // BLOCCO 2 — incarico + WhatsApp + schema
-      later(function(){
-        say('FRANK: «Visto che hai fatto una cazzata in plenaria.»');
-      },25000);
-      later(function(){
-        say('FRANK: «La direzione mi ha detto di farti partire con la sala più lontana.»');
-      },30000);
-      later(function(){
-        say('FRANK: «Ti vogliono far sgobbare.»');
-      },35000);
-      later(function(){
-        say('FRANK: «Io sono a disposizione per chiarimenti nella chat di WhatsApp.»');
-      },40000);
-      later(function(){
-        whatsappChatDelivered=true;
-        if(inventory.indexOf('CHAT WHATSAPP') === -1) inventory.push('CHAT WHATSAPP');
-        renderInventory();
-        say('FRANK ti consegna la CHAT WHATSAPP. È entrata nell’inventario.');
-      },45000);
-      later(function(){
-        say('FRANK: «Questo è lo schema di montaggio.»');
-      },50000);
-      later(function(){
-        assemblySchemaDelivered=true;
-        if(inventory.indexOf('SCHEMA DI MONTAGGIO') === -1) inventory.push('SCHEMA DI MONTAGGIO');
-        renderInventory();
-        say('FRANK ti consegna lo SCHEMA DI MONTAGGIO. È entrato nell’inventario.');
-      },55000);
-
-      // BLOCCO 3 — squadra + destinazione
-      later(function(){
-        say('FRANK: «Forza Andriu, questa è la squadra del montaggio, sono tutti sul pezzo.»');
-      },60000);
-      later(function(){
-        say('FRANK: «Li conoscerai tutti bene durante la giornata.»');
-      },65000);
-      later(function(){
-        frankBriefingComplete=true;
-        say('FRANK: «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
-      },70000);
+    if(frankBriefingRunning){
       return;
     }
 
-    if(!planimetryDelivered){
+    clearTimers();
+    frankBriefingRunning=true;
+    warehouseConversationStarted=true;
+
+    // BLOCCO 1 — Frank si presenta e consegna la planimetria
+    say('FRANK — ON SITE MANAGER: «Buongiorno Andriu sono Frank il tuo ON SITE MANAGER.»');
+    later(function(){
+      say('FRANK: «Sì in sostanza sono il direttore di produzione.»');
+    },4000);
+    later(function(){
+      say('FRANK: «Ti spiegherò cosa faremo oggi, siamo di montaggio salette, perciò portati i DPI.»');
+    },8000);
+    later(function(){
+      say('FRANK: «Ecco a te la planimetria di questo labirinto chiamato MiCo, cerca di non perderti.»');
+    },12000);
+    later(function(){
       planimetryDelivered=true;
       if(inventory.indexOf('PLANIMETRIA NORD') === -1) inventory.push('PLANIMETRIA NORD');
       renderInventory();
-      say('FRANK ti consegna un foglio A3 con la planimetria di tutta l’ala nord. PLANIMETRIA NORD aggiunta all’inventario.');
-      return;
-    }
+    },16000);
 
-    if(!whatsappChatDelivered){
+    // BLOCCO 2 — incarico, chat WhatsApp e schema
+    later(function(){
+      say('FRANK: «Visto che hai fatto una cazzata in plenaria.»');
+    },20000);
+    later(function(){
+      say('FRANK: «La direzione mi ha detto di farti partire con la sala più lontana.»');
+    },24000);
+    later(function(){
+      say('FRANK: «Ti vogliono far sgobbare.»');
+    },28000);
+    later(function(){
+      say('FRANK: «Io sono a disposizione per chiarimenti nella chat di WhatsApp.»');
+    },32000);
+    later(function(){
       whatsappChatDelivered=true;
       if(inventory.indexOf('CHAT WHATSAPP') === -1) inventory.push('CHAT WHATSAPP');
       renderInventory();
-      say('FRANK ti consegna la CHAT WHATSAPP. È entrata nell’inventario.');
-      return;
-    }
-
-    if(!assemblySchemaDelivered){
+    },36000);
+    later(function(){
+      say('FRANK: «Questo è lo schema di montaggio.»');
+    },40000);
+    later(function(){
       assemblySchemaDelivered=true;
       if(inventory.indexOf('SCHEMA DI MONTAGGIO') === -1) inventory.push('SCHEMA DI MONTAGGIO');
       renderInventory();
-      say('FRANK ti consegna lo SCHEMA DI MONTAGGIO. È entrato nell’inventario.');
-      return;
-    }
+    },44000);
 
-    frankBriefingComplete=true;
-    say('FRANK: «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
+    // BLOCCO 3 — squadra e destinazione
+    later(function(){
+      say('FRANK: «Forza Andriu, questa è la squadra del montaggio, sono tutti sul pezzo.»');
+    },48000);
+    later(function(){
+      say('FRANK: «Li conoscerai tutti bene durante la giornata.»');
+    },52000);
+    later(function(){
+      say('FRANK: «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
+      frankBriefingComplete=true;
+      frankBriefingRunning=false;
+    },56000);
   }
 
   function getSaveData(){
@@ -799,6 +775,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       assemblySchemaDelivered=!!data.assemblySchemaDelivered;
       whatsappChatDelivered=!!data.whatsappChatDelivered;
       frankBriefingComplete=!!data.frankBriefingComplete;
+      frankBriefingRunning=false;
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
       if(!planimetryDelivered){
         inventory=inventory.filter(function(item){ return item !== 'PLANIMETRIA NORD'; });
