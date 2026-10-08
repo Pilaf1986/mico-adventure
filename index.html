@@ -244,6 +244,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       loungeAudio.currentTime = 0;
       loungeStarted = false;
     }
+    if(typeof warehouseAudio !== 'undefined'){
+      warehouseAudio.currentTime = 0;
+      warehouseAudio.play().catch(function(){});
+      warehouseStarted = true;
+    }
     panic.style.display='none';
     goWarehouse.style.display='none';
     const bg=document.getElementById('bg');
@@ -447,8 +452,23 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(scene === 'warehouse'){
         document.getElementById('bg').src=warehouseBackground;
         configureWarehouseHotspots();
+        if(typeof loungeAudio !== 'undefined'){
+          loungeAudio.pause();
+          loungeAudio.currentTime = 0;
+          loungeStarted = false;
+        }
+        if(typeof warehouseAudio !== 'undefined'){
+          warehouseAudio.currentTime = 0;
+          warehouseAudio.play().catch(function(){});
+          warehouseStarted = true;
+        }
       }else{
         document.getElementById('bg').src=regiaBackground;
+        if(typeof warehouseAudio !== 'undefined'){
+          warehouseAudio.pause();
+          warehouseAudio.currentTime = 0;
+          warehouseStarted = false;
+        }
       }
       verb=data.verb || 'GUARDA';
       radioCalled=!!data.radioCalled;
@@ -600,6 +620,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   });
 
   renderInventory();
+
+  // Rumore ambientale del Magazzino Mico A/V.
+  const warehouseAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/magazzino_urban_ferraglia_loop.wav');
+  warehouseAudio.loop = true;
+  warehouseAudio.volume = 0.42;
+  warehouseAudio.preload = 'auto';
+  warehouseAudio.playsInline = true;
+  let warehouseStarted = false;
 
   // Musica lounge ambientale della Regia Gold.
   const loungeAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/regia-gold-lounge-v2.mp3');
