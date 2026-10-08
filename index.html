@@ -446,79 +446,19 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     });
   });
 
-  // Musica lounge ambientale della Regia Gold.
-  let loungeStarted = false;
-  let loungeCtx = null;
-  let loungeTimer = null;
+  // Musica lounge reale della Regia Gold.
+  const loungeAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/regia-gold-lounge.opus');
+  loungeAudio.loop = true;
+  loungeAudio.volume = 0.28;
+  loungeAudio.preload = 'auto';
 
   async function startLounge(){
-    if(loungeStarted) return;
     try{
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if(!AudioCtx) return;
-
-      loungeCtx = new AudioCtx();
-      if(loungeCtx.state === 'suspended') await loungeCtx.resume();
-
-      const master = loungeCtx.createGain();
-      master.gain.value = 0.18;
-      master.connect(loungeCtx.destination);
-
-      const chords = [
-        [261.63,329.63,392.00,493.88],
-        [220.00,261.63,329.63,392.00],
-        [174.61,220.00,261.63,329.63],
-        [196.00,246.94,293.66,349.23]
-      ];
-      const bass = [130.81,110.00,87.31,98.00];
-
-      function note(freq, when, duration, volume, type){
-        const osc = loungeCtx.createOscillator();
-        const gain = loungeCtx.createGain();
-        const filter = loungeCtx.createBiquadFilter();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, when);
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(type === 'sine' ? 900 : 1700, when);
-        filter.Q.value = 0.35;
-        gain.gain.setValueAtTime(0.0001, when);
-        gain.gain.linearRampToValueAtTime(volume, when + 0.35);
-        gain.gain.setValueAtTime(volume * 0.82, when + Math.max(0.36,duration - 0.55));
-        gain.gain.exponentialRampToValueAtTime(0.0001, when + duration);
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(master);
-        osc.start(when);
-        osc.stop(when + duration + 0.08);
-      }
-
-      function playLoop(){
-        if(!loungeCtx || loungeCtx.state !== 'running') return;
-        const now = loungeCtx.currentTime + 0.05;
-
-        chords.forEach(function(chord, i){
-          const start = now + i * 3;
-          chord.forEach(function(freq, j){
-            note(freq, start, 2.85, 0.035, j === 0 ? 'triangle' : 'sine');
-            note(freq * 2, start + 1.48, 1.25, 0.008, 'sine');
-          });
-          note(bass[i], start, 2.65, 0.045, 'sine');
-          note(bass[i] * 2, start + 1.5, 0.75, 0.012, 'sine');
-        });
-
-        loungeTimer = setTimeout(playLoop, 11400);
-      }
-
-      loungeStarted = true;
-      playLoop();
-    }catch(e){
-      loungeStarted = false;
-      loungeCtx = null;
-    }
+      await loungeAudio.play();
+    }catch(e){}
   }
 
-  // I browser mobili possono ignorare pointerdown in alcuni casi: click e touchstart
-  // vengono registrati su tutta la pagina, così basta una qualsiasi interazione.
+  // Una vera interazione dell'utente sblocca la riproduzione nei browser.
   document.addEventListener('click', startLounge, {once:true});
   document.addEventListener('touchstart', startLounge, {once:true, passive:true});
 
