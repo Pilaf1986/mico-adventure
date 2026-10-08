@@ -41,6 +41,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 #saveSlots .slotBtn{margin:0;font-size:11px;padding:6px 4px}
 #saveSlots .slotBtn.sel{border-color:#ffd84a;color:#ffd84a}
 .warehouseItem{display:none}
+#whatsappOverlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:70;display:none;align-items:center;justify-content:center;padding:12px;box-sizing:border-box}
+#whatsappBox{width:min(420px,94vw);height:min(720px,90vh);background:#0b1410;border:3px solid #69717e;box-shadow:0 0 35px #000;display:flex;flex-direction:column}
+.waHeader{background:#075e54;color:#fff;padding:14px;font:bold 14px monospace}
+.waBody{flex:1;padding:14px;overflow:auto;background:#0b1410}
+.waBubble{max-width:82%;padding:9px 11px;margin:8px 0;border-radius:8px;font:bold 11px monospace;line-height:1.35}
+.waBubble span{font-weight:normal}
+.waFrank{background:#202c2a;margin-right:auto}
+.waAndriu{background:#075e54;margin-left:auto}
+#closeWhatsapp{margin:8px}
 #planimetryOverlay{position:fixed;inset:0;background:#000;z-index:60;display:none;align-items:center;justify-content:center;flex-direction:column;padding:0;box-sizing:border-box}
 #planimetryBox{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
 #planimetryImage{width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;display:block;border:0;background:#fff}
@@ -127,6 +136,18 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         <div class="menuTitle">MI CO ADVENTURE</div>
         <div style="margin-bottom:18px">SEI USCITO DALLA REGIA GOLD.</div>
         <button type="button" id="resumeBtn">RIPRENDI PARTITA</button>
+      </div>
+    </div>
+
+    <div id="whatsappOverlay">
+      <div id="whatsappBox">
+        <div class="waHeader">💬 CHAT WHATSAPP — FRANK</div>
+        <div class="waBody">
+          <div class="waBubble waFrank">Frank — ON SITE MANAGER<br><span>Io sono a disposizione per chiarimenti nella chat di WhatsApp.</span></div>
+          <div class="waBubble waAndriu">Andriu<br><span>Ok Frank, ricevuto.</span></div>
+          <div class="waBubble waFrank">Frank<br><span>Se hai dubbi durante il montaggio scrivimi qui.</span></div>
+        </div>
+        <button type="button" id="closeWhatsapp">✕ CHIUDI CHAT</button>
       </div>
     </div>
 
@@ -313,6 +334,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     },35000);
   }
 
+  function openWhatsapp(){
+    document.getElementById('whatsappOverlay').style.display='flex';
+  }
+
+  function closeWhatsapp(){
+    document.getElementById('whatsappOverlay').style.display='none';
+  }
+
   function renderInventory(){
     invEl.innerHTML = '';
     const label = document.createElement('span');
@@ -336,6 +365,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       itemButton.title = 'Esamina ' + item;
       itemButton.addEventListener('click', function(){
         if(verb === 'GUARDA' && item === 'PLANIMETRIA NORD') return openNorthPlanimetry();
+        if(verb === 'GUARDA' && item === 'CHAT WHATSAPP') return openWhatsapp();
         if(verb === 'USA'){
           selectedItem = item;
           if(item === 'CELLULARE' && scene === 'barrier') return callCooperative();
@@ -500,238 +530,101 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
     function talkOnSiteManager(){
     if(frankBriefingComplete){
-      say('🎙️ FRANK — ON SITE MANAGER: «Vai, prendi il materiale e vai in OCEAN 3. Segui la planimetria.»');
+      say('FRANK: «Vai, prendi il materiale e vai in OCEAN 3. Segui la planimetria.»');
       return;
     }
 
     if(!warehouseConversationStarted){
       warehouseConversationStarted=true;
 
-      // PRIMO BLOCCO: presentazione e consegna planimetria
-      say('🎙️ FRANK — ON SITE MANAGER: «Buongiorno Andriu, sono Frank il tuo ON SITE MANAGER.»');
+      // BLOCCO 1 — presentazione + consegna planimetria
+      say('FRANK — ON SITE MANAGER: «Buongiorno Andriu sono Frank il tuo ON SITE MANAGER.»');
       later(function(){
-        say('🎙️ FRANK: «Sì, in sostanza sono il direttore di produzione.»');
-      },7000);
+        say('FRANK: «Sì in sostanza sono il direttore di produzione.»');
+      },5000);
       later(function(){
-        say('🎙️ FRANK: «Ti spiegherò cosa faremo oggi, siamo di montaggio salette, perciò portati i DPI.»');
-      },14000);
+        say('FRANK: «Ti spiegherò cosa faremo oggi, siamo di montaggio salette, perciò portati i DPI.»');
+      },10000);
       later(function(){
-        say('🎙️ FRANK: «Ecco a te la planimetria di questo labirinto chiamato MiCo, cerca di non perderti.»');
-      },21000);
+        say('FRANK: «Ecco a te la planimetria di questo labirinto chiamato MiCo, cerca di non perderti.»');
+      },15000);
       later(function(){
         planimetryDelivered=true;
-        if(inventory.indexOf('PLANIMETRIA NORD') === -1){
-          inventory.push('PLANIMETRIA NORD');
-          renderInventory();
-        }
-        say('📐 FRANK ti consegna un foglio A3 con la PLANIMETRIA NORD. È entrata nell’inventario: puoi selezionarla e usare GUARDA.');
-      },28000);
+        if(inventory.indexOf('PLANIMETRIA NORD') === -1) inventory.push('PLANIMETRIA NORD');
+        renderInventory();
+        say('FRANK ti consegna un foglio A3 con la planimetria di tutta l’ala nord. PLANIMETRIA NORD aggiunta all’inventario.');
+      },20000);
 
-      // SECONDO BLOCCO: incarico, schema e chat WhatsApp
+      // BLOCCO 2 — incarico + WhatsApp + schema
       later(function(){
-        say('🎙️ FRANK: «Visto che hai fatto una cazzata in plenaria.»');
+        say('FRANK: «Visto che hai fatto una cazzata in plenaria.»');
+      },25000);
+      later(function(){
+        say('FRANK: «La direzione mi ha detto di farti partire con la sala più lontana.»');
+      },30000);
+      later(function(){
+        say('FRANK: «Ti vogliono far sgobbare.»');
       },35000);
       later(function(){
-        say('🎙️ FRANK: «La direzione mi ha detto di farti partire con la sala più lontana.»');
-      },42000);
-      later(function(){
-        say('🎙️ FRANK: «Ti vogliono far sgobbare.»');
-      },49000);
-      later(function(){
-        say('🎙️ FRANK: «Io sono a disposizione per chiarimenti nella chat di WhatsApp.»');
-      },56000);
+        say('FRANK: «Io sono a disposizione per chiarimenti nella chat di WhatsApp.»');
+      },40000);
       later(function(){
         whatsappChatDelivered=true;
-        if(inventory.indexOf('CHAT WHATSAPP') === -1){
-          inventory.push('CHAT WHATSAPP');
-          renderInventory();
-        }
-        say('💬 FRANK ti consegna la CHAT WHATSAPP. È entrata nell’inventario: puoi selezionarla e usare GUARDA.');
-      },63000);
+        if(inventory.indexOf('CHAT WHATSAPP') === -1) inventory.push('CHAT WHATSAPP');
+        renderInventory();
+        say('FRANK ti consegna la CHAT WHATSAPP. È entrata nell’inventario.');
+      },45000);
+      later(function(){
+        say('FRANK: «Questo è lo schema di montaggio.»');
+      },50000);
       later(function(){
         assemblySchemaDelivered=true;
-        if(inventory.indexOf('SCHEMA DI MONTAGGIO') === -1){
-          inventory.push('SCHEMA DI MONTAGGIO');
-          renderInventory();
-        }
-        say('📋 FRANK ti consegna lo SCHEMA DI MONTAGGIO della sala. È entrato nell’inventario: puoi selezionarlo e usare GUARDA.');
-      },70000);
+        if(inventory.indexOf('SCHEMA DI MONTAGGIO') === -1) inventory.push('SCHEMA DI MONTAGGIO');
+        renderInventory();
+        say('FRANK ti consegna lo SCHEMA DI MONTAGGIO. È entrato nell’inventario.');
+      },55000);
 
-      // TERZO BLOCCO: nuova ripresa del dialogo
+      // BLOCCO 3 — squadra + destinazione
       later(function(){
-        say('🎙️ FRANK: «Forza Andriu, questa è la squadra del montaggio, sono tutti sul pezzo.»');
-      },77000);
+        say('FRANK: «Forza Andriu, questa è la squadra del montaggio, sono tutti sul pezzo.»');
+      },60000);
       later(function(){
-        say('🎙️ FRANK: «Li conoscerai tutti bene durante la giornata.»');
-      },84000);
+        say('FRANK: «Li conoscerai tutti bene durante la giornata.»');
+      },65000);
       later(function(){
-        say('🎙️ FRANK: «Vai, prendi il materiale e vai in OCEAN 3. Segui la planimetria.»');
         frankBriefingComplete=true;
-      },91000);
+        say('FRANK: «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
+      },70000);
       return;
     }
 
     if(!planimetryDelivered){
       planimetryDelivered=true;
-      if(inventory.indexOf('PLANIMETRIA NORD') === -1){
-        inventory.push('PLANIMETRIA NORD');
-        renderInventory();
-      }
-      say('📐 FRANK ti consegna un foglio A3 con la PLANIMETRIA NORD. È entrata nell’inventario: puoi selezionarla e usare GUARDA.');
+      if(inventory.indexOf('PLANIMETRIA NORD') === -1) inventory.push('PLANIMETRIA NORD');
+      renderInventory();
+      say('FRANK ti consegna un foglio A3 con la planimetria di tutta l’ala nord. PLANIMETRIA NORD aggiunta all’inventario.');
       return;
     }
 
     if(!whatsappChatDelivered){
       whatsappChatDelivered=true;
-      if(inventory.indexOf('CHAT WHATSAPP') === -1){
-        inventory.push('CHAT WHATSAPP');
-        renderInventory();
-      }
-      say('💬 FRANK ti consegna la CHAT WHATSAPP. È entrata nell’inventario: puoi selezionarla e usare GUARDA.');
+      if(inventory.indexOf('CHAT WHATSAPP') === -1) inventory.push('CHAT WHATSAPP');
+      renderInventory();
+      say('FRANK ti consegna la CHAT WHATSAPP. È entrata nell’inventario.');
       return;
     }
 
     if(!assemblySchemaDelivered){
       assemblySchemaDelivered=true;
-      if(inventory.indexOf('SCHEMA DI MONTAGGIO') === -1){
-        inventory.push('SCHEMA DI MONTAGGIO');
-        renderInventory();
-      }
-      say('📋 FRANK ti consegna lo SCHEMA DI MONTAGGIO della sala. È entrato nell’inventario: puoi selezionarlo e usare GUARDA.');
+      if(inventory.indexOf('SCHEMA DI MONTAGGIO') === -1) inventory.push('SCHEMA DI MONTAGGIO');
+      renderInventory();
+      say('FRANK ti consegna lo SCHEMA DI MONTAGGIO. È entrato nell’inventario.');
       return;
     }
 
     frankBriefingComplete=true;
-    say('🎙️ FRANK: «Vai, prendi il materiale e vai in OCEAN 3. Segui la planimetria.»');
+    say('FRANK: «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
   }
-  function drinkCoffee(){
-    if(coffeeDrunk) return say('☕ Ho già bevuto il caffè. Ora sono pronto a lavorare.');
-    clearTimers();
-    coffeeDrunk = true;
-    inventory = inventory.filter(function(item){ return item !== 'CAFFÈ'; });
-    renderInventory();
-    say('☕ Bevo il caffè. Ahhh... adesso sì che si lavora!');
-  }
-
-  function beep(){
-    try{
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if(!AudioCtx) return;
-      const audio = new AudioCtx();
-      const osc = audio.createOscillator();
-      const gain = audio.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(480, audio.currentTime);
-      osc.frequency.linearRampToValueAtTime(1450, audio.currentTime + 0.8);
-      gain.gain.setValueAtTime(0.0001, audio.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.25, audio.currentTime + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 1.1);
-      osc.connect(gain);
-      gain.connect(audio.destination);
-      osc.start();
-      osc.stop(audio.currentTime + 1.15);
-    }catch(e){}
-  }
-
-  function radioCall(){
-    if(radioCalled) return;
-    radioCalled = true;
-    say('📻 RADIO — TECNICO DI PALCO: «Regia, regia... qui palco! Abbiamo un problema con il microfono del relatore! Non si sente in sala!»');
-    const radio = document.querySelector('[data-name="radio"]');
-    if(radio){
-      radio.style.outline = '3px solid #ff3b30';
-      later(function(){ radio.style.outline = ''; }, 1500);
-    }
-  }
-
-  function useMixer(){
-    if(!radioCalled){
-      say('Il RIVAGE è pronto. Non tocco niente finché dal palco non arriva una chiamata.');
-      return;
-    }
-    say('Trovo il canale del relatore sul RIVAGE. Eccolo... adesso devo agire sul fader giusto.');
-  }
-
-  function useFader(){
-    if(!radioCalled){
-      say('Non tocco il fader a caso. Prima devo sapere cosa succede sul palco.');
-      return;
-    }
-    if(!panicked){
-      panicked = true;
-      panic.style.display = 'flex';
-      say('FADER SBAGLIATO! FIIIIIIIIIIII! PANICO IN REGIA!');
-      beep();
-    }else{
-      say('Il fader è ancora lì. Il danno ormai è fatto.');
-    }
-  }
-
-  function callResponsible(){
-    if(!panicked){
-      return say('Prima devo avere un problema serio da segnalare.');
-    }
-    if(phoneConversationStarted){
-      return say('Il responsabile ha già riattaccato. Ora bisogna risolvere il problema.');
-    }
-
-    phoneConversationStarted=true;
-    panic.style.display='none';
-
-    say('📞 FONICO: «Ehi, il mixer della plenaria non risponde, fischia tutto!»');
-
-    // Ogni battuta resta abbastanza a lungo per essere letta.
-    later(function(){
-      say('📞 RESPONSABILE: «Ma che cazzo dici, impara a lavorare!»');
-    }, 7000);
-
-    later(function(){
-      say('Il responsabile riattacca. In regia rimaniamo solo io e il tecnico di palco.');
-    }, 14000);
-
-    later(function(){
-      say('🎙️ TECNICO DI PALCO: «Aspetta... ho capito qual è il problema.»');
-    }, 21000);
-
-    later(function(){
-      cableDiagnosed=true;
-      say('🎙️ TECNICO DI PALCO: «Il cavo del microfono è finito nel DMX delle luci! Lo ricollego subito.»');
-    }, 28000);
-  }
-
-  function fixCable(){
-    if(!cableDiagnosed){
-      return say('Sono solo cavi sotto la console. Non so ancora quale sia il problema.');
-    }
-    if(!cableFixed){
-      cableFixed=true;
-      say('🔌 TECNICO DI PALCO: «Eccolo! Era collegato al DMX delle luci.» Ricollega il cavo del microfono.');
-
-      later(function(){
-        say('🎙️ TECNICO DI PALCO: «Prova adesso.»');
-      }, 7000);
-
-      later(function(){
-        say('🎤 MICROFONO RELATORE: «Uno, due... mi sentite?» — Perfetto. Il congresso può partire.');
-      }, 14000);
-
-      later(function(){
-        say('📞 TELEFONO REGIA — RESPONSABILE: «Hai sbagliato, ha fischiato tutto, sei stato degradato, devi ricominciare la tua carriera dal livello iniziale di voi sottoposti, la SALETTA.»');
-      }, 21000);
-
-      later(function(){
-        say('📞 RESPONSABILE: «Vai in magazzino, segui le istruzioni dell’ON SITE MANAGER e buon divertimento. Che la tua carriera abbia un nuovo inizio.»');
-      }, 28000);
-
-      later(function(){
-        say('🚪 FINE REGIA GOLD — Vai in magazzino. La tua nuova carriera comincia dalla SALETTA.');
-        goWarehouse.style.display='block';
-      }, 35000);
-    }else{
-      say('Il cavo è già ricollegato. Il microfono funziona.');
-    }
-  }
-
 
   function getSaveData(){
     return {
@@ -910,6 +803,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(!planimetryDelivered){
         inventory=inventory.filter(function(item){ return item !== 'PLANIMETRIA NORD'; });
       }
+      if(planimetryDelivered && inventory.indexOf('PLANIMETRIA NORD') === -1) inventory.push('PLANIMETRIA NORD');
+      if(whatsappChatDelivered && inventory.indexOf('CHAT WHATSAPP') === -1) inventory.push('CHAT WHATSAPP');
+      if(assemblySchemaDelivered && inventory.indexOf('SCHEMA DI MONTAGGIO') === -1) inventory.push('SCHEMA DI MONTAGGIO');
       if(scene === 'barrier'){
         if(inventory.indexOf('CELLULARE') === -1) inventory.push('CELLULARE');
         if(inventory.indexOf('PASS') === -1) inventory.push('PASS');
@@ -1013,6 +909,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     exitScreen.style.display='none';
   });
   closePlanimetry.addEventListener('click', closeNorthPlanimetry);
+  document.getElementById('closeWhatsapp').addEventListener('click', closeWhatsapp);
   document.getElementById('northOcean1').addEventListener('click', function(){chooseNorthRoom('OCEAN 1');});
   document.getElementById('northOcean2').addEventListener('click', function(){chooseNorthRoom('OCEAN 2');});
   document.getElementById('northOcean3').addEventListener('click', function(){chooseNorthRoom('OCEAN 3');});
