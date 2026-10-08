@@ -274,15 +274,24 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function configureBarrierHotspots(){
     const config = {
-      mixer:   {title:'SBARRA AUTOMATICA', style:'left:35%;top:38%;width:35%;height:28%'},
-      fader:   {title:'GUARDIOLA', style:'left:8%;top:25%;width:25%;height:55%'},
-      postit:  {title:'CARTELLO FORNITORI', style:'left:2%;top:35%;width:20%;height:28%'},
-      radio:   {title:'TELECAMERA', style:'left:39%;top:8%;width:10%;height:22%'},
-      phone:   {title:'CABINA DI CONTROLLO', style:'left:8%;top:15%;width:28%;height:60%'},
-      monitor: {title:'INGRESSO MICO', style:'left:48%;top:15%;width:45%;height:45%'},
-      door:    {title:'USCITA', style:'left:75%;top:55%;width:20%;height:35%'},
-      cable:   {title:'CAVI ELETTRICI', style:'left:25%;top:68%;width:30%;height:18%'},
-      coffee:  {title:'BLOCCO DI CEMENTO', style:'left:0%;top:70%;width:25%;height:25%'}
+      // Sbarra: la barra rossa attraversa orizzontalmente il centro della scena.
+      mixer:   {title:'SBARRA AUTOMATICA', style:'left:36%;top:43%;width:48%;height:12%'},
+      // Guardiola: cabina sulla sinistra.
+      fader:   {title:'GUARDIOLA', style:'left:4%;top:20%;width:29%;height:55%'},
+      // Cartello "INGRESSO FORNITORI E TECNICI".
+      postit:  {title:'CARTELLO FORNITORI', style:'left:1%;top:30%;width:13%;height:24%'},
+      // Telecamera sul palo sopra la sbarra.
+      radio:   {title:'TELECAMERA', style:'left:40%;top:5%;width:10%;height:23%'},
+      // GUARDIA: hotspot stretto e centrato esattamente sul corpo della guardia.
+      phone:   {title:'GUARDIA — CONTROLLO PASS', style:'left:43%;top:27%;width:17%;height:56%'},
+      // Edificio/insegna MiCo sullo sfondo.
+      monitor: {title:'INGRESSO MICO', style:'left:61%;top:27%;width:25%;height:30%'},
+      // Segnaletica sulla destra.
+      door:    {title:'SEGNALETICA', style:'left:87%;top:12%;width:12%;height:58%'},
+      // Zona stradale davanti alla sbarra.
+      cable:   {title:'PIAZZALE', style:'left:26%;top:57%;width:60%;height:22%'},
+      // New Jersey in primo piano.
+      coffee:  {title:'BLOCCO DI CEMENTO', style:'left:0%;top:62%;width:30%;height:20%'}
     };
     hotspots.forEach(function(h){
       const name=h.dataset.name;
