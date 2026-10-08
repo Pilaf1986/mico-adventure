@@ -217,7 +217,6 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function drinkCoffee(){
     if(coffeeDrunk) return say('☕ Ho già bevuto il caffè. Ora sono pronto a lavorare.');
-    if(inventory.indexOf('CAFFÈ') === -1) return say('Non ho nessun caffè da bere.');
     clearTimers();
     const player = document.getElementById('player');
     player.classList.remove('drink','walk');
