@@ -752,7 +752,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       h.style.setProperty('visibility','hidden','important');
       h.style.setProperty('pointer-events','none','important');
     });
-    say('OCEAN 3: tutti gli hotspot sono stati disattivati.');
+    // Riattiva SOLO il hotspot del baule verde in primo piano.
+    const chestHotspot=document.querySelector('.hot[data-name="coffee"]');
+    if(chestHotspot){
+      chestHotspot.hidden=false;
+      chestHotspot.title='BAULE VERDE — CLICCA APRI';
+      chestHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:60;display:block!important;visibility:visible!important;pointer-events:auto!important';
+    }
+    say('OCEAN 3: clicca APRI sul baule verde per trovare il microfono gooseneck.');
   }
 
   function enterWarehouseExit(){
@@ -1024,6 +1031,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         });
         document.getElementById('scene').classList.add('ocean3-clean');
         document.getElementById('oceanChestOpen').style.display='none';
+        // Dopo il caricamento resta visibile soltanto il hotspot del baule verde.
+        const savedChestHotspot=document.querySelector('.hot[data-name="coffee"]');
+        if(savedChestHotspot){
+          savedChestHotspot.hidden=false;
+          savedChestHotspot.title='BAULE VERDE — CLICCA APRI';
+          savedChestHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:60;display:block!important;visibility:visible!important;pointer-events:auto!important';
+        }
         const podiumMic=document.getElementById('oceanPodiumMic');
         if(podiumMic) podiumMic.style.display='none';
         if(typeof loungeAudio !== 'undefined'){ loungeAudio.pause(); loungeAudio.currentTime=0; loungeStarted=false; }
