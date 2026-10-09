@@ -12,6 +12,7 @@ body{display:flex;align-items:center;justify-content:center}
 #bg{width:100%;height:100%;display:block;object-fit:cover}
 .hot{position:absolute;cursor:pointer;background:transparent;border:0;z-index:2}
 .hot:hover{outline:2px dashed #ffd84a;outline-offset:-2px}
+    #scene.ocean3-clean .hot{display:none!important;visibility:hidden!important;pointer-events:none!important;outline:none!important}
 #faderHint{position:absolute;left:24%;top:51%;width:4%;height:7%;border:2px dashed transparent;box-sizing:border-box;pointer-events:none;z-index:9;transition:.15s}
 #scene:hover #faderHint{border-color:rgba(255,216,74,.35)}
 #ui{background:#11151d;border:3px solid #69717e;border-top:0;padding:7px}
@@ -654,6 +655,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function enterBarrier(){
     clearTimers();
+    document.getElementById('scene').classList.remove('ocean3-clean');
     scene='barrier';
     barrierReached=true;
     if(typeof warehouseAudio !== 'undefined'){
@@ -722,6 +724,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function enterOcean3(){
     clearTimers();
     scene='ocean3';
+    document.getElementById('scene').classList.add('ocean3-clean');
     frankBriefingRunning=false;
     goWarehouse.style.display='none';
     goBarrier.style.display='none';
@@ -752,6 +755,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function enterWarehouseExit(){
     clearTimers();
+    document.getElementById('scene').classList.remove('ocean3-clean');
     scene='warehouseExit';
     frankBriefingRunning=false;
     if(typeof loungeAudio !== 'undefined'){
