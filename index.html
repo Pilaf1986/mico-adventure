@@ -1606,12 +1606,19 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let barrierStarted = false;
 
   // Sottofondo OCEAN 3: vociare indistinto e martellate sul ferro.
-  const ocean3Audio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/ocean3_ambience.mp3');
+  const ocean3Audio = new Audio('./assets/ocean3_ambience.mp3?v=2');
   ocean3Audio.loop = true;
   ocean3Audio.volume = 0.30;
   ocean3Audio.preload = 'auto';
   ocean3Audio.playsInline = true;
   let ocean3Started = false;
+
+  // Riprendi il sottofondo al primo clic utile se il browser ha bloccato l'avvio automatico.
+  document.addEventListener('click', function(){
+    if(scene === 'ocean3' && !audioMuted && ocean3Audio.paused){
+      ocean3Audio.play().then(function(){ ocean3Started=true; }).catch(function(error){ console.warn('Audio OCEAN 3 non avviato:', error); });
+    }
+  }, true);
 
   // Musica lounge ambientale della Regia Gold.
   const loungeAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/regia-gold-lounge-v2.mp3');
