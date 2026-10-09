@@ -61,7 +61,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   #closeAssemblySchema{position:absolute;right:8px;top:8px;z-index:5}
 .northRoom{position:absolute;display:none;font:bold 11px monospace;padding:6px 8px;border:2px solid #ffd84a;background:#252a34;color:#fff;box-shadow:0 0 8px #000}
 .northRoom:hover{background:#3e4654;color:#ffd84a}
-#oceanChestOpen{position:absolute;left:62%;top:58%;width:22%;height:27%;z-index:25;display:none;pointer-events:none;box-sizing:border-box;background:rgba(8,12,10,.94);border:3px solid #8bbd54;box-shadow:0 0 16px #000;align-items:center;justify-content:center;flex-direction:column;color:#e9f7d7;text-align:center;font:bold clamp(10px,1.5vw,17px) monospace}
+#oceanChestOpen{position:absolute;left:28%;top:62%;width:24%;height:30%;z-index:25;display:none;pointer-events:none;box-sizing:border-box;background:rgba(8,12,10,.94);border:3px solid #8bbd54;box-shadow:0 0 16px #000;align-items:center;justify-content:center;flex-direction:column;color:#e9f7d7;text-align:center;font:bold clamp(10px,1.5vw,17px) monospace}
 #oceanChestOpen .chestLid{width:72%;height:22%;background:linear-gradient(#719342,#355322);border:3px solid #a4c66b;transform:skewY(-8deg);box-sizing:border-box;margin-bottom:3px}
 #oceanChestOpen .chestBody{width:78%;height:35%;background:linear-gradient(90deg,#30491f,#789d3f,#30491f);border:3px solid #a4c66b;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:clamp(18px,3vw,34px)}
 #oceanChestOpen .chestLabel{font-size:clamp(8px,1vw,12px);margin-top:4px}
@@ -83,7 +83,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="fader" title="PRIMO FADER — USA QUI" style="left:19%;top:43%;width:16%;height:22%;z-index:50;pointer-events:auto"></div>
     <div class="hot" data-name="postit" title="POST-IT" style="left:42%;top:68%;width:7%;height:12%;z-index:10"></div>
     <div id="faderHint"></div>
-    <button type="button" id="oceanChestHotspot" style="display:none;position:absolute;left:61%;top:58%;width:24%;height:29%;z-index:10000;background:rgba(40,70,20,.28);border:3px dashed #c6ff73;color:#fff;font:bold clamp(10px,1.4vw,16px) monospace;text-shadow:0 2px 4px #000;box-shadow:0 0 14px #9dff45;cursor:pointer" aria-label="Apri il baule verde">CLICCA QUI<br>APRI BAULE</button>
+    <button type="button" id="oceanChestHotspot" style="display:none;position:absolute;left:0.5%;top:57%;width:54%;height:42%;z-index:10000;background:transparent;border:0;color:transparent;box-shadow:none;cursor:pointer;padding:0;margin:0" aria-label="Apri uno dei bauli verdi" title="Clicca sul baule verde"><span style="position:absolute;inset:0;background:transparent;border:2px solid transparent"></span></button>
     <div id="oceanChestOpen" aria-label="Baule verde aperto con microfono gooseneck">
       <div class="chestLid"></div>
       <div class="chestBody">🎤</div>
@@ -756,12 +756,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     // Controllo visibile per aprire il baule verde.
     const chestButton=document.getElementById('oceanChestHotspot');
     chestButton.style.display='block';
+    chestButton.style.left='0.5%'; chestButton.style.top='57%'; chestButton.style.width='54%'; chestButton.style.height='42%';
     chestButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
     const chestHotspot=document.querySelector('.hot[data-name="coffee"]');
     if(chestHotspot){
       chestHotspot.hidden=false;
       chestHotspot.title='BAULE VERDE — CLICCA PER APRIRE';
-      chestHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:9999;display:block!important;visibility:visible!important;pointer-events:auto!important';
+      chestHotspot.style.cssText='left:0.5%;top:57%;width:54%;height:42%;z-index:9999;display:block!important;visibility:visible!important;pointer-events:auto!important;background:transparent;border:0';
       chestHotspot.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
     }
     say('OCEAN 3: clicca APRI sul baule verde per trovare il microfono gooseneck.');
