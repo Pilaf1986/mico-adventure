@@ -87,6 +87,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       <div class="chestBody">🎤</div>
       <div class="chestLabel">BAULE APERTO</div>
     </div>
+    <div id="oceanPodiumMic" style="display:none;position:absolute;left:43%;top:33%;z-index:40;background:rgba(20,35,20,.92);color:#b9ff89;border:2px solid #b9ff89;padding:8px 10px;font:bold 12px monospace;pointer-events:none">🎤 MICROFONO MONTATO SUL PODIO</div>
     <div class="hot" data-name="radio" title="RADIO" style="left:85%;top:57%;width:3%;height:14%"></div>
     <div class="hot" data-name="phone" title="TELEFONO REGIA" style="left:76%;top:57%;width:8%;height:17%;z-index:10"></div>
     <div class="hot" data-name="monitor" title="MONITOR" style="left:36%;top:22%;width:17%;height:13%"></div>
@@ -565,6 +566,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       itemButton.textContent = item;
       itemButton.title = 'Esamina ' + item;
       itemButton.addEventListener('click', function(){
+        if(scene === 'ocean3' && verb === 'DAI' && item === 'MICROFONO GOOSENECK'){
+          selectedItem=item;
+          return say('🎤 MICROFONO GOOSENECK selezionato. Ora clicca su Paul per consegnarglielo.');
+        }
         if(verb === 'GUARDA' && item === 'PLANIMETRIA NORD') return openNorthPlanimetry();
         if((verb === 'GUARDA' || verb === 'USA') && item === 'CHAT WHATSAPP') return openWhatsapp();
         if(verb === 'GUARDA' && item === 'SCHEMA DI MONTAGGIO') return openAssemblySchema();
@@ -735,16 +740,22 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       bg.onerror=null;
       bg.style.background='transparent';
     };
-    // Scena 5: hotspot del baule verde che contiene il microfono da podio.
+    // OCEAN 3: manteniamo solo due hotspot interattivi: baule verde e Paul.
     document.getElementById('oceanChestOpen').style.display='none';
-    configureWarehouseHotspots();
+    hotspots.forEach(function(h){ h.style.display='none'; });
     const caseHotspot=hotspots.find(function(h){return h.dataset.name==='coffee';});
     if(caseHotspot){
-      caseHotspot.style.cssText='left:62%;top:58%;width:22%;height:27%;z-index:20';
-      caseHotspot.style.display='block';
-      caseHotspot.title='BAULE VERDE — MATERIALE OCEAN 3';
+      caseHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:30;display:block';
+      caseHotspot.title='BAULE VERDE — APRI PER TROVARE IL MICROFONO';
+      caseHotspot.textContent='';
     }
-    say('🔧 SCENA 5 — OCEAN 3. La sala è ancora da allestire. Apri il baule verde per controllare il materiale.');
+    const paulHotspot=hotspots.find(function(h){return h.dataset.name==='phone';});
+    if(paulHotspot){
+      paulHotspot.style.cssText='left:10%;top:23%;width:19%;height:54%;z-index:30;display:block';
+      paulHotspot.title='PAUL — TECNICO, PRIMO A SINISTRA';
+      paulHotspot.textContent='';
+    }
+    say('🔧 OCEAN 3 — Ci sono due hotspot: il baule verde in primo piano e Paul, il tecnico a sinistra.');
   }
 
   function enterWarehouseExit(){
@@ -1203,6 +1214,41 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.getElementById('northWarehouse').addEventListener('click', function(){chooseNorthRoom('MAGAZZINO');});
 
   function act(name){
+    if(scene === 'ocean3'){
+      if(name === 'coffee'){
+        const chestVisual=document.getElementById('oceanChestOpen');
+        if(verb === 'APRI'){
+          chestVisual.style.display='flex';
+          chestVisual.style.zIndex='999';
+          if(inventory.indexOf('MICROFONO GOOSENECK') === -1){
+            inventory.push('MICROFONO GOOSENECK');
+            renderInventory();
+            return say('🟢 Apri il baule verde: dentro trovi il MICROFONO GOOSENECK. Lo aggiungo all’inventario.');
+          }
+          return say('🟢 Il baule verde è già aperto: il microfono gooseneck è nell’inventario.');
+        }
+        if(verb === 'GUARDA') return say('🟢 Un baule verde in primo piano, pieno di materiale per il montaggio.');
+        return say('Seleziona APRI per aprire il baule verde.');
+      }
+      if(name === 'phone'){
+        if(verb === 'PARLA') return say('👷 PAUL: «Ehy Andriu, passami il microfono che lo vado a montare!»');
+        if(verb === 'DAI'){
+          if(selectedItem !== 'MICROFONO GOOSENECK') return say('Paul: «Ehy Andriu, passami il microfono che lo vado a montare!» Seleziona prima il MICROFONO GOOSENECK nell’inventario.');
+          const idx=inventory.indexOf('MICROFONO GOOSENECK');
+          if(idx !== -1) inventory.splice(idx,1);
+          selectedItem='';
+          renderInventory();
+          const chestVisual=document.getElementById('oceanChestOpen');
+          chestVisual.style.display='none';
+          const podium=document.getElementById('oceanPodiumMic');
+          if(podium) podium.style.display='block';
+          return say('🎤 Hai dato il microfono a Paul. «Grande, Andriu!» Paul lo monta sul podio. MONTAGGIO COMPLETATO.');
+        }
+        if(verb === 'GUARDA') return say('👷 Paul è il primo tecnico a sinistra. Sta aspettando il microfono gooseneck.');
+        return say('Parla con Paul oppure seleziona DAI e scegli il MICROFONO GOOSENECK nell’inventario.');
+      }
+      return say('In OCEAN 3 puoi interagire soltanto con il baule verde e con Paul.');
+    }
     // Riconoscimento robusto del baule Ocean 3 anche se una partita salvata
     // mantiene un valore di scena non aggiornato.
     const oceanChestHotspot = hotspots.find(function(h){return h.dataset.name === 'coffee';});
