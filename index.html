@@ -626,7 +626,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function chooseNorthRoom(room){
     if(room === 'MAGAZZINO'){
       closeNorthPlanimetry();
-      return enterWarehouse();
+      // Il magazzino operativo di Frank è accessibile solo dopo il rientro autorizzato dalla sbarra.
+      if(scene === 'barrier' && accessGranted) return enterWarehouse();
+      return enterWarehouseExit();
     }
     closeNorthPlanimetry();
     say('📐 PLANIMETRIA NORD — Destinazione selezionata: ' + room + '.');
@@ -635,6 +637,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function enterWarehouseExit(){
     clearTimers();
     scene='warehouseExit';
+    frankBriefingRunning=false;
     if(typeof loungeAudio !== 'undefined'){
       loungeAudio.pause();
       loungeAudio.currentTime = 0;
@@ -662,6 +665,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   function enterWarehouse(){
+    // Blocco di sicurezza: nessun percorso può aprire la scena di Frank prima dell'accesso autorizzato.
+    if(scene !== 'barrier' || !accessGranted){
+      return enterWarehouseExit();
+    }
     clearTimers();
     scene='warehouse';
     if(typeof loungeAudio !== 'undefined'){
