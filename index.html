@@ -265,7 +265,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     buttons.forEach(function(button){
       button.classList.toggle('sel', button.dataset.verb === verb);
     });
-    say(scene === 'warehouse'
+    say(scene === 'warehouse' || scene === 'warehouseExit'
       ? verb + ' selezionato. Ora clicca un oggetto nel Magazzino.'
       : scene === 'barrier'
         ? verb + ' selezionato. Ora clicca un oggetto alla Sbarra.'
@@ -632,6 +632,35 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     say('📐 PLANIMETRIA NORD — Destinazione selezionata: ' + room + '.');
   }
 
+  function enterWarehouseExit(){
+    clearTimers();
+    scene='warehouseExit';
+    if(typeof loungeAudio !== 'undefined'){
+      loungeAudio.pause();
+      loungeAudio.currentTime = 0;
+      loungeStarted = false;
+    }
+    if(typeof barrierAudio !== 'undefined'){
+      barrierAudio.pause();
+      barrierAudio.currentTime=0;
+      barrierStarted=false;
+    }
+    if(typeof warehouseAudio !== 'undefined'){
+      warehouseAudio.currentTime = 0;
+      if(!audioMuted) warehouseAudio.play().catch(function(){});
+      warehouseStarted = !audioMuted;
+    }
+    panic.style.display='none';
+    goWarehouse.style.display='none';
+    goBarrier.textContent='🚧 VAI ALLA SBARRA';
+    goBarrier.style.display='block';
+    const bg=document.getElementById('bg');
+    bg.src=warehouseBackground;
+    bg.onerror=function(){ bg.src=regiaBackground; };
+    configureWarehouseHotspots();
+    say('🪪 MAGAZZINO — RESPONSABILE: «Andriu, il tuo PASS è stato revocato. Devi uscire subito dal MiCo. Vai alla sbarra e chiarisci la situazione.»');
+  }
+
   function enterWarehouse(){
     clearTimers();
     scene='warehouse';
@@ -868,7 +897,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           barrierAudio.play().catch(function(){});
           barrierStarted=true;
         }
-      }else if(scene === 'warehouse'){
+      }else if(scene === 'warehouse' || scene === 'warehouseExit'){
         document.getElementById('bg').src=warehouseBackground;
         configureWarehouseHotspots();
         if(typeof loungeAudio !== 'undefined'){
@@ -912,6 +941,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       frankBriefingComplete=!!data.frankBriefingComplete;
       frankBriefingRunning=false;
       if(scene === 'warehouse' && frankBriefingComplete){
+        goBarrier.textContent='🚧 VAI ALLA SBARRA';
+        goBarrier.style.display='block';
+      }
+      if(scene === 'warehouseExit'){
         goBarrier.textContent='🚧 VAI ALLA SBARRA';
         goBarrier.style.display='block';
       }
@@ -987,7 +1020,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   goWarehouse.addEventListener('click', function(){
-    enterWarehouse();
+    if(accessGranted) enterWarehouse();
+    else enterWarehouseExit();
   });
 
   goBarrier.addEventListener('click', function(){
@@ -1058,6 +1092,27 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       }
       if(verb === 'APRI' && name === 'mixer') return say('🚧 La sbarra non si apre. Serve un’autorizzazione.');
       return say('Non c’è niente da fare con questo oggetto, per ora.');
+    }
+
+    if(scene === 'warehouseExit'){
+      if(verb === 'GUARDA'){
+        if(name === 'phone') return say('🪪 Il responsabile ti conferma che il PASS è revocato e che devi lasciare il MiCo.');
+        if(name === 'door') return say('🚪 L’uscita del magazzino porta verso la sbarra. Devi uscire e parlare con la guardia.');
+        return say('Il magazzino. Ti hanno appena comunicato che il tuo PASS è revocato.');
+      }
+      if((verb === 'PARLA' || verb === 'USA') && name === 'phone'){
+        say('🪪 RESPONSABILE: «Il PASS è revocato, Andriu. Esci dal MiCo e vai alla sbarra.»');
+        goBarrier.textContent='🚧 VAI ALLA SBARRA';
+        goBarrier.style.display='block';
+        return;
+      }
+      if(verb === 'APRI' && name === 'door'){
+        say('🚪 Esci dal magazzino e raggiungi la sbarra del MiCo.');
+        goBarrier.textContent='🚧 VAI ALLA SBARRA';
+        goBarrier.style.display='block';
+        return;
+      }
+      return say('Non c’è niente da fare qui: devi raggiungere la sbarra.');
     }
 
     if(scene === 'warehouse'){
