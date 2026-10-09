@@ -1259,16 +1259,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function act(name){
     if(scene === 'ocean3'){
       if(name === 'coffee'){
+        // OCEAN 3: cliccare il baule assegna subito il microfono, senza mostrare la grafica SVG del baule aperto.
         const chestVisual=document.getElementById('oceanChestOpen');
-        // In OCEAN 3 il clic sul baule lo apre direttamente, senza dipendere dal verbo selezionato.
-        chestVisual.style.display='flex';
-        chestVisual.style.zIndex='999';
-        if(inventory.indexOf('MICROFONO GOOSENECK') === -1){
-          inventory.push('MICROFONO GOOSENECK');
+        if(chestVisual) chestVisual.style.display='none';
+        if(inventory.indexOf('MICROFONO GOOSENECK DA PODIO') === -1 && inventory.indexOf('MICROFONO GOOSENECK') === -1){
+          inventory.push('MICROFONO GOOSENECK DA PODIO');
           renderInventory();
-          return say('🟢 Hai aperto il baule verde: trovi il MICROFONO GOOSENECK. Aggiunto all’inventario.');
+          return say('🎤 Hai preso dal baule il MICROFONO GOOSENECK DA PODIO. Aggiunto all’inventario.');
         }
-        return say('🟢 Il baule verde è aperto: il microfono gooseneck è già nell’inventario.');
+        return say('🎤 Hai già preso il microfono gooseneck: è nell’inventario.');
       }
       if(name === 'phone'){
         if(verb === 'PARLA') return say('👷 PAUL: «Ehy Andriu, passami il microfono che lo vado a montare!»');
