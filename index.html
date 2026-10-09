@@ -90,7 +90,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       <div class="chestBody">🎤</div>
       <div class="chestLabel">BAULE APERTO</div>
     </div>
-    <div id="oceanPodiumMic" style="display:none;position:absolute;left:43%;top:33%;z-index:40;background:rgba(20,35,20,.92);color:#b9ff89;border:2px solid #b9ff89;padding:8px 10px;font:bold 12px monospace;pointer-events:none">🎤 MICROFONO MONTATO SUL PODIO</div>
+
     <div class="hot" data-name="radio" title="RADIO" style="left:85%;top:57%;width:3%;height:14%"></div>
     <div class="hot" data-name="phone" title="PAUL — TECNICO DI MONTAGGIO" style="left:23%;top:34%;width:13%;height:31%;z-index:60"></div>
     <div class="hot" data-name="monitor" title="MONITOR" style="left:36%;top:22%;width:17%;height:13%"></div>
@@ -1083,8 +1083,6 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           savedChestHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:9999;display:block!important;visibility:visible!important;pointer-events:auto!important';
           savedChestHotspot.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
         }
-        const podiumMic=document.getElementById('oceanPodiumMic');
-        if(podiumMic) podiumMic.style.display='none';
         if(typeof loungeAudio !== 'undefined'){ loungeAudio.pause(); loungeAudio.currentTime=0; loungeStarted=false; }
         if(typeof warehouseAudio !== 'undefined'){ warehouseAudio.pause(); warehouseAudio.currentTime=0; warehouseStarted=false; }
         if(typeof barrierAudio !== 'undefined'){ barrierAudio.pause(); barrierAudio.currentTime=0; barrierStarted=false; }
@@ -1326,8 +1324,6 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           renderInventory();
           const chestVisual=document.getElementById('oceanChestOpen');
           if(chestVisual) chestVisual.style.display='none';
-          const podium=document.getElementById('oceanPodiumMic');
-          if(podium) podium.style.display='block';
           return say('🎤 Hai dato il microfono a Paul. «Grande, Andriu!» Lo monta sul podio. MONTAGGIO COMPLETATO.');
         }
         if(verb === 'GUARDA') return say('👷 Paul è il tecnico in primo piano a sinistra. Sta aspettando lo schema di montaggio.');
