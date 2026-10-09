@@ -738,6 +738,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function enterOcean3(){
     clearTimers();
     scene='ocean3';
+    if(typeof warehouseAudio !== 'undefined'){ warehouseAudio.pause(); warehouseAudio.currentTime=0; warehouseStarted=false; }
+    if(typeof barrierAudio !== 'undefined'){ barrierAudio.pause(); barrierAudio.currentTime=0; barrierStarted=false; }
+    if(typeof loungeAudio !== 'undefined'){ loungeAudio.pause(); loungeAudio.currentTime=0; loungeStarted=false; }
+    if(typeof ocean3Audio !== 'undefined' && !audioMuted){ ocean3Audio.currentTime=0; ocean3Audio.play().catch(function(){}); ocean3Started=true; }
     document.getElementById('scene').classList.add('ocean3-clean');
     frankBriefingRunning=false;
     goWarehouse.style.display='none';
@@ -1070,6 +1074,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(scene === 'ocean3'){
         // OCEAN 3 va ripristinata come scena, non deve ricadere nel ramo Regia Gold.
         document.getElementById('bg').src='./assets/ocean3-scena5.png?rev=0841331';
+        if(typeof ocean3Audio !== 'undefined' && !audioMuted){ ocean3Audio.currentTime=0; ocean3Audio.play().catch(function(){}); ocean3Started=true; }
         document.querySelectorAll('.hot').forEach(function(h){
           h.hidden=true;
           h.style.setProperty('display','none','important');
@@ -1099,6 +1104,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           savedChestHotspot.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
         }
         if(typeof loungeAudio !== 'undefined'){ loungeAudio.pause(); loungeAudio.currentTime=0; loungeStarted=false; }
+        if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Started=false; }
         if(typeof warehouseAudio !== 'undefined'){ warehouseAudio.pause(); warehouseAudio.currentTime=0; warehouseStarted=false; }
         if(typeof barrierAudio !== 'undefined'){ barrierAudio.pause(); barrierAudio.currentTime=0; barrierStarted=false; }
       }else if(scene === 'barrier'){
@@ -1211,9 +1217,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       loungeAudio.pause();
       warehouseAudio.pause();
       barrierAudio.pause();
+      ocean3Audio.pause();
     }else{
       if(scene === 'warehouse') warehouseAudio.play().catch(function(){});
       else if(scene === 'barrier') barrierAudio.play().catch(function(){});
+      else if(scene === 'ocean3') ocean3Audio.play().catch(function(){});
       else loungeAudio.play().catch(function(){});
     }
     updateAudioButton();
@@ -1593,6 +1601,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   barrierAudio.preload = 'auto';
   barrierAudio.playsInline = true;
   let barrierStarted = false;
+
+  // Sottofondo OCEAN 3: vociare indistinto e martellate sul ferro.
+  const ocean3Audio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/ocean3_ambience.mp3');
+  ocean3Audio.loop = true;
+  ocean3Audio.volume = 0.30;
+  ocean3Audio.preload = 'auto';
+  ocean3Audio.playsInline = true;
+  let ocean3Started = false;
 
   // Musica lounge ambientale della Regia Gold.
   const loungeAudio = new Audio('https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/regia-gold-lounge-v2.mp3');
