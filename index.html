@@ -713,9 +713,18 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     goBarrier.style.display='none';
     panic.style.display='none';
     const bg=document.getElementById('bg');
-    bg.src='https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/ocean3-scena5.png?v=20261009';
+    bg.onerror=null;
+    bg.onload=null;
+    bg.style.background='#fff';
+    bg.src='./assets/ocean3-scena5.png?rev=0841331';
     bg.onerror=function(){
-      say('⚠️ SCENA 5 — L’immagine di OCEAN 3 non è stata trovata. Carica ocean3-scena5.png nella cartella assets del repository.');
+      bg.onerror=null;
+      bg.removeAttribute('src');
+      say('⚠️ SCENA 5 — Non riesco a caricare ./assets/ocean3-scena5.png. Controlla che il file sia pubblicato nella cartella assets del sito GitHub Pages.');
+    };
+    bg.onload=function(){
+      bg.onerror=null;
+      bg.style.background='transparent';
     };
     // La scena 5 è l’area di montaggio: per ora conserva i comandi standard e mostra il briefing operativo.
     configureWarehouseHotspots();
