@@ -859,7 +859,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       bg.src=regiaBackground;
     };
     configureWarehouseHotspots();
-    say('MAGAZZINO MICO A/V — Andriu è arrivato al livello iniziale della sua nuova carriera.');
+    // In scena 2 si parte sempre da GUARDA: il briefing di Frank non deve avviarsi
+    // semplicemente cliccando il suo hotspot con l'azione rimasta selezionata.
+    verb = 'GUARDA';
+    buttons.forEach(function(button){
+      button.classList.toggle('sel', button.dataset.verb === verb);
+    });
+    say('MAGAZZINO MICO A/V — Andriu è arrivato al livello iniziale della sua nuova carriera. Seleziona PARLA e poi clicca sull’ON SITE MANAGER per iniziare il briefing.');
   }
 
     function talkOnSiteManager(){
@@ -1461,7 +1467,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         return say('Un angolo del magazzino pieno di attrezzatura A/V.');
       }
       if(verb === 'PARLA' && name === 'phone') return talkOnSiteManager();
-      if(verb === 'USA' && name === 'phone') return talkOnSiteManager();
+      if(verb === 'USA' && name === 'phone') return say('Frank è l’ON SITE MANAGER. Seleziona PARLA e poi clicca su di lui per ascoltare il briefing.');
       if(verb === 'APRI' && name === 'door') return say('Apro l’uscita del magazzino. Prima devo parlare con la cooperativa.');
       if(verb === 'CHIUDI' && name === 'door') return say('Meglio non chiudere l’uscita. Devo tornare fuori.');
       return say('Non c’è niente da fare con questo oggetto, per ora.');
