@@ -258,6 +258,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let warehouseConversationStarted = false;
   let planimetryDelivered = false;
   let assemblySchemaDelivered = false;
+  let paulHasSchema = false;
   let whatsappChatDelivered = false;
   let frankBriefingComplete = false;
   let frankBriefingRunning = false;
@@ -964,6 +965,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       phoneConversationStarted: phoneConversationStarted,
       planimetryDelivered: planimetryDelivered,
       assemblySchemaDelivered: assemblySchemaDelivered,
+      paulHasSchema: paulHasSchema,
       whatsappChatDelivered: whatsappChatDelivered,
       frankBriefingComplete: frankBriefingComplete,
       inventory: inventory.slice(),
@@ -1155,6 +1157,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       phoneConversationStarted=!!data.phoneConversationStarted;
       planimetryDelivered=!!data.planimetryDelivered;
       assemblySchemaDelivered=!!data.assemblySchemaDelivered;
+      paulHasSchema=!!data.paulHasSchema;
       whatsappChatDelivered=!!data.whatsappChatDelivered;
       frankBriefingComplete=!!data.frankBriefingComplete;
       frankBriefingRunning=false;
@@ -1316,21 +1319,21 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       }
       if(name === 'phone'){
         if(verb === 'PARLA'){
-          if(!assemblySchemaDelivered) return say('PAUL: «Ciao Andriu, qui Paul, lavoreremo insieme oggi. Se mi dai lo schema di montaggio capisco il da farsi.»');
+          if(!paulHasSchema) return say('PAUL: «Ciao Andriu, qui Paul, lavoreremo insieme oggi. Mi dai lo schema di montaggio? Così capisco come allestire OCEAN 3.»');
           return say('PAUL: «Grazie, è un po’ incasinato ma ce la faremo. Vedo che il congresso si chiama FICA 2026. Bah, sarà la Federazione Italiana Congressisti Anonimi, chissà di cosa parlano. Ok, passami il microfono che lo monto a podio.»');
         }
         if(verb === 'DAI' && selectedItem === 'SCHEMA DI MONTAGGIO'){
-          if(assemblySchemaDelivered) return say('PAUL: «Lo schema ce l’ho già, grazie! Ora passami il microfono gooseneck e lo monto a podio.»');
+          if(paulHasSchema) return say('PAUL: «Lo schema ce l’ho già, grazie! Ora passami il microfono gooseneck e lo monto a podio.»');
           const schemaIndex=inventory.indexOf('SCHEMA DI MONTAGGIO');
           if(schemaIndex !== -1) inventory.splice(schemaIndex,1);
           selectedItem='';
-          assemblySchemaDelivered=true;
+          paulHasSchema=true;
           renderInventory();
-          return say('PAUL: «Grazie, è un po’ incasinato ma ce la faremo. Vedo che il congresso si chiama FICA 2026. Bah, sarà la Federazione Italiana Congressisti Anonimi, chissà di cosa parlano. Ok, passami il microfono che lo monto a podio.»');
+          return say('PAUL: «Perfetto, grazie per lo schema! Ora mi serve il microfono gooseneck: recuperalo dal baule e passamelo, così lo monto sul podio.»');
         }
         if(verb === 'DAI'){
           if(selectedItem !== 'MICROFONO GOOSENECK' && selectedItem !== 'MICROFONO GOOSENECK DA PODIO') return say('👷 PAUL: «Prima mi serve lo SCHEMA DI MONTAGGIO!» Seleziona SCHEMA DI MONTAGGIO nell’inventario e clicca su di me.');
-          if(!assemblySchemaDelivered) return say('👷 PAUL: «Prima lo schema, Andriu! Senza istruzioni rischio di montare tutto al contrario.»');
+          if(!paulHasSchema) return say('👷 PAUL: «Prima lo schema, Andriu! Senza istruzioni rischio di montare tutto al contrario.»');
           const micItem=selectedItem;
           const idx=inventory.indexOf(micItem);
           if(idx !== -1) inventory.splice(idx,1);
