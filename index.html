@@ -726,9 +726,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       bg.onerror=null;
       bg.style.background='transparent';
     };
-    // La scena 5 è l’area di montaggio: per ora conserva i comandi standard e mostra il briefing operativo.
+    // Scena 5: hotspot del baule verde che contiene il microfono da podio.
     configureWarehouseHotspots();
-    say('🔧 SCENA 5 — OCEAN 3. La sala è ancora da allestire. La squadra di montaggio è sul posto e i due bauli verdi contengono il materiale. Consulta lo schema di montaggio e recupera il materiale prima di iniziare.');
+    const caseHotspot=hotspots.find(function(h){return h.dataset.name==='coffee';});
+    if(caseHotspot){
+      caseHotspot.style.cssText='left:62%;top:58%;width:22%;height:27%;z-index:20';
+      caseHotspot.style.display='block';
+      caseHotspot.title='BAULE VERDE — MATERIALE OCEAN 3';
+    }
+    say('🔧 SCENA 5 — OCEAN 3. La sala è ancora da allestire. Apri il baule verde per controllare il materiale.');
   }
 
   function enterWarehouseExit(){
@@ -1187,6 +1193,23 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.getElementById('northWarehouse').addEventListener('click', function(){chooseNorthRoom('MAGAZZINO');});
 
   function act(name){
+    if(scene === 'ocean3'){
+      if(verb === 'GUARDA' && name === 'coffee') return say('🟢 BAULE VERDE: «MATERIALE OCEAN 3». È uno dei bauli della squadra di montaggio.');
+      if(verb === 'APRI' && name === 'coffee'){
+        if(inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1) return say('🟢 Il baule è già aperto. Hai già preso il microfono gooseneck da podio.');
+        inventory.push('MICROFONO GOOSENECK DA PODIO');
+        renderInventory();
+        return say('🟢 Apri il baule verde: dentro, ben protetto nella custodia, trovi un MICROFONO GOOSENECK DA PODIO. Lo prendi e lo aggiungi all’inventario.');
+      }
+      if(verb === 'PRENDI' && name === 'coffee'){
+        if(inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1) return say('Hai già preso il microfono gooseneck da podio.');
+        inventory.push('MICROFONO GOOSENECK DA PODIO');
+        renderInventory();
+        return say('🟢 Prendi dal baule il MICROFONO GOOSENECK DA PODIO e lo aggiungi all’inventario.');
+      }
+      if(verb === 'GUARDA') return say('La sala OCEAN 3 è ancora da allestire. La squadra di montaggio è pronta e i bauli contengono il materiale.');
+      return say('Per prima cosa apri il baule verde e controlla il materiale.');
+    }
     if(scene === 'barrier'){
       if(verb === 'GUARDA'){
         if(name === 'mixer') return say('🚧 La sbarra è abbassata. Senza pass, Andriu non entra.');
