@@ -83,6 +83,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="fader" title="PRIMO FADER — USA QUI" style="left:19%;top:43%;width:16%;height:22%;z-index:50;pointer-events:auto"></div>
     <div class="hot" data-name="postit" title="POST-IT" style="left:42%;top:68%;width:7%;height:12%;z-index:10"></div>
     <div id="faderHint"></div>
+    <button type="button" id="paulHotspot" aria-label="Parla con Paul, tecnico di montaggio" title="PAUL — TECNICO DI MONTAGGIO" style="display:none;position:absolute;left:23%;top:34%;width:13%;height:31%;z-index:10002;background:transparent;border:2px solid transparent;color:transparent;box-shadow:none;cursor:pointer;padding:0;margin:0" onclick="event.preventDefault();event.stopPropagation();">Paul</button>
     <button type="button" id="oceanChestHotspot" style="display:none;position:absolute;left:0.5%;top:57%;width:54%;height:42%;z-index:10000;background:transparent;border:0;color:transparent;box-shadow:none;cursor:pointer;padding:0;margin:0" aria-label="Apri uno dei bauli verdi" title="Clicca sul baule verde"><span style="position:absolute;inset:0;background:transparent;border:2px solid transparent"></span></button>
     <div id="oceanChestOpen" aria-label="Baule verde aperto con microfono gooseneck">
       <div class="chestLid"></div>
@@ -758,6 +759,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       h.style.setProperty('pointer-events','none','important');
     });
     // Controllo visibile per aprire il baule verde.
+    const paulButton=document.getElementById('paulHotspot');
+    paulButton.style.display='block';
+    paulButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('phone');};
     const chestButton=document.getElementById('oceanChestHotspot');
     chestButton.style.display='block';
     chestButton.style.left='0.5%'; chestButton.style.top='57%'; chestButton.style.width='54%'; chestButton.style.height='42%';
@@ -776,6 +780,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     clearTimers();
     const chestButton=document.getElementById('oceanChestHotspot');
     if(chestButton) chestButton.style.display='none';
+    const paulButton=document.getElementById('paulHotspot');
+    if(paulButton) paulButton.style.display='none';
     document.getElementById('scene').classList.remove('ocean3-clean');
     scene='warehouseExit';
     frankBriefingRunning=false;
