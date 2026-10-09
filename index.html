@@ -1206,12 +1206,27 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     // Riconoscimento robusto del baule Ocean 3 anche se una partita salvata
     // mantiene un valore di scena non aggiornato.
     const oceanChestHotspot = hotspots.find(function(h){return h.dataset.name === 'coffee';});
-    const isOceanChest = name === 'coffee' && oceanChestHotspot &&
-      oceanChestHotspot.title.indexOf('BAULE VERDE') !== -1;
+    const currentBgSrc = document.getElementById('bg').getAttribute('src') || '';
+    const isOceanChest = name === 'coffee' && (
+      scene === 'ocean3' ||
+      currentBgSrc.indexOf('ocean3-scena5') !== -1 ||
+      (oceanChestHotspot && oceanChestHotspot.title.indexOf('BAULE VERDE') !== -1)
+    );
     if(isOceanChest){
       if(verb === 'GUARDA') return say('🟢 BAULE VERDE: «MATERIALE OCEAN 3». È uno dei bauli della squadra di montaggio.');
       if(verb === 'APRI' || verb === 'PRENDI'){
-        document.getElementById('oceanChestOpen').style.display='flex';
+        const chestVisual = document.getElementById('oceanChestOpen');
+        chestVisual.style.display='flex';
+        chestVisual.style.zIndex='999';
+        if(oceanChestHotspot){
+          oceanChestHotspot.style.background='rgba(40,75,20,.96)';
+          oceanChestHotspot.style.border='3px solid #a4c66b';
+          oceanChestHotspot.style.zIndex='998';
+          oceanChestHotspot.style.color='#fff';
+          oceanChestHotspot.textContent='🎤 BAULE APERTO';
+          oceanChestHotspot.style.font='bold 12px monospace';
+          oceanChestHotspot.style.display='block';
+        }
         if(inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1) return say('🟢 Il baule verde è aperto. Hai già preso il microfono gooseneck da podio.');
         inventory.push('MICROFONO GOOSENECK DA PODIO');
         renderInventory();
