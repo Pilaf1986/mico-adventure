@@ -107,6 +107,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
     <button type="button" id="goWarehouse">🚪 VAI IN MAGAZZINO</button>
     <button type="button" id="goBarrier">🚧 VAI ALLA SBARRA</button>
+    <button type="button" id="smokeBreakButton" style="display:none;position:absolute;left:50%;top:78%;transform:translateX(-50%);z-index:10010;background:#2b3326;color:#f6f0d4;border:2px solid #d2b66c;padding:12px 18px;font:bold clamp(12px,1.5vw,18px) monospace;cursor:pointer;box-shadow:0 0 12px #000">FAI A FUMARE</button>
 
     <div id="panicOverlay">
       <div class="panicText">FIIIIIIIIIIII!</div>
@@ -1259,6 +1260,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     else enterWarehouseExit();
   });
 
+  document.getElementById('smokeBreakButton').addEventListener('click', function(){
+    say('🚬 PAUSA SIGARETTA — Paul si allontana un momento dal podio. Il montaggio può aspettare cinque minuti.');
+  });
   goBarrier.addEventListener('click', function(){
     enterBarrier();
   });
@@ -1355,7 +1359,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           renderInventory();
           const chestVisual=document.getElementById('oceanChestOpen');
           if(chestVisual) chestVisual.style.display='none';
-          return say('🎤 Hai dato il microfono a Paul. «Grande, Andriu!» Lo monta sul podio. MONTAGGIO COMPLETATO.');
+          const smokeButton=document.getElementById('smokeBreakButton');
+          if(smokeButton) smokeButton.style.display='block';
+          return say('👷 PAUL: «Bom, qualcosa abbiamo fatto, PAUSA andiamo a fumare!»');
         }
         if(verb === 'GUARDA') return say('👷 Paul è il tecnico in primo piano a sinistra. Sta aspettando lo schema di montaggio.');
         return say('Parla con Paul: ti chiederà lo schema di montaggio. Poi seleziona DAI, scegli lo schema nell’inventario e clicca su Paul.');
