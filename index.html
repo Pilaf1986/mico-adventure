@@ -655,8 +655,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
     panic.style.display='none';
     goWarehouse.style.display='none';
-    goBarrier.textContent='🚧 VAI ALLA SBARRA';
-    goBarrier.style.display='block';
+    goBarrier.style.display='none';
     const bg=document.getElementById('bg');
     bg.src=warehouseBackground;
     bg.onerror=function(){ bg.src=regiaBackground; };
@@ -768,8 +767,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       say('FRANK: «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
       frankBriefingComplete=true;
       frankBriefingRunning=false;
-      goBarrier.textContent='🚧 VAI ALLA SBARRA';
-      goBarrier.style.display='block';
+      goBarrier.style.display='none';
     },56000);
   }
 
@@ -952,12 +950,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       frankBriefingComplete=!!data.frankBriefingComplete;
       frankBriefingRunning=false;
       if(scene === 'warehouse' && frankBriefingComplete){
-        goBarrier.textContent='🚧 VAI ALLA SBARRA';
-        goBarrier.style.display='block';
+        goBarrier.style.display='none';
       }
       if(scene === 'warehouseExit'){
-        goBarrier.textContent='🚧 VAI ALLA SBARRA';
-        goBarrier.style.display='block';
+        goBarrier.style.display='none';
       }
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
       if(!planimetryDelivered){
