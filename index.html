@@ -766,11 +766,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     paulButton.style.setProperty('pointer-events','auto','important');
     paulButton.style.left='20%'; paulButton.style.top='28%'; paulButton.style.width='19%'; paulButton.style.height='43%';
     paulButton.style.zIndex='10002';
-    paulButton.style.background='rgba(255,216,74,.18)';
-    paulButton.style.border='3px dashed #ffd84a';
-    paulButton.style.color='#fff'; paulButton.style.font='bold 15px monospace';
-    paulButton.style.textShadow='1px 1px 3px #000';
-    paulButton.textContent='PAUL — CLICCA QUI';
+    paulButton.style.background='transparent';
+    paulButton.style.border='0';
+    paulButton.style.outline='none';
+    paulButton.style.boxShadow='none';
+    paulButton.style.color='transparent';
+    paulButton.style.fontSize='0';
+    paulButton.style.textShadow='none';
+    paulButton.textContent='';
+    paulButton.setAttribute('aria-label','Parla con Paul');
     paulButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('phone');};
     const chestButton=document.getElementById('oceanChestHotspot');
     chestButton.style.display='block';
@@ -1063,8 +1067,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         const paulButton=document.getElementById('paulHotspot');
         if(paulButton){
           paulButton.hidden=false;
-          paulButton.style.cssText='position:absolute!important;left:20%!important;top:28%!important;width:19%!important;height:43%!important;z-index:10002!important;display:flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;pointer-events:auto!important;background:rgba(255,216,74,.18)!important;border:3px dashed #ffd84a!important;color:#fff!important;font:bold 15px monospace!important;text-shadow:1px 1px 3px #000!important;cursor:pointer!important;padding:0!important;margin:0!important';
-          paulButton.textContent='PAUL — CLICCA QUI';
+          paulButton.style.cssText='position:absolute!important;left:20%!important;top:28%!important;width:19%!important;height:43%!important;z-index:10002!important;display:block!important;visibility:visible!important;pointer-events:auto!important;background:transparent!important;border:0!important;outline:none!important;box-shadow:none!important;color:transparent!important;font-size:0!important;text-shadow:none!important;cursor:pointer!important;padding:0!important;margin:0!important';
+          paulButton.textContent='';
+          paulButton.setAttribute('aria-label','Parla con Paul');
           paulButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('phone');};
         }
         // Dopo il caricamento mostra il controllo visibile del baule verde.
