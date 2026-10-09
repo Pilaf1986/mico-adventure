@@ -108,6 +108,18 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 #viaCleanerBtn{right:5%;top:33%;width:18%;height:48%}
 #viaCoffeeBtn:hover,#viaBriocheBtn:hover,#viaCleanerBtn:hover{border-color:rgba(255,216,74,.45)!important;background:rgba(255,216,74,.06)!important}
 
+
+/* Scena 6: nessuna finestra messaggi; hotspot trasparenti con tooltip leggibili */
+#viabilitaScene #viaDialogue{display:none!important;visibility:hidden!important}
+#viabilitaScene .viaHot{font-size:0!important;color:transparent!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;text-shadow:none!important}
+#viabilitaScene #viaCoffeeBtn:hover::after,
+#viabilitaScene #viaBriocheBtn:hover::after,
+#viabilitaScene #viaCleanerBtn:hover::after{
+ content:attr(data-label);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+ display:block;padding:8px 11px;background:rgba(0,0,0,.9);border:1px solid #e5d18b;border-radius:3px;
+ color:#fff;font:bold 13px monospace;white-space:nowrap;text-shadow:none;pointer-events:none;z-index:20
+}
+#viabilitaScene #viaBackBtn{font-size:12px!important;color:#fff!important;left:2%;bottom:2%;background:rgba(0,0,0,.75)!important;border:1px solid #e5d18b!important;padding:8px 10px!important}
 </style>
 </head>
 <body>
