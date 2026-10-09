@@ -1011,7 +1011,25 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       selectedItem=data.selectedItem || '';
       goWarehouse.style.display='none';
       goBarrier.style.display='none';
-      if(scene === 'barrier'){
+      // Ripristina la classe della scena prima di applicare quella salvata.
+      document.getElementById('scene').classList.remove('ocean3-clean');
+      if(scene === 'ocean3'){
+        // OCEAN 3 va ripristinata come scena, non deve ricadere nel ramo Regia Gold.
+        document.getElementById('bg').src='./assets/ocean3-scena5.png?rev=0841331';
+        document.querySelectorAll('.hot').forEach(function(h){
+          h.hidden=true;
+          h.style.setProperty('display','none','important');
+          h.style.setProperty('visibility','hidden','important');
+          h.style.setProperty('pointer-events','none','important');
+        });
+        document.getElementById('scene').classList.add('ocean3-clean');
+        document.getElementById('oceanChestOpen').style.display='none';
+        const podiumMic=document.getElementById('oceanPodiumMic');
+        if(podiumMic) podiumMic.style.display='none';
+        if(typeof loungeAudio !== 'undefined'){ loungeAudio.pause(); loungeAudio.currentTime=0; loungeStarted=false; }
+        if(typeof warehouseAudio !== 'undefined'){ warehouseAudio.pause(); warehouseAudio.currentTime=0; warehouseStarted=false; }
+        if(typeof barrierAudio !== 'undefined'){ barrierAudio.pause(); barrierAudio.currentTime=0; barrierStarted=false; }
+      }else if(scene === 'barrier'){
         document.getElementById('bg').src=barrierBackground;
         configureBarrierHotspots();
         if(typeof warehouseAudio !== 'undefined'){
