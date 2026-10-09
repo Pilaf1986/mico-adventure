@@ -873,6 +873,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       scene=data.scene || 'regia';
       warehouseConversationStarted=!!data.warehouseConversationStarted;
       barrierReached=!!data.barrierReached;
+      // Migrazione dei vecchi salvataggi: il vecchio magazzino dopo Regia diventa la scena di uscita per PASS revocato.
+      if(scene === 'warehouse' && !barrierReached && !data.frankBriefingComplete){
+        scene='warehouseExit';
+      }
       passChecked=!!data.passChecked;
       cooperativeCleared=!!data.cooperativeCleared;
       accessGranted=!!data.accessGranted;
@@ -1020,7 +1024,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   goWarehouse.addEventListener('click', function(){
-    if(accessGranted) enterWarehouse();
+    // La scena 4 si raggiunge solo tornando dalla sbarra con accesso confermato.
+    if(scene === 'barrier' && accessGranted) enterWarehouse();
     else enterWarehouseExit();
   });
 
