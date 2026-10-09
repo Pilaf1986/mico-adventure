@@ -91,7 +91,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     </div>
     <div id="oceanPodiumMic" style="display:none;position:absolute;left:43%;top:33%;z-index:40;background:rgba(20,35,20,.92);color:#b9ff89;border:2px solid #b9ff89;padding:8px 10px;font:bold 12px monospace;pointer-events:none">🎤 MICROFONO MONTATO SUL PODIO</div>
     <div class="hot" data-name="radio" title="RADIO" style="left:85%;top:57%;width:3%;height:14%"></div>
-    <div class="hot" data-name="phone" title="TELEFONO REGIA" style="left:76%;top:57%;width:8%;height:17%;z-index:10"></div>
+    <div class="hot" data-name="phone" title="PAUL — TECNICO DI MONTAGGIO" style="left:23%;top:34%;width:13%;height:31%;z-index:60"></div>
     <div class="hot" data-name="monitor" title="MONITOR" style="left:36%;top:22%;width:17%;height:13%"></div>
     <div class="hot" data-name="door" title="PORTA BACKSTAGE" style="left:21%;top:0%;width:13%;height:34%"></div>
     <div class="hot" data-name="cable" title="CAVO DMX" style="left:50%;top:70%;width:18%;height:14%;z-index:10"></div>
@@ -568,9 +568,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       itemButton.textContent = item;
       itemButton.title = 'Esamina ' + item;
       itemButton.addEventListener('click', function(){
-        if(scene === 'ocean3' && verb === 'DAI' && item === 'MICROFONO GOOSENECK'){
+        if(scene === 'ocean3' && verb === 'DAI' && item === 'SCHEMA DI MONTAGGIO'){
           selectedItem=item;
-          return say('🎤 MICROFONO GOOSENECK selezionato. Ora clicca su Paul per consegnarglielo.');
+          return say('📋 SCHEMA DI MONTAGGIO selezionato. Ora clicca su Paul per consegnarglielo.');
+        }
+        if(scene === 'ocean3' && verb === 'DAI' && (item === 'MICROFONO GOOSENECK' || item === 'MICROFONO GOOSENECK DA PODIO')){
+          selectedItem=item;
+          return say('🎤 Microfono selezionato. Ora clicca su Paul per consegnarglielo.');
         }
         if(verb === 'GUARDA' && item === 'PLANIMETRIA NORD') return openNorthPlanimetry();
         if((verb === 'GUARDA' || verb === 'USA') && item === 'CHAT WHATSAPP') return openWhatsapp();
@@ -1270,21 +1274,35 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         return say('🎤 Hai già preso il microfono gooseneck: è nell’inventario.');
       }
       if(name === 'phone'){
-        if(verb === 'PARLA') return say('👷 PAUL: «Ehy Andriu, passami il microfono che lo vado a montare!»');
+        if(verb === 'PARLA'){
+          if(!assemblySchemaDelivered) return say('👷 PAUL: «Andriu, meno male che sei qui! Mi passi lo SCHEMA DI MONTAGGIO? Senza quello non so come allestire OCEAN 3!»');
+          return say('👷 PAUL: «Perfetto, grazie per lo schema! Ora so come allestire la sala. Se hai già recuperato il microfono gooseneck, passalo a me e completo il montaggio.»');
+        }
+        if(verb === 'DAI' && selectedItem === 'SCHEMA DI MONTAGGIO'){
+          if(assemblySchemaDelivered) return say('👷 PAUL: «Lo schema ce l’ho già, grazie! Ora posso seguire la pianta e preparare l’allestimento.»');
+          const schemaIndex=inventory.indexOf('SCHEMA DI MONTAGGIO');
+          if(schemaIndex !== -1) inventory.splice(schemaIndex,1);
+          selectedItem='';
+          assemblySchemaDelivered=true;
+          renderInventory();
+          return say('📋 Hai consegnato lo schema a Paul. Lui lo controlla e annuisce: «Ah, ecco! Mixer al centro, cablaggi sul lato palco e microfono gooseneck sul podio. Adesso è tutto chiaro. Grazie, Andriu!»');
+        }
         if(verb === 'DAI'){
-          if(selectedItem !== 'MICROFONO GOOSENECK') return say('Paul: «Ehy Andriu, passami il microfono che lo vado a montare!» Seleziona prima il MICROFONO GOOSENECK nell’inventario.');
-          const idx=inventory.indexOf('MICROFONO GOOSENECK');
+          if(selectedItem !== 'MICROFONO GOOSENECK' && selectedItem !== 'MICROFONO GOOSENECK DA PODIO') return say('👷 PAUL: «Prima mi serve lo SCHEMA DI MONTAGGIO!» Seleziona SCHEMA DI MONTAGGIO nell’inventario e clicca su di me.');
+          if(!assemblySchemaDelivered) return say('👷 PAUL: «Prima lo schema, Andriu! Senza istruzioni rischio di montare tutto al contrario.»');
+          const micItem=selectedItem;
+          const idx=inventory.indexOf(micItem);
           if(idx !== -1) inventory.splice(idx,1);
           selectedItem='';
           renderInventory();
           const chestVisual=document.getElementById('oceanChestOpen');
-          chestVisual.style.display='none';
+          if(chestVisual) chestVisual.style.display='none';
           const podium=document.getElementById('oceanPodiumMic');
           if(podium) podium.style.display='block';
-          return say('🎤 Hai dato il microfono a Paul. «Grande, Andriu!» Paul lo monta sul podio. MONTAGGIO COMPLETATO.');
+          return say('🎤 Hai dato il microfono a Paul. «Grande, Andriu!» Lo monta sul podio. MONTAGGIO COMPLETATO.');
         }
-        if(verb === 'GUARDA') return say('👷 Paul è il primo tecnico a sinistra. Sta aspettando il microfono gooseneck.');
-        return say('Parla con Paul oppure seleziona DAI e scegli il MICROFONO GOOSENECK nell’inventario.');
+        if(verb === 'GUARDA') return say('👷 Paul è il tecnico in primo piano a sinistra. Sta aspettando lo schema di montaggio.');
+        return say('Parla con Paul: ti chiederà lo schema di montaggio. Poi seleziona DAI, scegli lo schema nell’inventario e clicca su Paul.');
       }
       return say('In OCEAN 3 puoi interagire soltanto con il baule verde e con Paul.');
     }
