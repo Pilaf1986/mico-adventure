@@ -83,6 +83,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="fader" title="PRIMO FADER — USA QUI" style="left:19%;top:43%;width:16%;height:22%;z-index:50;pointer-events:auto"></div>
     <div class="hot" data-name="postit" title="POST-IT" style="left:42%;top:68%;width:7%;height:12%;z-index:10"></div>
     <div id="faderHint"></div>
+    <button type="button" id="oceanChestHotspot" style="display:none;position:absolute;left:61%;top:58%;width:24%;height:29%;z-index:10000;background:rgba(40,70,20,.28);border:3px dashed #c6ff73;color:#fff;font:bold clamp(10px,1.4vw,16px) monospace;text-shadow:0 2px 4px #000;box-shadow:0 0 14px #9dff45;cursor:pointer" aria-label="Apri il baule verde">CLICCA QUI<br>APRI BAULE</button>
     <div id="oceanChestOpen" aria-label="Baule verde aperto con microfono gooseneck">
       <div class="chestLid"></div>
       <div class="chestBody">🎤</div>
@@ -752,7 +753,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       h.style.setProperty('visibility','hidden','important');
       h.style.setProperty('pointer-events','none','important');
     });
-    // Riattiva SOLO il hotspot del baule verde in primo piano.
+    // Controllo visibile per aprire il baule verde.
+    const chestButton=document.getElementById('oceanChestHotspot');
+    chestButton.style.display='block';
+    chestButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
     const chestHotspot=document.querySelector('.hot[data-name="coffee"]');
     if(chestHotspot){
       chestHotspot.hidden=false;
@@ -765,6 +769,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function enterWarehouseExit(){
     clearTimers();
+    const chestButton=document.getElementById('oceanChestHotspot');
+    if(chestButton) chestButton.style.display='none';
     document.getElementById('scene').classList.remove('ocean3-clean');
     scene='warehouseExit';
     frankBriefingRunning=false;
@@ -1032,7 +1038,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         });
         document.getElementById('scene').classList.add('ocean3-clean');
         document.getElementById('oceanChestOpen').style.display='none';
-        // Dopo il caricamento resta visibile soltanto il hotspot del baule verde.
+        // Dopo il caricamento mostra il controllo visibile del baule verde.
+        const chestButton=document.getElementById('oceanChestHotspot');
+        chestButton.style.display='block';
+        chestButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
         const savedChestHotspot=document.querySelector('.hot[data-name="coffee"]');
         if(savedChestHotspot){
           savedChestHotspot.hidden=false;
