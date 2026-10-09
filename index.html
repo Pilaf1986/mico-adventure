@@ -108,6 +108,12 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <button type="button" id="goWarehouse">🚪 VAI IN MAGAZZINO</button>
     <button type="button" id="goBarrier">🚧 VAI ALLA SBARRA</button>
     <button type="button" id="smokeBreakButton" style="display:none;position:absolute;left:50%;top:78%;transform:translateX(-50%);z-index:10010;background:#2b3326;color:#f6f0d4;border:2px solid #d2b66c;padding:12px 18px;font:bold clamp(12px,1.5vw,18px) monospace;cursor:pointer;box-shadow:0 0 12px #000">FAI A FUMARE</button>
+    <div id="fumaFumaOverlay" style="display:none;position:absolute;inset:0;z-index:10020;background:linear-gradient(180deg,rgba(5,7,9,.28),rgba(5,7,9,.88));align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:5%;box-sizing:border-box;font-family:monospace">
+      <div style="font-size:clamp(12px,2vw,18px);color:#d8c28a;letter-spacing:.18em;margin-bottom:12px">SCENA 6</div>
+      <div style="font-size:clamp(28px,6vw,64px);font-weight:bold;color:#f6f0d4;text-shadow:3px 3px #000">FUMA FUMA</div>
+      <p style="max-width:680px;font-size:clamp(14px,2vw,21px);line-height:1.6;color:#fff;text-shadow:2px 2px #000">PAUL: «Finalmente cinque minuti di pace. Il lavoro può aspettare…»</p>
+      <p style="font-size:clamp(12px,1.5vw,16px);color:#d2b66c">La pausa comincia. Nessuno sa quanto durerà.</p>
+    </div>
 
     <div id="panicOverlay">
       <div class="panicText">FIIIIIIIIIIII!</div>
@@ -1261,7 +1267,23 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   });
 
   document.getElementById('smokeBreakButton').addEventListener('click', function(){
-    say('🚬 PAUSA SIGARETTA — Paul si allontana un momento dal podio. Il montaggio può aspettare cinque minuti.');
+    clearTimers();
+    scene='fumaFuma';
+    if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Started=false; }
+    goWarehouse.style.display='none';
+    goBarrier.style.display='none';
+    panic.style.display='none';
+    document.getElementById('smokeBreakButton').style.display='none';
+    document.getElementById('oceanChestOpen').style.display='none';
+    document.querySelectorAll('.hot').forEach(function(h){
+      h.hidden=true;
+      h.style.setProperty('display','none','important');
+      h.style.setProperty('visibility','hidden','important');
+      h.style.setProperty('pointer-events','none','important');
+    });
+    document.getElementById('paulHotspot').style.display='none';
+    document.getElementById('fumaFumaOverlay').style.display='flex';
+    say('SCENA 6 — FUMA FUMA. Paul si prende la pausa sigaretta con Andriu.');
   });
   goBarrier.addEventListener('click', function(){
     enterBarrier();
