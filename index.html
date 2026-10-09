@@ -740,22 +740,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       bg.onerror=null;
       bg.style.background='transparent';
     };
-    // OCEAN 3: manteniamo solo due hotspot interattivi: baule verde e Paul.
+    // PASSO 1: in OCEAN 3 nascondiamo TUTTI gli hotspot.
+    // Non riattivare nessun hotspot in questa fase.
     document.getElementById('oceanChestOpen').style.display='none';
-    hotspots.forEach(function(h){ h.style.display='none'; });
-    const caseHotspot=hotspots.find(function(h){return h.dataset.name==='coffee';});
-    if(caseHotspot){
-      caseHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:30;display:block';
-      caseHotspot.title='BAULE VERDE — APRI PER TROVARE IL MICROFONO';
-      caseHotspot.textContent='';
-    }
-    const paulHotspot=hotspots.find(function(h){return h.dataset.name==='phone';});
-    if(paulHotspot){
-      paulHotspot.style.cssText='left:10%;top:23%;width:19%;height:54%;z-index:30;display:block';
-      paulHotspot.title='PAUL — TECNICO, PRIMO A SINISTRA';
-      paulHotspot.textContent='';
-    }
-    say('🔧 OCEAN 3 — Ci sono due hotspot: il baule verde in primo piano e Paul, il tecnico a sinistra.');
+    hotspots.forEach(function(h){
+      h.style.display='none';
+      h.style.pointerEvents='none';
+    });
+    say('OCEAN 3: tutti gli hotspot sono stati disattivati.');
   }
 
   function enterWarehouseExit(){
