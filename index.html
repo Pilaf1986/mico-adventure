@@ -522,28 +522,29 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function frankReply(message){
     const q=message.toLocaleLowerCase('it-IT');
+    // Frank aiuta, ma non risolve più gli enigmi al posto del giocatore.
     if(scene === 'warehouseExit'){
-      return 'Prima devi risolvere il problema del PASS: esci dal magazzino e vai alla sbarra. Parla con la guardia e, se serve, usa il cellulare per chiamare la cooperativa. Una volta rientrato, il tuo incarico è montare OCEAN 3: usa planimetria e schema di montaggio.';
+      return 'Non posso risolvere tutto io, Andriu. Controlla cosa hai in inventario e parla con chi trovi lungo il percorso.';
     }
     if(scene === 'barrier'){
       if(!cooperativeCleared && !accessGranted){
-        return 'Sei alla sbarra: seleziona USA, scegli il PASS nell’inventario e clicca sulla guardia. Se il pass non viene accettato, usa il CELLULARE per chiamare la cooperativa e segui le istruzioni.';
+        return 'Il sistema del MiCo è sempre un labirinto burocratico. Hai già provato a capire perché il tuo accesso non viene accettato?';
       }
-      return 'L’accesso è in fase di risoluzione. Segui le indicazioni della guardia e poi torna al magazzino: devi montare OCEAN 3 con planimetria e schema di montaggio.';
+      return 'Quando la situazione sarà sistemata, torna al lavoro. Il materiale che ti serve dovrebbe essere da qualche parte.';
     }
     if(scene === 'regia'){
-      if(!cableDiagnosed) return 'Sei ancora in Regia Gold. Dopo il fischio, aspetta che il tecnico di palco individui il problema; poi seleziona USA e clicca sul cavo DMX per ricollegarlo.';
-      if(!cableFixed) return 'Il tecnico ha trovato il problema: seleziona USA e clicca sul cavo DMX. Devi ricollegarlo tu, non aspettare che lo faccia il tecnico.';
-      return 'La parte in regia è finita. Usa il pulsante per andare in magazzino e segui le istruzioni dell’ON SITE MANAGER.';
+      if(!cableDiagnosed) return 'Quel fischio non promette niente di buono. Ascolta cosa dice il personale di palco e guarda bene la scena.';
+      if(!cableFixed) return 'Adesso sai che c’è un problema. Tocca a te capire come rimediare.';
+      return 'Per me qui hai finito. Il resto della giornata ti aspetta altrove.';
     }
     if(scene === 'warehouse'){
-      if(!frankBriefingComplete) return 'Aspetta che finisca il briefing: ti consegnerò la planimetria, la chat e lo schema di montaggio.';
+      if(!frankBriefingComplete) return 'Un attimo, Andriu. Lasciami finire il briefing e poi ne riparliamo.';
       if(q.includes('planimetr') || q.includes('ocean') || q.includes('sala') || q.includes('dove')){
-        return 'Devi montare OCEAN 3. Apri PLANIMETRIA NORD, seleziona OCEAN 3 e consulta lo SCHEMA DI MONTAGGIO. Recupera il materiale necessario e segui le indicazioni.';
+        return 'La destinazione è scritta sui documenti che ti ho dato. A volte la risposta è proprio sotto il naso.';
       }
-      return 'Devi montare OCEAN 3. Usa PLANIMETRIA NORD per individuare la sala e lo SCHEMA DI MONTAGGIO per sapere come allestirla. Se sei perso, chiedimi pure dove andare o cosa usare.';
+      return 'Ti ho dato documenti e contatti utili. Leggili con attenzione e arrangiati un po’: sei pur sempre un tecnico.';
     }
-    return 'Il tuo incarico è montare OCEAN 3. Usa la planimetria per trovare la sala e lo schema di montaggio per allestirla. Se sei ancora alla sbarra, prima risolvi l’accesso al MiCo.';
+    return 'Non posso seguirti passo passo. Esamina l’ambiente, parla con le persone e usa con criterio gli oggetti che hai raccolto.';
   }
 
   function sendWhatsappMessage(message){
