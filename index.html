@@ -789,6 +789,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       return enterWarehouseExit();
     }
     clearTimers();
+    document.getElementById('scene').classList.remove('ocean3-clean');
     scene='warehouse';
     if(typeof loungeAudio !== 'undefined'){
       loungeAudio.pause();
