@@ -1302,17 +1302,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       }
       if(name === 'phone'){
         if(verb === 'PARLA'){
-          if(!assemblySchemaDelivered) return say('👷 PAUL: «Andriu, meno male che sei qui! Mi passi lo SCHEMA DI MONTAGGIO? Senza quello non so come allestire OCEAN 3!»');
-          return say('👷 PAUL: «Perfetto, grazie per lo schema! Ora so come allestire la sala. Se hai già recuperato il microfono gooseneck, passalo a me e completo il montaggio.»');
+          if(!assemblySchemaDelivered) return say('PAUL: «Ciao Andriu, qui Paul, lavoreremo insieme oggi. Se mi dai lo schema di montaggio capisco il da farsi.»');
+          return say('PAUL: «Grazie, è un po’ incasinato ma ce la faremo. Vedo che il congresso si chiama FICA 2026. Bah, sarà la Federazione Italiana Congressisti Anonimi, chissà di cosa parlano. Ok, passami il microfono che lo monto a podio.»');
         }
         if(verb === 'DAI' && selectedItem === 'SCHEMA DI MONTAGGIO'){
-          if(assemblySchemaDelivered) return say('👷 PAUL: «Lo schema ce l’ho già, grazie! Ora posso seguire la pianta e preparare l’allestimento.»');
+          if(assemblySchemaDelivered) return say('PAUL: «Lo schema ce l’ho già, grazie! Ora passami il microfono gooseneck e lo monto a podio.»');
           const schemaIndex=inventory.indexOf('SCHEMA DI MONTAGGIO');
           if(schemaIndex !== -1) inventory.splice(schemaIndex,1);
           selectedItem='';
           assemblySchemaDelivered=true;
           renderInventory();
-          return say('📋 Hai consegnato lo schema a Paul. Lui lo controlla e annuisce: «Ah, ecco! Mixer al centro, cablaggi sul lato palco e microfono gooseneck sul podio. Adesso è tutto chiaro. Grazie, Andriu!»');
+          return say('PAUL: «Grazie, è un po’ incasinato ma ce la faremo. Vedo che il congresso si chiama FICA 2026. Bah, sarà la Federazione Italiana Congressisti Anonimi, chissà di cosa parlano. Ok, passami il microfono che lo monto a podio.»');
         }
         if(verb === 'DAI'){
           if(selectedItem !== 'MICROFONO GOOSENECK' && selectedItem !== 'MICROFONO GOOSENECK DA PODIO') return say('👷 PAUL: «Prima mi serve lo SCHEMA DI MONTAGGIO!» Seleziona SCHEMA DI MONTAGGIO nell’inventario e clicca su di me.');
