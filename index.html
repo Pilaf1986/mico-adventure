@@ -33,7 +33,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
 #menuBar{display:flex;justify-content:flex-end;margin-bottom:5px}
 #menuBtn{font-size:11px;padding:5px 12px}
-#menuOverlay,#exitScreen{position:absolute;inset:0;background:rgba(5,7,12,.94);z-index:50;display:none;align-items:center;justify-content:center;flex-direction:column}
+#menuOverlay,#exitScreen{position:absolute;inset:0;background:rgba(5,7,12,.94);z-index:20001;display:none;align-items:center;justify-content:center;flex-direction:column;pointer-events:auto}
+#menuOverlay{isolation:isolate}
+#menuOverlay .menuBox{position:relative;z-index:20002;max-height:calc(100% - 16px);overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box}
 .menuBox{border:3px solid #69717e;background:#11151d;padding:22px;min-width:220px;text-align:center;box-shadow:0 0 35px #000}
 .menuTitle{font-size:24px;font-weight:bold;color:#ffd84a;margin-bottom:18px}
 .menuBox button{display:block;width:100%;margin:7px 0}
