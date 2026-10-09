@@ -84,7 +84,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="postit" title="POST-IT" style="left:42%;top:68%;width:7%;height:12%;z-index:10"></div>
     <div id="faderHint"></div>
     <button type="button" id="paulHotspot" aria-label="Parla con Paul, tecnico di montaggio" title="PAUL — TECNICO DI MONTAGGIO" style="display:none;position:absolute;left:23%;top:34%;width:13%;height:31%;z-index:10002;background:transparent;border:2px solid transparent;color:transparent;box-shadow:none;cursor:pointer;padding:0;margin:0" onclick="event.preventDefault();event.stopPropagation();">Paul</button>
-    <button type="button" id="oceanChestHotspot" style="display:none;position:absolute;left:0.5%;top:57%;width:54%;height:42%;z-index:10000;background:transparent;border:0;color:transparent;box-shadow:none;cursor:pointer;padding:0;margin:0" aria-label="Apri uno dei bauli verdi" title="Clicca sul baule verde"><span style="position:absolute;inset:0;background:transparent;border:2px solid transparent"></span></button>
+    <button type="button" id="oceanChestHotspot" style="display:none;position:absolute;left:0.5%;top:57%;width:54%;height:42%;z-index:10000;background:transparent;border:0;color:transparent;box-shadow:none;cursor:pointer;padding:0;margin:0" aria-label="Baule verde"><span style="position:absolute;inset:0;background:transparent;border:2px solid transparent"></span></button>
     <div id="oceanChestOpen" aria-label="Baule verde aperto con microfono gooseneck">
       <div class="chestLid"></div>
       <div class="chestBody">🎤</div>
@@ -786,7 +786,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     const chestHotspot=document.querySelector('.hot[data-name="coffee"]');
     if(chestHotspot){
       chestHotspot.hidden=false;
-      chestHotspot.title='BAULE VERDE — CLICCA PER APRIRE';
+      chestHotspot.removeAttribute('title');
       chestHotspot.style.cssText='left:0.5%;top:57%;width:54%;height:42%;z-index:9999;display:block!important;visibility:visible!important;pointer-events:auto!important;background:transparent;border:0';
       chestHotspot.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
     }
@@ -1088,7 +1088,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         const savedChestHotspot=document.querySelector('.hot[data-name="coffee"]');
         if(savedChestHotspot){
           savedChestHotspot.hidden=false;
-          savedChestHotspot.title='BAULE VERDE — CLICCA PER APRIRE';
+          savedChestHotspot.removeAttribute('title');
           savedChestHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:9999;display:block!important;visibility:visible!important;pointer-events:auto!important';
           savedChestHotspot.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
         }
