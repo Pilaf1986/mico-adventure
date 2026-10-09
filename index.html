@@ -697,8 +697,29 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(scene === 'barrier' && accessGranted) return enterWarehouse();
       return enterWarehouseExit();
     }
+    if(room === 'OCEAN 3'){
+      closeNorthPlanimetry();
+      return enterOcean3();
+    }
     closeNorthPlanimetry();
     say('📐 PLANIMETRIA NORD — Destinazione selezionata: ' + room + '.');
+  }
+
+  function enterOcean3(){
+    clearTimers();
+    scene='ocean3';
+    frankBriefingRunning=false;
+    goWarehouse.style.display='none';
+    goBarrier.style.display='none';
+    panic.style.display='none';
+    const bg=document.getElementById('bg');
+    bg.src='https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/ocean3-scena5.png?v=20261009';
+    bg.onerror=function(){
+      say('⚠️ SCENA 5 — L’immagine di OCEAN 3 non è stata trovata. Carica ocean3-scena5.png nella cartella assets del repository.');
+    };
+    // La scena 5 è l’area di montaggio: per ora conserva i comandi standard e mostra il briefing operativo.
+    configureWarehouseHotspots();
+    say('🔧 SCENA 5 — OCEAN 3. La sala è ancora da allestire. La squadra di montaggio è sul posto e i due bauli verdi contengono il materiale. Consulta lo schema di montaggio e recupera il materiale prima di iniziare.');
   }
 
   function enterWarehouseExit(){
