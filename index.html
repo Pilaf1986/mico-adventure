@@ -760,7 +760,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     });
     // Controllo visibile per aprire il baule verde.
     const paulButton=document.getElementById('paulHotspot');
-    paulButton.style.display='block';
+    paulButton.hidden=false;
+    paulButton.style.setProperty('display','block','important');
+    paulButton.style.setProperty('visibility','visible','important');
+    paulButton.style.setProperty('pointer-events','auto','important');
+    paulButton.style.left='20%'; paulButton.style.top='28%'; paulButton.style.width='19%'; paulButton.style.height='43%';
+    paulButton.style.zIndex='10002';
+    paulButton.style.background='rgba(255,216,74,.18)';
+    paulButton.style.border='3px dashed #ffd84a';
+    paulButton.style.color='#fff'; paulButton.style.font='bold 15px monospace';
+    paulButton.style.textShadow='1px 1px 3px #000';
+    paulButton.textContent='PAUL — CLICCA QUI';
     paulButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('phone');};
     const chestButton=document.getElementById('oceanChestHotspot');
     chestButton.style.display='block';
