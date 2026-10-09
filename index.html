@@ -871,7 +871,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     function talkOnSiteManager(){
     // UN SOLO CLICK: il briefing parte e prosegue tutto automaticamente.
     if(frankBriefingComplete){
-      say('FRANK: «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
+      say('ON SITE MANAGER (FRANK): «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
       return;
     }
 
@@ -884,15 +884,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     warehouseConversationStarted=true;
 
     // BLOCCO 1 — Frank si presenta e consegna la planimetria
-    say('FRANK — ON SITE MANAGER: «Buongiorno Andriu sono Frank il tuo ON SITE MANAGER.»');
+    say('ON SITE MANAGER (FRANK): «Buongiorno Andriu sono Frank il tuo ON SITE MANAGER.»');
     later(function(){
-      say('FRANK: «Sì in sostanza sono il direttore di produzione.»');
+      say('ON SITE MANAGER (FRANK): «Sì in sostanza sono il direttore di produzione.»');
     },4000);
     later(function(){
-      say('FRANK: «Ti spiegherò cosa faremo oggi, siamo di montaggio salette, perciò portati i DPI.»');
+      say('ON SITE MANAGER (FRANK): «Ti spiegherò cosa faremo oggi, siamo di montaggio salette, perciò portati i DPI.»');
     },8000);
     later(function(){
-      say('FRANK: «Ecco a te la planimetria di questo labirinto chiamato MiCo, cerca di non perderti.»');
+      say('ON SITE MANAGER (FRANK): «Ecco a te la planimetria di questo labirinto chiamato MiCo, cerca di non perderti.»');
     },12000);
     later(function(){
       planimetryDelivered=true;
@@ -902,16 +902,16 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
     // BLOCCO 2 — incarico, chat WhatsApp e schema
     later(function(){
-      say('FRANK: «Visto che hai fatto una cazzata in plenaria.»');
+      say('ON SITE MANAGER (FRANK): «Visto che hai fatto una cazzata in plenaria.»');
     },20000);
     later(function(){
-      say('FRANK: «La direzione mi ha detto di farti partire con la sala più lontana.»');
+      say('ON SITE MANAGER (FRANK): «La direzione mi ha detto di farti partire con la sala più lontana.»');
     },24000);
     later(function(){
-      say('FRANK: «Ti vogliono far sgobbare.»');
+      say('ON SITE MANAGER (FRANK): «Ti vogliono far sgobbare.»');
     },28000);
     later(function(){
-      say('FRANK: «Io sono a disposizione per chiarimenti nella chat di WhatsApp.»');
+      say('ON SITE MANAGER (FRANK): «Io sono a disposizione per chiarimenti nella chat di WhatsApp.»');
     },32000);
     later(function(){
       whatsappChatDelivered=true;
@@ -919,7 +919,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       renderInventory();
     },36000);
     later(function(){
-      say('FRANK: «Questo è lo schema di montaggio.»');
+      say('ON SITE MANAGER (FRANK): «Questo è lo schema di montaggio.»');
     },40000);
     later(function(){
       assemblySchemaDelivered=true;
@@ -929,13 +929,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
     // BLOCCO 3 — squadra e destinazione
     later(function(){
-      say('FRANK: «Forza Andriu, questa è la squadra del montaggio, sono tutti sul pezzo.»');
+      say('ON SITE MANAGER (FRANK): «Forza Andriu, questa è la squadra del montaggio, sono tutti sul pezzo.»');
     },48000);
     later(function(){
-      say('FRANK: «Li conoscerai tutti bene durante la giornata.»');
+      say('ON SITE MANAGER (FRANK): «Li conoscerai tutti bene durante la giornata.»');
     },52000);
     later(function(){
-      say('FRANK: «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
+      say('ON SITE MANAGER (FRANK): «Vai prendi il materiale e vai in OCEAN 3 segui la planimetria.»');
       frankBriefingComplete=true;
       frankBriefingRunning=false;
       goBarrier.style.display='none';
