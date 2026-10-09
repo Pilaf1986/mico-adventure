@@ -373,26 +373,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     },10000);
     later(function(){
       panic.style.display='none';
-      say('🎤 TECNICO DI PALCO: «Aspetta... il cavo del microfono è collegato al DMX delle luci!»');
+      say('🎤 TECNICO DI PALCO: «Aspetta... il cavo del microfono è collegato al DMX delle luci! Usa il comando USA sul cavo DMX per ricollegarlo.»');
       cableDiagnosed=true;
     },15000);
-    later(function(){
-      say('💡 Il tecnico ricollega il cavo del microfono nel posto giusto.');
-      cableFixed=true;
-    },20000);
-    later(function(){
-      say('🎤 MICROFONO RELATORE: «Uno, due... mi sentite?» — Perfetto. Il congresso può partire.');
-    },27000);
-    later(function(){
-      say('📞 TELEFONO REGIA — RESPONSABILE: «Hai sbagliato, ha fischiato tutto, sei stato degradato, devi ricominciare la tua carriera dal livello iniziale di voi sottoposti, la SALETTA.»');
-    },34000);
-    later(function(){
-      say('📞 RESPONSABILE: «Vai in magazzino, segui le istruzioni dell’ON SITE MANAGER e buon divertimento. Che la tua carriera abbia un nuovo inizio.»');
-    },41000);
-    later(function(){
-      say('🚪 FINE REGIA GOLD — Vai in magazzino. La tua nuova carriera comincia dalla SALETTA.');
-      goWarehouse.style.display='block';
-    },48000);
   }
 
   function fixCable(){
@@ -400,13 +383,23 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(cableFixed) return say('🔌 Il cavo del microfono è già stato ricollegato.');
     cableFixed=true;
     panic.style.display='none';
-    say('🔌 Andriu ricollega il cavo del microfono. Ora è collegato correttamente.');
+    say('🔌 Andriu usa il cavo DMX e ricollega il cavo del microfono nel posto giusto.');
     later(function(){
       say('🎤 «Prova adesso.»');
-    },5000);
+    },3000);
     later(function(){
       say('🎤 MICROFONO RELATORE: «Uno, due... mi sentite?» — Perfetto. Il congresso può partire.');
-    },10000);
+    },6000);
+    later(function(){
+      say('📞 TELEFONO REGIA — RESPONSABILE: «Hai sbagliato, ha fischiato tutto, sei stato degradato, devi ricominciare la tua carriera dal livello iniziale di voi sottoposti, la SALETTA.»');
+    },13000);
+    later(function(){
+      say('📞 RESPONSABILE: «Vai in magazzino, segui le istruzioni dell’ON SITE MANAGER e buon divertimento. Che la tua carriera abbia un nuovo inizio.»');
+    },20000);
+    later(function(){
+      say('🚪 FINE REGIA GOLD — Vai in magazzino. La tua nuova carriera comincia dalla SALETTA.');
+      goWarehouse.style.display='block';
+    },27000);
   }
 
   function drinkCoffee(){
