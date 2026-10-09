@@ -74,6 +74,31 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 #northSky1{left:55%;top:55%}#northSky2{left:55%;top:38%}
 #northMeeting{right:3%;top:35%}#northSuites{left:5%;bottom:12%}#northBlue{left:62%;top:55%}
 @media(max-width:600px){.northRoom{font-size:9px;padding:4px 5px}}
+
+#viabilitaScene{position:absolute;inset:0;z-index:10019;display:none;overflow:hidden;font-family:monospace;background:linear-gradient(180deg,#263542 0%,#6b8290 22%,#9aa7a7 23%,#58636a 24%,#2c343b 100%);color:#fff}
+#viabilitaScene:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 13%,rgba(10,18,24,.7) 13.2% 13.8%,transparent 14% 27%),linear-gradient(180deg,transparent 0 16%,rgba(7,12,18,.8) 16% 19%,transparent 19% 22%,rgba(0,0,0,.12) 22% 100%);pointer-events:none}
+.viaRoof{position:absolute;inset:0 0 auto;height:25%;background:repeating-linear-gradient(90deg,#343a40 0 2%,#7b8588 2.3% 2.8%,#252b31 3% 18%),repeating-linear-gradient(0deg,transparent 0 45px,rgba(255,255,255,.16) 47px 50px);border-bottom:8px solid #252b31}
+.viaRoof:after{content:"";position:absolute;left:0;right:0;bottom:8%;height:12px;background:#d9d5b7;box-shadow:0 0 18px #fff}
+.viaSign{position:absolute;left:2%;top:5%;font-size:clamp(11px,1.7vw,20px);font-weight:bold;background:#111c26;border:2px solid #c3b88d;padding:8px 12px;box-shadow:3px 4px #0008}
+.viaDepth{position:absolute;left:34%;top:22%;width:66%;height:60%;background:linear-gradient(90deg,#9ba7a6,#59656b 50%,#a8b1ae);clip-path:polygon(0 0,100% 0,100% 100%,0 62%);opacity:.8}
+.viaFloor{position:absolute;left:0;right:0;bottom:0;height:42%;background:repeating-linear-gradient(174deg,transparent 0 46px,rgba(255,255,255,.18) 47px 49px),linear-gradient(180deg,#58616a,#252a30);border-top:5px solid #bbc0b8}
+.viaLane{position:absolute;right:4%;bottom:7%;width:45%;height:3%;background:#e9d34e;transform:skewY(-7deg);box-shadow:0 28px #e9d34e}
+.viaTruck{position:absolute;right:4%;top:33%;width:25%;height:28%;background:linear-gradient(90deg,#d7d9d6 0 70%,#354451 70%);border:4px solid #20262b;box-shadow:0 10px #0007}
+.viaTruck:before{content:"🚚";position:absolute;left:-20%;bottom:0;font-size:clamp(35px,7vw,80px);filter:drop-shadow(3px 4px 2px #000)}
+.viaTruck:after{content:"CARICO / SCARICO";position:absolute;left:8%;top:12%;color:#24303a;font-weight:bold;font-size:clamp(8px,1vw,12px)}
+.viaCoffee{position:absolute;left:3%;top:27%;width:17%;height:45%;background:linear-gradient(90deg,#171d21,#45494b,#171d21);border:4px solid #b7b9b4;box-shadow:0 0 0 5px #222,5px 8px 8px #0008}
+.viaCoffee:before{content:"☕  CAFFÈ";display:block;background:#9d2025;color:#fff;text-align:center;font-size:clamp(9px,1.2vw,15px);font-weight:bold;padding:8px 0}
+.viaCoffee:after{content:"▣  ▣\A  ▣  ▣\A ━━━━━\A  ☕";white-space:pre;display:block;text-align:center;line-height:1.55;font-size:clamp(14px,2vw,25px);color:#d4d9d8;padding-top:8px}
+.viaCatering{position:absolute;left:42%;top:42%;font-size:clamp(28px,5vw,56px);filter:drop-shadow(3px 4px 2px #000)}
+.viaPeople{position:absolute;left:24%;top:39%;font-size:clamp(32px,5vw,58px);filter:drop-shadow(3px 4px 2px #000)}
+.viaCleaner{position:absolute;right:23%;top:43%;font-size:clamp(32px,5vw,58px);filter:drop-shadow(3px 4px 2px #000)}
+.viaHot{position:absolute;z-index:4;background:rgba(8,14,18,.22);border:2px dashed transparent;color:#fff;text-shadow:2px 2px #000;font:bold clamp(9px,1.1vw,13px) monospace;padding:5px;cursor:pointer}
+.viaHot:hover{border-color:#ffd84a;background:#111cbb55}
+#viaCoffeeBtn{left:1.5%;top:70%;width:20%}#viaBriocheBtn{left:39%;top:65%;width:22%}#viaCleanerBtn{right:15%;top:68%;width:22%}
+#viaBackBtn{left:2%;bottom:2%;z-index:8}
+#viaDialogue{position:absolute;left:24%;bottom:2%;width:52%;min-height:13%;z-index:7;background:rgba(6,10,16,.94);border:2px solid #8794a2;padding:9px 12px;box-sizing:border-box;font-size:clamp(10px,1.25vw,15px);line-height:1.4}
+.viaStatus{color:#f3d87b;font-weight:bold}
+
 </style>
 </head>
 <body>
@@ -115,6 +140,21 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       <p style="font-size:clamp(12px,1.5vw,16px);color:#d2b66c">La pausa comincia. Nessuno sa quanto durerà.</p>
     </div>
 
+
+    <div id="viabilitaScene" aria-label="Scena 6, viabilità esterna coperta">
+      <div class="viaRoof"></div><div class="viaDepth"></div><div class="viaFloor"></div><div class="viaLane"></div>
+      <div class="viaSign">MiCo · VIABILITÀ<br><small>CARICO / SCARICO · AREA COPERTA</small></div>
+      <div class="viaTruck"></div>
+      <div class="viaCoffee"></div>
+      <div class="viaPeople" aria-hidden="true">🚬🧍🏻‍♂️　🚬🧍🏻‍♂️</div>
+      <div class="viaCatering" aria-hidden="true">🧑🏻‍🍳🥐🧑🏻‍🍳</div>
+      <div class="viaCleaner" aria-hidden="true">🧹🧍🏽‍♂️📱</div>
+      <button type="button" class="viaHot" id="viaCoffeeBtn">☕ USA MACCHINA DEL CAFFÈ</button>
+      <button type="button" class="viaHot" id="viaBriocheBtn">🥐 PRENDI UNA BRIOCHE</button>
+      <button type="button" class="viaHot" id="viaCleanerBtn">🧹 PARLA CON L'ADDETTO</button>
+      <button type="button" class="viaHot" id="viaBackBtn">↩ TORNA A OCEAN 3</button>
+      <div id="viaDialogue"><span class="viaStatus">SCENA 6 — FUMA FUMA · VIABILITÀ</span><br>Paul e Andriu si godono una sigaretta sotto la copertura. I camion passano, il catering prepara le brioche e l'addetto alle pulizie continua il suo turno.</div>
+    </div>
     <div id="panicOverlay">
       <div class="panicText">FIIIIIIIIIIII!</div>
       <div class="panicSub">PANICO IN REGIA!</div>
@@ -1270,20 +1310,34 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     clearTimers();
     scene='fumaFuma';
     if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Started=false; }
-    goWarehouse.style.display='none';
-    goBarrier.style.display='none';
-    panic.style.display='none';
+    goWarehouse.style.display='none'; goBarrier.style.display='none'; panic.style.display='none';
     document.getElementById('smokeBreakButton').style.display='none';
     document.getElementById('oceanChestOpen').style.display='none';
-    document.querySelectorAll('.hot').forEach(function(h){
-      h.hidden=true;
-      h.style.setProperty('display','none','important');
-      h.style.setProperty('visibility','hidden','important');
-      h.style.setProperty('pointer-events','none','important');
-    });
+    document.getElementById('fumaFumaOverlay').style.display='none';
+    document.querySelectorAll('.hot').forEach(function(h){ h.hidden=true; h.style.setProperty('display','none','important'); h.style.setProperty('visibility','hidden','important'); h.style.setProperty('pointer-events','none','important'); });
     document.getElementById('paulHotspot').style.display='none';
-    document.getElementById('fumaFumaOverlay').style.display='flex';
-    say('SCENA 6 — FUMA FUMA. Paul si prende la pausa sigaretta con Andriu.');
+    document.getElementById('bg').style.display='none';
+    document.getElementById('viabilitaScene').style.display='block';
+    document.getElementById('viaDialogue').innerHTML='<span class="viaStatus">SCENA 6 — FUMA FUMA · VIABILITÀ</span><br>Paul e Andriu escono nella viabilità coperta. Si accendono una sigaretta: finalmente una pausa, mentre camion, catering e pulizie continuano a lavorare.';
+    say('SCENA 6 — VIABILITÀ. Puoi usare la macchina del caffè, prendere una brioche o parlare con l’addetto alle pulizie.');
+  });
+  document.getElementById('viaCoffeeBtn').addEventListener('click',function(){
+    document.getElementById('viaDialogue').innerHTML='<span class="viaStatus">MACCHINA DEL CAFFÈ</span><br>La macchina brontola, macina e riempie il bicchierino. ☕ Andriu beve il caffè bollente: «Finalmente qualcosa di decente!»';
+    say('☕ Hai preso e bevuto un caffè. La pausa migliora.');
+  });
+  document.getElementById('viaBriocheBtn').addEventListener('click',function(){
+    document.getElementById('viaDialogue').innerHTML='<span class="viaStatus">BRIOCHE PRESA</span><br>Prendi una brioche dal vassoio dei camerieri e la mangi in due bocconi. 🥐 Paul ti guarda: «Oh, lasciane qualcuna anche agli altri!»';
+    say('🥐 Hai preso e mangiato una brioche. Energia recuperata!');
+    this.textContent='🥐 PRENDI UN’ALTRA BRIOCHE';
+  });
+  document.getElementById('viaCleanerBtn').addEventListener('click',function(){
+    document.getElementById('viaDialogue').innerHTML='<span class="viaStatus">ADDETTO ALLE PULIZIE</span><br>Andriu: «Scusa, sai dov’è…?»<br>ADDETTO: «السلام عليكم، أنا مشغول الآن…» continua a parlare al cellulare in arabo, passa lo straccio senza guardarti e ti ignora completamente.';
+    say('🧹 L’addetto risponde in arabo al telefono e continua a pulire senza considerarti.');
+  });
+  document.getElementById('viaBackBtn').addEventListener('click',function(){
+    document.getElementById('viabilitaScene').style.display='none';
+    document.getElementById('bg').style.display='block';
+    enterOcean3();
   });
   goBarrier.addEventListener('click', function(){
     enterBarrier();
