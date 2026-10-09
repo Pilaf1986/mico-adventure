@@ -142,11 +142,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div id="whatsappOverlay">
       <div id="whatsappBox">
         <div class="waHeader">💬 CHAT WHATSAPP — FRANK</div>
-        <div class="waBody">
-          <div class="waBubble waFrank">Frank — ON SITE MANAGER<br><span>Io sono a disposizione per chiarimenti nella chat di WhatsApp.</span></div>
-          <div class="waBubble waAndriu">Andriu<br><span>Ok Frank, ricevuto.</span></div>
-          <div class="waBubble waFrank">Frank<br><span>Se hai dubbi durante il montaggio scrivimi qui.</span></div>
+        <div class="waBody" id="waMessages" aria-live="polite">
+          <div class="waBubble waFrank">Frank — ON SITE MANAGER<br><span>Scrivimi quando sei bloccato: ti aiuto a capire cosa fare.</span></div>
         </div>
+        <form id="waForm" style="display:flex;gap:5px;padding:8px;background:#111b18">
+          <input id="waInput" type="text" autocomplete="off" placeholder="Scrivi a Frank..." aria-label="Messaggio per Frank" style="flex:1;min-width:0;background:#172521;color:#fff;border:2px solid #69717e;padding:9px;font:12px monospace">
+          <button type="submit">INVIA</button>
+        </form>
         <button type="button" id="closeWhatsapp">✕ CHIUDI CHAT</button>
       </div>
     </div>
@@ -224,7 +226,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let cableDiagnosed = false;
   let cableFixed = false;
   let phoneConversationStarted = false;
-  let inventory = [];
+  let inventory = ['CHAT WHATSAPP'];
   let selectedSlot = 1;
   let timers = [];
   let coffeeDrunk = false;
@@ -463,10 +465,62 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function openWhatsapp(){
     document.getElementById('whatsappOverlay').style.display='flex';
+    document.getElementById('waInput').focus();
   }
 
   function closeWhatsapp(){
     document.getElementById('whatsappOverlay').style.display='none';
+  }
+
+  function addWhatsappBubble(sender, message, isAndriu){
+    const bubble=document.createElement('div');
+    bubble.className='waBubble ' + (isAndriu ? 'waAndriu' : 'waFrank');
+    const name=document.createElement('strong');
+    name.textContent=sender;
+    const body=document.createElement('div');
+    body.style.fontWeight='normal';
+    body.style.marginTop='4px';
+    body.textContent=message;
+    bubble.appendChild(name);
+    bubble.appendChild(body);
+    const messages=document.getElementById('waMessages');
+    messages.appendChild(bubble);
+    messages.scrollTop=messages.scrollHeight;
+  }
+
+  function frankReply(message){
+    const q=message.toLocaleLowerCase('it-IT');
+    if(scene === 'warehouseExit'){
+      return 'Prima devi risolvere il problema del PASS: esci dal magazzino e vai alla sbarra. Parla con la guardia e, se serve, usa il cellulare per chiamare la cooperativa. Una volta rientrato, il tuo incarico è montare OCEAN 3: usa planimetria e schema di montaggio.';
+    }
+    if(scene === 'barrier'){
+      if(!cooperativeCleared && !accessGranted){
+        return 'Sei alla sbarra: seleziona USA, scegli il PASS nell’inventario e clicca sulla guardia. Se il pass non viene accettato, usa il CELLULARE per chiamare la cooperativa e segui le istruzioni.';
+      }
+      return 'L’accesso è in fase di risoluzione. Segui le indicazioni della guardia e poi torna al magazzino: devi montare OCEAN 3 con planimetria e schema di montaggio.';
+    }
+    if(scene === 'regia'){
+      if(!cableDiagnosed) return 'Sei ancora in Regia Gold. Dopo il fischio, aspetta che il tecnico di palco individui il problema; poi seleziona USA e clicca sul cavo DMX per ricollegarlo.';
+      if(!cableFixed) return 'Il tecnico ha trovato il problema: seleziona USA e clicca sul cavo DMX. Devi ricollegarlo tu, non aspettare che lo faccia il tecnico.';
+      return 'La parte in regia è finita. Usa il pulsante per andare in magazzino e segui le istruzioni dell’ON SITE MANAGER.';
+    }
+    if(scene === 'warehouse'){
+      if(!frankBriefingComplete) return 'Aspetta che finisca il briefing: ti consegnerò la planimetria, la chat e lo schema di montaggio.';
+      if(q.includes('planimetr') || q.includes('ocean') || q.includes('sala') || q.includes('dove')){
+        return 'Devi montare OCEAN 3. Apri PLANIMETRIA NORD, seleziona OCEAN 3 e consulta lo SCHEMA DI MONTAGGIO. Recupera il materiale necessario e segui le indicazioni.';
+      }
+      return 'Devi montare OCEAN 3. Usa PLANIMETRIA NORD per individuare la sala e lo SCHEMA DI MONTAGGIO per sapere come allestirla. Se sei perso, chiedimi pure dove andare o cosa usare.';
+    }
+    return 'Il tuo incarico è montare OCEAN 3. Usa la planimetria per trovare la sala e lo schema di montaggio per allestirla. Se sei ancora alla sbarra, prima risolvi l’accesso al MiCo.';
+  }
+
+  function sendWhatsappMessage(message){
+    const cleaned=message.trim();
+    if(!cleaned) return;
+    addWhatsappBubble('Andriu',cleaned,true);
+    document.getElementById('waInput').value='';
+    const reply=frankReply(cleaned);
+    later(function(){ addWhatsappBubble('Frank — ON SITE MANAGER',reply,false); },450);
   }
 
   function renderInventory(){
@@ -492,7 +546,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       itemButton.title = 'Esamina ' + item;
       itemButton.addEventListener('click', function(){
         if(verb === 'GUARDA' && item === 'PLANIMETRIA NORD') return openNorthPlanimetry();
-        if(verb === 'GUARDA' && item === 'CHAT WHATSAPP') return openWhatsapp();
+        if((verb === 'GUARDA' || verb === 'USA') && item === 'CHAT WHATSAPP') return openWhatsapp();
         if(verb === 'USA'){
           selectedItem = item;
           if(item === 'CELLULARE' && scene === 'barrier') return callCooperative();
@@ -949,6 +1003,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         goBarrier.style.display='none';
       }
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
+      if(inventory.indexOf('CHAT WHATSAPP') === -1) inventory.push('CHAT WHATSAPP');
       if(!planimetryDelivered){
         inventory=inventory.filter(function(item){ return item !== 'PLANIMETRIA NORD'; });
       }
@@ -1061,6 +1116,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   });
   closePlanimetry.addEventListener('click', closeNorthPlanimetry);
   document.getElementById('closeWhatsapp').addEventListener('click', closeWhatsapp);
+  document.getElementById('waForm').addEventListener('submit', function(event){
+    event.preventDefault();
+    sendWhatsappMessage(document.getElementById('waInput').value);
+  });
   document.getElementById('northOcean1').addEventListener('click', function(){chooseNorthRoom('OCEAN 1');});
   document.getElementById('northOcean2').addEventListener('click', function(){chooseNorthRoom('OCEAN 2');});
   document.getElementById('northOcean3').addEventListener('click', function(){chooseNorthRoom('OCEAN 3');});
