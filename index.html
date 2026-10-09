@@ -295,7 +295,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       ? verb + ' selezionato. Ora clicca un oggetto nel Magazzino.'
       : scene === 'barrier'
         ? verb + ' selezionato. Ora clicca un oggetto alla Sbarra.'
-        : verb + ' selezionato. Ora clicca un oggetto nella Regia Gold.');
+        : scene === 'ocean3'
+          ? verb + ' selezionato. Ora clicca un oggetto in OCEAN 3.'
+          : verb + ' selezionato. Ora clicca un oggetto nella Regia Gold.');
   }
 
   const itemDescriptions = {
