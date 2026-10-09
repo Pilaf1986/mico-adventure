@@ -372,6 +372,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       return say('Il primo fader è già stato mosso. In regia è ancora tutto nel caos.');
     }
 
+    // Evita che timer rimasti da una precedente chiamata alla radio
+    // facciano partire in anticipo le battute del tecnico di palco.
+    clearTimers();
     panicked=true;
     playFeedbackSqueal();
     say('🎚️ Andriu muove il PRIMO FADER...');
