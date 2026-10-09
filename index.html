@@ -96,13 +96,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 .viaHot:hover{border-color:#ffd84a;background:#111cbb55}
 #viaCoffeeBtn{left:1.5%;top:70%;width:20%}#viaBriocheBtn{left:39%;top:65%;width:22%}#viaCleanerBtn{right:15%;top:68%;width:22%}
 #viaBackBtn{left:2%;bottom:2%;z-index:8}
-#viaDialogue{position:absolute;left:24%;bottom:2%;width:52%;min-height:13%;z-index:7;background:rgba(6,10,16,.94);border:2px solid #8794a2;padding:9px 12px;box-sizing:border-box;font-size:clamp(10px,1.25vw,15px);line-height:1.4}
+#viaDialogue{display:none!important}
 .viaStatus{color:#f3d87b;font-weight:bold}
 
 
 #viabilitaScene:before{display:none}
 #viabilitaScene .viaRoof,#viabilitaScene .viaDepth,#viabilitaScene .viaFloor,#viabilitaScene .viaLane,#viabilitaScene .viaSign,#viabilitaScene .viaTruck,#viabilitaScene .viaCoffee,#viabilitaScene .viaPeople,#viabilitaScene .viaCatering,#viabilitaScene .viaCleaner{display:none!important}
-#viaCoffeeBtn,#viaBriocheBtn,#viaCleanerBtn{font-size:0!important;background:transparent!important;border:2px solid transparent!important;box-shadow:none!important;padding:0!important;text-shadow:none!important}
+#viaCoffeeBtn,#viaBriocheBtn,#viaCleanerBtn{font-size:0!important;background:transparent!important;border:2px solid transparent!important;box-shadow:none!important;padding:0!important;text-shadow:none!important;position:absolute} #viaCoffeeBtn:hover:after,#viaBriocheBtn:hover:after,#viaCleanerBtn:hover:after{content:attr(data-label);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:bold 13px monospace;color:#fff;background:rgba(0,0,0,.86);border:1px solid #e5d18b;padding:7px 9px;white-space:nowrap;text-shadow:none;pointer-events:none}
 #viaCoffeeBtn{left:1%;top:15%;width:20%;height:57%}
 #viaBriocheBtn{left:43%;top:36%;width:19%;height:27%}
 #viaCleanerBtn{right:5%;top:33%;width:18%;height:48%}
@@ -158,9 +158,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       <div class="viaPeople" aria-hidden="true">🚬🧍🏻‍♂️　🚬🧍🏻‍♂️</div>
       <div class="viaCatering" aria-hidden="true">🧑🏻‍🍳🥐🧑🏻‍🍳</div>
       <div class="viaCleaner" aria-hidden="true">🧹🧍🏽‍♂️📱</div>
-      <button type="button" class="viaHot" id="viaCoffeeBtn">☕ USA MACCHINA DEL CAFFÈ</button>
-      <button type="button" class="viaHot" id="viaBriocheBtn">🥐 PRENDI UNA BRIOCHE</button>
-      <button type="button" class="viaHot" id="viaCleanerBtn">🧹 PARLA CON L'ADDETTO</button>
+      <button type="button" class="viaHot" id="viaCoffeeBtn" data-label="MACCHINA DEL CAFFÈ" aria-label="Macchina del caffè" title="Macchina del caffè"></button>
+      <button type="button" class="viaHot" id="viaBriocheBtn" data-label="BRIOCHE" aria-label="Vassoio delle brioche" title="Brioche"></button>
+      <button type="button" class="viaHot" id="viaCleanerBtn" data-label="ADDETTO ALLE PULIZIE" aria-label="Addetto alle pulizie" title="Addetto alle pulizie"></button>
       <button type="button" class="viaHot" id="viaBackBtn">↩ TORNA A OCEAN 3</button>
       <div id="viaDialogue"><span class="viaStatus">SCENA 6 — FUMA FUMA · VIABILITÀ</span><br>Paul e Andriu si godono una sigaretta sotto la copertura. I camion passano, il catering prepara le brioche e l'addetto alle pulizie continua il suo turno.</div>
     </div>
