@@ -1294,6 +1294,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(scene === 'warehouse') warehouseAudio.play().catch(function(){});
       else if(scene === 'barrier') barrierAudio.play().catch(function(){});
       else if(scene === 'ocean3') ocean3Audio.play().catch(function(){});
+      else if(scene === 'fumaFuma'){ barrierAudio.play().catch(function(){}); ocean3Audio.play().catch(function(){}); }
       else loungeAudio.play().catch(function(){});
     }
     updateAudioButton();
@@ -1330,7 +1331,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.getElementById('smokeBreakButton').addEventListener('click', function(){
     clearTimers();
     scene='fumaFuma';
-    if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Started=false; }
+    // Scena 6: traffico/camion e vociare, usando due ambience già presenti.
+    ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Audio.volume=0.20; ocean3Started=false;
+    barrierAudio.pause(); barrierAudio.currentTime=0; barrierAudio.volume=0.26; barrierStarted=false;
+    if(!audioMuted){ barrierAudio.play().catch(function(){}); ocean3Audio.play().catch(function(){}); }
     goWarehouse.style.display='none'; goBarrier.style.display='none'; panic.style.display='none';
     document.getElementById('smokeBreakButton').style.display='none';
     document.getElementById('oceanChestOpen').style.display='none';
@@ -1355,7 +1359,19 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     document.getElementById('viaDialogue').innerHTML='<span class="viaStatus">ADDETTO ALLE PULIZIE</span><br>Andriu: «Scusa, sai dov’è…?»<br>ADDETTO: «السلام عليكم، أنا مشغول الآن…» continua a parlare al cellulare in arabo, passa lo straccio senza guardarti e ti ignora completamente.';
     say('🧹 L’addetto risponde in arabo al telefono e continua a pulire senza considerarti.');
   });
+  // Limita la porzione ascoltata in Scena 6 a 20 secondi, poi riparte in loop.
+  function loopScene6Audio(audio){
+    if(scene === 'fumaFuma' && audio.currentTime >= 20){
+      audio.currentTime = 0;
+      if(!audioMuted && audio.paused) audio.play().catch(function(){});
+    }
+  }
+  barrierAudio.addEventListener('timeupdate', function(){ loopScene6Audio(barrierAudio); });
+  ocean3Audio.addEventListener('timeupdate', function(){ loopScene6Audio(ocean3Audio); });
+
   document.getElementById('viaBackBtn').addEventListener('click',function(){
+    barrierAudio.pause(); barrierAudio.currentTime=0; barrierAudio.volume=0.42; barrierStarted=false;
+    ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Audio.volume=0.30; ocean3Started=false;
     document.getElementById('viabilitaScene').style.display='none';
     document.getElementById('bg').style.display='block';
     enterOcean3();
