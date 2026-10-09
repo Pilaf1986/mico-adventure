@@ -60,6 +60,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   #closeAssemblySchema{position:absolute;right:8px;top:8px;z-index:5}
 .northRoom{position:absolute;display:none;font:bold 11px monospace;padding:6px 8px;border:2px solid #ffd84a;background:#252a34;color:#fff;box-shadow:0 0 8px #000}
 .northRoom:hover{background:#3e4654;color:#ffd84a}
+#oceanChestOpen{position:absolute;left:62%;top:58%;width:22%;height:27%;z-index:25;display:none;pointer-events:none;box-sizing:border-box;background:rgba(8,12,10,.94);border:3px solid #8bbd54;box-shadow:0 0 16px #000;align-items:center;justify-content:center;flex-direction:column;color:#e9f7d7;text-align:center;font:bold clamp(10px,1.5vw,17px) monospace}
+#oceanChestOpen .chestLid{width:72%;height:22%;background:linear-gradient(#719342,#355322);border:3px solid #a4c66b;transform:skewY(-8deg);box-sizing:border-box;margin-bottom:3px}
+#oceanChestOpen .chestBody{width:78%;height:35%;background:linear-gradient(90deg,#30491f,#789d3f,#30491f);border:3px solid #a4c66b;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:clamp(18px,3vw,34px)}
+#oceanChestOpen .chestLabel{font-size:clamp(8px,1vw,12px);margin-top:4px}
 .northWarehouse{left:45%;bottom:4%;display:block!important;background:#0b5;color:#fff;border-color:#7cff7c;z-index:20}
 .northWarehouse:hover{background:#087a3a;color:#fff}
 #northOcean1{left:12%;top:38%}#northOcean2{left:22%;top:38%}#northOcean3{left:12%;top:53%}#northOcean4{left:22%;top:53%}
@@ -78,6 +82,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="fader" title="PRIMO FADER — USA QUI" style="left:19%;top:43%;width:16%;height:22%;z-index:50;pointer-events:auto"></div>
     <div class="hot" data-name="postit" title="POST-IT" style="left:42%;top:68%;width:7%;height:12%;z-index:10"></div>
     <div id="faderHint"></div>
+    <div id="oceanChestOpen" aria-label="Baule verde aperto con microfono gooseneck">
+      <div class="chestLid"></div>
+      <div class="chestBody">🎤</div>
+      <div class="chestLabel">BAULE APERTO</div>
+    </div>
     <div class="hot" data-name="radio" title="RADIO" style="left:85%;top:57%;width:3%;height:14%"></div>
     <div class="hot" data-name="phone" title="TELEFONO REGIA" style="left:76%;top:57%;width:8%;height:17%;z-index:10"></div>
     <div class="hot" data-name="monitor" title="MONITOR" style="left:36%;top:22%;width:17%;height:13%"></div>
@@ -727,6 +736,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       bg.style.background='transparent';
     };
     // Scena 5: hotspot del baule verde che contiene il microfono da podio.
+    document.getElementById('oceanChestOpen').style.display='none';
     configureWarehouseHotspots();
     const caseHotspot=hotspots.find(function(h){return h.dataset.name==='coffee';});
     if(caseHotspot){
@@ -1196,10 +1206,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(scene === 'ocean3'){
       if(verb === 'GUARDA' && name === 'coffee') return say('🟢 BAULE VERDE: «MATERIALE OCEAN 3». È uno dei bauli della squadra di montaggio.');
       if(verb === 'APRI' && name === 'coffee'){
-        if(inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1) return say('🟢 Il baule è già aperto. Hai già preso il microfono gooseneck da podio.');
+        document.getElementById('oceanChestOpen').style.display='flex';
+        if(inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1) return say('🟢 Il baule verde è aperto. Hai già preso il microfono gooseneck da podio.');
         inventory.push('MICROFONO GOOSENECK DA PODIO');
         renderInventory();
-        return say('🟢 Apri il baule verde: dentro, ben protetto nella custodia, trovi un MICROFONO GOOSENECK DA PODIO. Lo prendi e lo aggiungi all’inventario.');
+        return say('🟢 Apri il baule verde: ora è aperto. Dentro trovi un MICROFONO GOOSENECK DA PODIO. Lo prendi e lo aggiungi all’inventario.');
       }
       if(verb === 'PRENDI' && name === 'coffee'){
         if(inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1) return say('Hai già preso il microfono gooseneck da podio.');
