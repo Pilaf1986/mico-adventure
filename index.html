@@ -75,7 +75,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 #northMeeting{right:3%;top:35%}#northSuites{left:5%;bottom:12%}#northBlue{left:62%;top:55%}
 @media(max-width:600px){.northRoom{font-size:9px;padding:4px 5px}}
 
-#viabilitaScene{position:absolute;inset:0;z-index:10019;display:none;overflow:hidden;font-family:monospace;background:linear-gradient(180deg,#263542 0%,#6b8290 22%,#9aa7a7 23%,#58636a 24%,#2c343b 100%);color:#fff}
+#viabilitaScene{position:absolute;inset:0;z-index:10019;display:none;overflow:hidden;font-family:monospace;background:#252a30 url("./assets/viabilita-scena6.jpg?v=1") center center / cover no-repeat;color:#fff}
 #viabilitaScene:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 13%,rgba(10,18,24,.7) 13.2% 13.8%,transparent 14% 27%),linear-gradient(180deg,transparent 0 16%,rgba(7,12,18,.8) 16% 19%,transparent 19% 22%,rgba(0,0,0,.12) 22% 100%);pointer-events:none}
 .viaRoof{position:absolute;inset:0 0 auto;height:25%;background:repeating-linear-gradient(90deg,#343a40 0 2%,#7b8588 2.3% 2.8%,#252b31 3% 18%),repeating-linear-gradient(0deg,transparent 0 45px,rgba(255,255,255,.16) 47px 50px);border-bottom:8px solid #252b31}
 .viaRoof:after{content:"";position:absolute;left:0;right:0;bottom:8%;height:12px;background:#d9d5b7;box-shadow:0 0 18px #fff}
@@ -98,6 +98,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 #viaBackBtn{left:2%;bottom:2%;z-index:8}
 #viaDialogue{position:absolute;left:24%;bottom:2%;width:52%;min-height:13%;z-index:7;background:rgba(6,10,16,.94);border:2px solid #8794a2;padding:9px 12px;box-sizing:border-box;font-size:clamp(10px,1.25vw,15px);line-height:1.4}
 .viaStatus{color:#f3d87b;font-weight:bold}
+
+
+#viabilitaScene:before{display:none}
+#viabilitaScene .viaRoof,#viabilitaScene .viaDepth,#viabilitaScene .viaFloor,#viabilitaScene .viaLane,#viabilitaScene .viaSign,#viabilitaScene .viaTruck,#viabilitaScene .viaCoffee,#viabilitaScene .viaPeople,#viabilitaScene .viaCatering,#viabilitaScene .viaCleaner{display:none!important}
+#viaCoffeeBtn,#viaBriocheBtn,#viaCleanerBtn{font-size:0!important;background:transparent!important;border:2px solid transparent!important;box-shadow:none!important;padding:0!important;text-shadow:none!important}
+#viaCoffeeBtn{left:1%;top:15%;width:20%;height:57%}
+#viaBriocheBtn{left:43%;top:36%;width:19%;height:27%}
+#viaCleanerBtn{right:5%;top:33%;width:18%;height:48%}
+#viaCoffeeBtn:hover,#viaBriocheBtn:hover,#viaCleanerBtn:hover{border-color:rgba(255,216,74,.45)!important;background:rgba(255,216,74,.06)!important}
 
 </style>
 </head>
