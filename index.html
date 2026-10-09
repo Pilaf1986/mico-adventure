@@ -1203,6 +1203,22 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.getElementById('northWarehouse').addEventListener('click', function(){chooseNorthRoom('MAGAZZINO');});
 
   function act(name){
+    // Riconoscimento robusto del baule Ocean 3 anche se una partita salvata
+    // mantiene un valore di scena non aggiornato.
+    const oceanChestHotspot = hotspots.find(function(h){return h.dataset.name === 'coffee';});
+    const isOceanChest = name === 'coffee' && oceanChestHotspot &&
+      oceanChestHotspot.title.indexOf('BAULE VERDE') !== -1;
+    if(isOceanChest){
+      if(verb === 'GUARDA') return say('🟢 BAULE VERDE: «MATERIALE OCEAN 3». È uno dei bauli della squadra di montaggio.');
+      if(verb === 'APRI' || verb === 'PRENDI'){
+        document.getElementById('oceanChestOpen').style.display='flex';
+        if(inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1) return say('🟢 Il baule verde è aperto. Hai già preso il microfono gooseneck da podio.');
+        inventory.push('MICROFONO GOOSENECK DA PODIO');
+        renderInventory();
+        return say('🟢 Baule verde aperto! Hai trovato il MICROFONO GOOSENECK DA PODIO: è stato aggiunto all’inventario.');
+      }
+      return say('Il baule verde contiene il materiale per OCEAN 3. Seleziona APRI per aprirlo.');
+    }
     if(scene === 'ocean3'){
       if(verb === 'GUARDA' && name === 'coffee') return say('🟢 BAULE VERDE: «MATERIALE OCEAN 3». È uno dei bauli della squadra di montaggio.');
       if(verb === 'APRI' && name === 'coffee'){
