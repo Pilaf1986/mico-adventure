@@ -746,9 +746,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     // PASSO 1: in OCEAN 3 nascondiamo TUTTI gli hotspot.
     // Non riattivare nessun hotspot in questa fase.
     document.getElementById('oceanChestOpen').style.display='none';
-    hotspots.forEach(function(h){
-      h.style.display='none';
-      h.style.pointerEvents='none';
+    document.querySelectorAll('.hot').forEach(function(h){
+      h.hidden=true;
+      h.style.setProperty('display','none','important');
+      h.style.setProperty('visibility','hidden','important');
+      h.style.setProperty('pointer-events','none','important');
     });
     say('OCEAN 3: tutti gli hotspot sono stati disattivati.');
   }
