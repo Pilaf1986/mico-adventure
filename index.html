@@ -671,6 +671,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     clearTimers();
     document.getElementById('scene').classList.remove('ocean3-clean');
     scene='barrier';
+    if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Started=false; }
     barrierReached=true;
     if(typeof warehouseAudio !== 'undefined'){
       warehouseAudio.pause();
@@ -810,6 +811,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(paulButton) paulButton.style.display='none';
     document.getElementById('scene').classList.remove('ocean3-clean');
     scene='warehouseExit';
+    if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Started=false; }
     frankBriefingRunning=false;
     if(typeof loungeAudio !== 'undefined'){
       loungeAudio.pause();
@@ -844,6 +846,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     clearTimers();
     document.getElementById('scene').classList.remove('ocean3-clean');
     scene='warehouse';
+    if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Started=false; }
     if(typeof loungeAudio !== 'undefined'){
       loungeAudio.pause();
       loungeAudio.currentTime = 0;
