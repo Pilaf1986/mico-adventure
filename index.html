@@ -756,8 +756,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     const chestHotspot=document.querySelector('.hot[data-name="coffee"]');
     if(chestHotspot){
       chestHotspot.hidden=false;
-      chestHotspot.title='BAULE VERDE — CLICCA APRI';
-      chestHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:60;display:block!important;visibility:visible!important;pointer-events:auto!important';
+      chestHotspot.title='BAULE VERDE — CLICCA PER APRIRE';
+      chestHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:9999;display:block!important;visibility:visible!important;pointer-events:auto!important';
+      chestHotspot.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
     }
     say('OCEAN 3: clicca APRI sul baule verde per trovare il microfono gooseneck.');
   }
@@ -1035,8 +1036,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         const savedChestHotspot=document.querySelector('.hot[data-name="coffee"]');
         if(savedChestHotspot){
           savedChestHotspot.hidden=false;
-          savedChestHotspot.title='BAULE VERDE — CLICCA APRI';
-          savedChestHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:60;display:block!important;visibility:visible!important;pointer-events:auto!important';
+          savedChestHotspot.title='BAULE VERDE — CLICCA PER APRIRE';
+          savedChestHotspot.style.cssText='left:61%;top:58%;width:24%;height:29%;z-index:9999;display:block!important;visibility:visible!important;pointer-events:auto!important';
+          savedChestHotspot.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
         }
         const podiumMic=document.getElementById('oceanPodiumMic');
         if(podiumMic) podiumMic.style.display='none';
@@ -1248,18 +1250,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(scene === 'ocean3'){
       if(name === 'coffee'){
         const chestVisual=document.getElementById('oceanChestOpen');
-        if(verb === 'APRI'){
-          chestVisual.style.display='flex';
-          chestVisual.style.zIndex='999';
-          if(inventory.indexOf('MICROFONO GOOSENECK') === -1){
-            inventory.push('MICROFONO GOOSENECK');
-            renderInventory();
-            return say('🟢 Apri il baule verde: dentro trovi il MICROFONO GOOSENECK. Lo aggiungo all’inventario.');
-          }
-          return say('🟢 Il baule verde è già aperto: il microfono gooseneck è nell’inventario.');
+        // In OCEAN 3 il clic sul baule lo apre direttamente, senza dipendere dal verbo selezionato.
+        chestVisual.style.display='flex';
+        chestVisual.style.zIndex='999';
+        if(inventory.indexOf('MICROFONO GOOSENECK') === -1){
+          inventory.push('MICROFONO GOOSENECK');
+          renderInventory();
+          return say('🟢 Hai aperto il baule verde: trovi il MICROFONO GOOSENECK. Aggiunto all’inventario.');
         }
-        if(verb === 'GUARDA') return say('🟢 Un baule verde in primo piano, pieno di materiale per il montaggio.');
-        return say('Seleziona APRI per aprire il baule verde.');
+        return say('🟢 Il baule verde è aperto: il microfono gooseneck è già nell’inventario.');
       }
       if(name === 'phone'){
         if(verb === 'PARLA') return say('👷 PAUL: «Ehy Andriu, passami il microfono che lo vado a montare!»');
