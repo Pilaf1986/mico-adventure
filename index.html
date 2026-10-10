@@ -721,6 +721,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function enterZanini(){
     clearTimers();
     scene='zanini';
+    if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Started=false; }
+    if(typeof zaniniAudio !== 'undefined' && !audioMuted){ zaniniAudio.currentTime=0; zaniniAudio.play().catch(function(){}); }
     zaniniMenuSeen=false;
     zaniniKitchenSeen=false;
     zaniniWaiterTalked=false;
@@ -875,6 +877,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function enterOcean3(){
     clearTimers();
     scene='ocean3';
+    if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
     if(typeof warehouseAudio !== 'undefined'){ warehouseAudio.pause(); warehouseAudio.currentTime=0; warehouseStarted=false; }
     if(typeof barrierAudio !== 'undefined'){ barrierAudio.pause(); barrierAudio.currentTime=0; barrierStarted=false; }
     if(typeof loungeAudio !== 'undefined'){ loungeAudio.pause(); loungeAudio.currentTime=0; loungeStarted=false; }
@@ -1412,11 +1415,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       barrierAudio.pause();
       ocean3Audio.pause();
       fumaFumaAudio.pause();
+      zaniniAudio.pause();
     }else{
       if(scene === 'warehouse') warehouseAudio.play().catch(function(){});
       else if(scene === 'barrier') barrierAudio.play().catch(function(){});
       else if(scene === 'ocean3') ocean3Audio.play().catch(function(){});
       else if(scene === 'fumaFuma') fumaFumaAudio.play().catch(function(){});
+      else if(scene === 'zanini') zaniniAudio.play().catch(function(){});
       else loungeAudio.play().catch(function(){});
     }
     updateAudioButton();
@@ -1453,6 +1458,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.getElementById('goZaniniButton').addEventListener('click', enterZanini);
   document.getElementById('zaniniBackButton').addEventListener('click', function(){
     scene='ocean3';
+     if(typeof zaniniAudio!=='undefined'){zaniniAudio.pause();zaniniAudio.currentTime=0;}
     document.getElementById('zaniniBackButton').style.display='none';
     document.getElementById('bg').onerror=null;
     document.getElementById('bg').src='./assets/ocean3_devastata.png?rev=1';
@@ -1911,6 +1917,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   ocean3Audio.playsInline = true;
   let ocean3Started = false;
 
+  // Musica folk della Trattoria Zanini.
+  const zaniniAudio = new Audio('./assets/zanini-folk.mp3');
+  zaniniAudio.loop = true;
+  zaniniAudio.volume = 0.34;
+  zaniniAudio.preload = 'auto';
+  zaniniAudio.playsInline = true;
+
   // Audio dedicato alla scena 6: rumore di camion, voci indistinte e vibrazioni.
   const fumaFumaAudio = new Audio('./assets/fuma_fuma_ambience_loop_20s.wav');
   fumaFumaAudio.loop = true;
@@ -1922,6 +1935,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.addEventListener('click', function(){
     if(scene === 'ocean3' && !audioMuted && ocean3Audio.paused){
       ocean3Audio.play().then(function(){ ocean3Started=true; }).catch(function(error){ console.warn('Audio OCEAN 3 non avviato:', error); });
+    }else if(scene === 'zanini' && !audioMuted && zaniniAudio.paused){
+      zaniniAudio.play().catch(function(error){ console.warn('Musica Zanini non avviata:', error); });
     }else if(scene === 'fumaFuma' && !audioMuted && fumaFumaAudio.paused){
       fumaFumaAudio.play().catch(function(error){ console.warn('Audio FUMA FUMA non avviato:', error); });
     }
