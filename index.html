@@ -153,6 +153,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
     <button type="button" id="goWarehouse">🚪 VAI IN MAGAZZINO</button>
     <button type="button" id="goBarrier">🚧 VAI ALLA SBARRA</button>
+    <button type="button" id="goZaniniButton" style="display:none;position:absolute;left:50%;bottom:8%;transform:translateX(-50%);z-index:10020;font-size:15px;padding:12px 20px;background:#252a34;color:#fff;border:3px solid #ffd84a;box-shadow:0 0 18px #000;cursor:pointer;font-family:monospace;font-weight:bold">🍝 VAI DA ZANINI</button>
     <button type="button" id="smokeBreakButton" style="display:none;position:absolute;left:50%;top:78%;transform:translateX(-50%);z-index:10010;background:#2b3326;color:#f6f0d4;border:2px solid #d2b66c;padding:12px 18px;font:bold clamp(12px,1.5vw,18px) monospace;cursor:pointer;box-shadow:0 0 12px #000">FAI A FUMARE</button>
     <div id="fumaFumaOverlay" style="display:none;position:absolute;inset:0;z-index:10020;background:linear-gradient(180deg,rgba(5,7,9,.28),rgba(5,7,9,.88));align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:5%;box-sizing:border-box;font-family:monospace">
       <div style="font-size:clamp(12px,2vw,18px);color:#d8c28a;letter-spacing:.18em;margin-bottom:12px">SCENA 6</div>
@@ -326,6 +327,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let coffeeDrunk = false;
   let scene = 'regia';
   let fumaFumaReturned = false;
+  let ocean3TestStep = 0;
   let warehouseConversationStarted = false;
   let planimetryDelivered = false;
   let assemblySchemaDelivered = false;
@@ -621,6 +623,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(!cleaned) return;
     addWhatsappBubble('Andriu',cleaned,true);
     document.getElementById('waInput').value='';
+    if(scene === 'ocean3' && cleaned.toLocaleLowerCase('it-IT') === "ocean 3 pronta per l'evento"){
+      later(function(){
+        addWhatsappBubble('Frank — ON SITE MANAGER','Ottimo ragazzi, andate a mangiare e fate pure il taglio della cravatta abbiamo tempo.',false);
+        say('💬 FRANK: «Ottimo ragazzi, andate a mangiare e fate pure il taglio della cravatta abbiamo tempo.»');
+        document.getElementById('goZaniniButton').style.display='block';
+      },450);
+      return;
+    }
     const reply=frankReply(cleaned);
     later(function(){ addWhatsappBubble('Frank — ON SITE MANAGER',reply,false); },450);
   }
@@ -1343,6 +1353,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     else enterWarehouseExit();
   });
 
+  document.getElementById('goZaniniButton').addEventListener('click', function(){
+    say('🍝 Andriu e Paul si avviano da Zanini per la pausa pranzo.');
+  });
   document.getElementById('smokeBreakButton').addEventListener('click', function(){
     clearTimers();
     scene='fumaFuma';
@@ -1458,6 +1471,20 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       }
       if(name === 'phone'){
         if(verb === 'PARLA'){
+          if(fumaFumaReturned){
+            const dialogue=[
+              'ANDRIU: «Ella madonna, che velocità, tempo di una sigaretta ed è tutto pronto, noi in plenaria siamo molto più lenti.»',
+              'PAUL: «È certo, noi salettare di mestiere non facciamo cagare, siamo solo poco considerati ma siamo bravi.»',
+              'ANDRIU: «Ok, vai a provare i microfoni da podio e i radio per le poltroncine.»',
+              'PAUL: «Sa sa sa di cazzo, si si si sente là in fondo, prova podio: un due tre quattro cinque.»',
+              'ANDRIU: «Tutto a posto, ora prova i lavalier per le poltroncine che attivo il Dan Dugan :-)»',
+              'PAUL: «Sei sette otto e oplà, provo lavalier, provo lavalier.»',
+              'ANDRIU: «Tutto a posto, direi che ci siamo.»',
+              'PAUL: «Ok, scrivi a Frank che siamo operativi e allestiti, pronti per il congresso. Usa CHAT WHATSAPP e inviagli: Ocean 3 pronta per l\'evento.»'
+            ];
+            if(ocean3TestStep < dialogue.length) return say(dialogue[ocean3TestStep++]);
+            return say('PAUL: «Mandiamo il messaggio a Frank dalla CHAT WHATSAPP nell’inventario.»');
+          }
           if(!paulHasSchema) return say('PAUL: «Ciao Andriu, qui Paul, lavoreremo insieme oggi. Mi dai lo schema di montaggio? Così capisco come allestire OCEAN 3.»');
           return say('PAUL: «Grazie, è un po’ incasinato ma ce la faremo. Vedo che il congresso si chiama FICA 2026. Bah, sarà la Federazione Italiana Congressisti Anonimi, chissà di cosa parlano. Ok, passami il microfono che lo monto a podio.»');
         }
