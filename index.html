@@ -877,6 +877,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function enterOcean3(){
     clearTimers();
     scene='ocean3';
+    if(typeof sabotatoreAudio !== 'undefined'){ sabotatoreAudio.pause(); sabotatoreAudio.currentTime=0; }
     if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
     if(typeof warehouseAudio !== 'undefined'){ warehouseAudio.pause(); warehouseAudio.currentTime=0; warehouseStarted=false; }
     if(typeof barrierAudio !== 'undefined'){ barrierAudio.pause(); barrierAudio.currentTime=0; barrierStarted=false; }
@@ -1414,11 +1415,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       warehouseAudio.pause();
       barrierAudio.pause();
       ocean3Audio.pause();
+      sabotatoreAudio.pause();
       fumaFumaAudio.pause();
       zaniniAudio.pause();
     }else{
       if(scene === 'warehouse') warehouseAudio.play().catch(function(){});
       else if(scene === 'barrier') barrierAudio.play().catch(function(){});
+      else if(scene === 'ocean3' && (document.getElementById('bg').getAttribute('src') || '').indexOf('ocean3_devastata') !== -1) sabotatoreAudio.play().catch(function(){});
       else if(scene === 'ocean3') ocean3Audio.play().catch(function(){});
       else if(scene === 'fumaFuma') fumaFumaAudio.play().catch(function(){});
       else if(scene === 'zanini') zaniniAudio.play().catch(function(){});
@@ -1459,6 +1462,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.getElementById('zaniniBackButton').addEventListener('click', function(){
     scene='ocean3';
      if(typeof zaniniAudio!=='undefined'){zaniniAudio.pause();zaniniAudio.currentTime=0;}
+    if(typeof ocean3Audio!=='undefined'){ocean3Audio.pause();ocean3Started=false;}
+    if(typeof sabotatoreAudio!=='undefined' && !audioMuted){sabotatoreAudio.currentTime=0;sabotatoreAudio.play().catch(function(){});}
     document.getElementById('zaniniBackButton').style.display='none';
     document.getElementById('bg').onerror=null;
     document.getElementById('bg').src='./assets/ocean3_devastata.png?rev=1';
@@ -1931,9 +1936,18 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   fumaFumaAudio.preload = 'auto';
   fumaFumaAudio.playsInline = true;
 
+  // Colonna sonora della scena OCEAN 3 devastata: Il ritorno al MiCo.
+  const sabotatoreAudio = new Audio('./assets/CanzoneDelSabotatore.mp3');
+  sabotatoreAudio.loop = true;
+  sabotatoreAudio.volume = 0.38;
+  sabotatoreAudio.preload = 'auto';
+  sabotatoreAudio.playsInline = true;
+
   // Riprendi il sottofondo della scena attiva se il browser blocca l'avvio automatico.
   document.addEventListener('click', function(){
-    if(scene === 'ocean3' && !audioMuted && ocean3Audio.paused){
+    if(scene === 'ocean3' && !audioMuted && (document.getElementById('bg').getAttribute('src') || '').indexOf('ocean3_devastata') !== -1 && sabotatoreAudio.paused){
+      sabotatoreAudio.play().catch(function(error){ console.warn('Musica Sabotatore non avviata:', error); });
+    }else if(scene === 'ocean3' && !audioMuted && ocean3Audio.paused){
       ocean3Audio.play().then(function(){ ocean3Started=true; }).catch(function(error){ console.warn('Audio OCEAN 3 non avviato:', error); });
     }else if(scene === 'zanini' && !audioMuted && zaniniAudio.paused){
       zaniniAudio.play().catch(function(error){ console.warn('Musica Zanini non avviata:', error); });
