@@ -325,6 +325,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let timers = [];
   let coffeeDrunk = false;
   let scene = 'regia';
+  let fumaFumaReturned = false;
   let warehouseConversationStarted = false;
   let planimetryDelivered = false;
   let assemblySchemaDelivered = false;
@@ -869,7 +870,12 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       chestHotspot.style.cssText='left:0.5%;top:57%;width:54%;height:42%;z-index:9999;display:block!important;visibility:visible!important;pointer-events:auto!important;background:transparent;border:0';
       chestHotspot.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
     }
-    say('');
+    if(fumaFumaReturned){
+      fumaFumaReturned=false;
+      say('👷 PAUL: «Eccoti, Andriu! La pausa è finita. Nel frattempo abbiamo completato una parte dell’allestimento: palco e sedute sono pronti, ma prima dell’apertura dobbiamo fare un ultimo controllo tecnico. Guarda bene la sala e parlami quando sei pronto.»');
+    } else {
+      say('');
+    }
   }
 
   function enterWarehouseExit(){
@@ -1371,6 +1377,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     say('🧹 L’addetto risponde in arabo al telefono e continua a pulire senza considerarti.');
   });
   document.getElementById('viaBackBtn').addEventListener('click',function(){
+    fumaFumaReturned = true;
     document.getElementById('viabilitaScene').style.display='none';
     fumaFumaAudio.pause();
     fumaFumaAudio.currentTime=0;
