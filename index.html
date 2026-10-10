@@ -807,6 +807,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function enterBarrier(){
     clearTimers();
+    if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
     document.getElementById('scene').classList.remove('ocean3-clean');
     scene='barrier';
     if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Started=false; }
@@ -876,6 +877,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function enterOcean3(){
     clearTimers();
+    if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
     scene='ocean3';
     if(typeof sabotatoreAudio !== 'undefined'){ sabotatoreAudio.pause(); sabotatoreAudio.currentTime=0; }
     if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
@@ -956,6 +958,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function enterWarehouseExit(){
     clearTimers();
+    if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
     const chestButton=document.getElementById('oceanChestHotspot');
     if(chestButton) chestButton.style.display='none';
     const paulButton=document.getElementById('paulHotspot');
@@ -991,6 +994,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function enterWarehouse(){
     // Blocco di sicurezza: nessun percorso può aprire la scena di Frank prima dell'accesso autorizzato.
+    if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
     if(scene !== 'barrier' || !accessGranted){
       return enterWarehouseExit();
     }
@@ -1208,6 +1212,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         return;
       }
       clearTimers();
+      if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
       const data=JSON.parse(raw);
       saveName.value=data.saveName || ('Salvataggio '+selectedSlot);
       scene=data.scene || 'regia';
@@ -1312,6 +1317,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         if(typeof warehouseAudio!=='undefined'){warehouseAudio.pause();warehouseAudio.currentTime=0;warehouseStarted=false;}
         if(typeof barrierAudio!=='undefined'){barrierAudio.pause();barrierAudio.currentTime=0;barrierStarted=false;}
         if(typeof fumaFumaAudio!=='undefined'){fumaFumaAudio.pause();fumaFumaAudio.currentTime=0;}
+        if(typeof zaniniAudio !== 'undefined' && !audioMuted){ zaniniAudio.currentTime=0; zaniniAudio.play().catch(function(){}); }
       }else if(scene === 'fumaFuma'){
         // Ripristina FUMA FUMA quando il salvataggio viene caricato.
         document.getElementById('bg').style.display='none';
