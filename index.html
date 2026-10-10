@@ -882,7 +882,21 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
     if(fumaFumaReturned){
       fumaFumaReturned=false;
-      say('👷 PAUL: «Eccoti, Andriu! La pausa è finita. Nel frattempo abbiamo completato una parte dell’allestimento: palco e sedute sono pronti, ma prima dell’apertura dobbiamo fare un ultimo controllo tecnico. Guarda bene la sala e parlami quando sei pronto.»');
+      ocean3TestStep=0;
+      const reunionDialogue=[
+        'PAUL: «Eccoti, Andriu! La pausa è finita: abbiamo completato l’allestimento. Dobbiamo solo fare un ultimo controllo tecnico.»',
+        'ANDRIU: «Ella madonna, che velocità, tempo di una sigaretta ed è tutto pronto, noi in plenaria siamo molto più lenti.»',
+        'PAUL: «È certo, noi salettare di mestiere non facciamo cagare, siamo solo poco considerati ma siamo bravi.»',
+        'ANDRIU: «Ok, vai a provare i microfoni da podio e i radio per le poltroncine.»',
+        'PAUL: «Sa sa sa di cazzo, si si si sente là in fondo, prova podio: un due tre quattro cinque.»',
+        'ANDRIU: «Tutto a posto, ora prova i lavalier per le poltroncine che attivo il Dan Dugan :-)»',
+        'PAUL: «Sei sette otto e oplà, provo lavalier, provo lavalier.»',
+        'ANDRIU: «Tutto a posto, direi che ci siamo.»',
+        'PAUL: «Ok, scrivi a Frank che siamo operativi e allestiti, pronti per il congresso. Usa CHAT WHATSAPP e inviagli: Ocean 3 pronta per l’evento.»'
+      ];
+      reunionDialogue.forEach(function(line,index){
+        later(function(){ say(line); }, 1800 + index*4200);
+      });
     } else {
       say('');
     }
