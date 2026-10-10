@@ -1478,7 +1478,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     document.getElementById('paulHotspot').style.display='block';
     const chest=document.getElementById('oceanChestHotspot');
     if(chest) chest.style.display='block';
-    if(typeof ocean3Audio!=='undefined' && !audioMuted){ocean3Audio.currentTime=0;ocean3Audio.play().catch(function(){});ocean3Started=true;}
+    // In OCEAN 3 devastata deve suonare solo la Canzone del Sabotatore.
+    if(typeof ocean3Audio!=='undefined'){ocean3Audio.pause();ocean3Audio.currentTime=0;ocean3Started=false;}
+    if(typeof sabotatoreAudio!=='undefined' && !audioMuted){sabotatoreAudio.currentTime=0;sabotatoreAudio.play().catch(function(){});}
     say('Sei tornato a OCEAN 3.');
   });
   document.getElementById('smokeBreakButton').addEventListener('click', function(){
