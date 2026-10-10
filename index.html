@@ -16,10 +16,6 @@ body{display:flex;align-items:center;justify-content:center}
 #faderHint{position:absolute;left:24%;top:51%;width:4%;height:7%;border:2px dashed transparent;box-sizing:border-box;pointer-events:none;z-index:9;transition:.15s}
 #scene:hover #faderHint{border-color:rgba(255,216,74,.35)}
 #ui{background:#11151d;border:3px solid #69717e;border-top:0;padding:7px}
-/* OCEAN 3 dopo FUMA FUMA: niente finestra messaggi né verbi punta-e-clicca. */
-#wrap:has(#scene.ocean3-clean) #msg,
-#wrap:has(#scene.ocean3-clean) #verbs{display:none!important}
-#wrap:has(#scene.ocean3-clean) #ui{background:transparent;border:0;padding:0}
 #msg{min-height:34px;font-size:14px;line-height:1.25;margin-bottom:5px}
 button{font:bold 12px monospace;background:#252a34;color:#fff;border:2px solid #657080;padding:7px 9px;margin:2px;cursor:pointer}
 button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
