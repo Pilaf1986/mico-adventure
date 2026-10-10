@@ -1355,15 +1355,18 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     say('SCENA 6 — VIABILITÀ. Puoi usare la macchina del caffè, prendere una brioche o parlare con l’addetto alle pulizie.');
   });
   document.getElementById('viaCoffeeBtn').addEventListener('click',function(){
+    if(verb !== 'USA') return say('☕ Per prendere un caffè devi selezionare USA e poi cliccare sulla macchina del caffè.');
     document.getElementById('viaDialogue').innerHTML='<span class="viaStatus">MACCHINA DEL CAFFÈ</span><br>La macchina brontola, macina e riempie il bicchierino. ☕ Andriu beve il caffè bollente: «Finalmente qualcosa di decente!»';
-    say('☕ Hai preso e bevuto un caffè. La pausa migliora.');
+    say('☕ Hai usato la macchina del caffè e bevuto un caffè. La pausa migliora.');
   });
   document.getElementById('viaBriocheBtn').addEventListener('click',function(){
+    if(verb !== 'PRENDI') return say('🥐 Per prendere una brioche devi selezionare PRENDI e poi cliccare sul vassoio.');
     document.getElementById('viaDialogue').innerHTML='<span class="viaStatus">BRIOCHE PRESA</span><br>Prendi una brioche dal vassoio dei camerieri e la mangi in due bocconi. 🥐 Paul ti guarda: «Oh, lasciane qualcuna anche agli altri!»';
     say('🥐 Hai preso e mangiato una brioche. Energia recuperata!');
     this.textContent='🥐 PRENDI UN’ALTRA BRIOCHE';
   });
   document.getElementById('viaCleanerBtn').addEventListener('click',function(){
+    if(verb !== 'PARLA') return say('🧹 Per rivolgerti all’addetto devi selezionare PARLA e poi cliccare su di lui.');
     document.getElementById('viaDialogue').innerHTML='<span class="viaStatus">ADDETTO ALLE PULIZIE</span><br>Andriu: «Scusa, sai dov’è…?»<br>ADDETTO: «السلام عليكم، أنا مشغول الآن…» continua a parlare al cellulare in arabo, passa lo straccio senza guardarti e ti ignora completamente.';
     say('🧹 L’addetto risponde in arabo al telefono e continua a pulire senza considerarti.');
   });
