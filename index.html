@@ -333,6 +333,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let zaniniMenuSeen = false;
   let zaniniKitchenSeen = false;
   let zaniniWaiterTalked = false;
+  let ocean3ReadyForEvent = false;
   let fumaFumaReturned = false;
   let ocean3TestStep = 0;
   let warehouseConversationStarted = false;
@@ -631,6 +632,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     addWhatsappBubble('Andriu',cleaned,true);
     document.getElementById('waInput').value='';
     if(scene === 'ocean3' && cleaned.toLocaleLowerCase('it-IT') === "ocean 3 pronta per l'evento"){
+      ocean3ReadyForEvent = true;
       later(function(){
         addWhatsappBubble('Frank — ON SITE MANAGER','Ottimo ragazzi, andate a mangiare e fate pure il taglio della cravatta abbiamo tempo.',false);
         say('💬 FRANK: «Ottimo ragazzi, andate a mangiare e fate pure il taglio della cravatta abbiamo tempo.»');
@@ -1132,6 +1134,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       paulHasSchema: paulHasSchema,
       whatsappChatDelivered: whatsappChatDelivered,
       frankBriefingComplete: frankBriefingComplete,
+      ocean3ReadyForEvent: ocean3ReadyForEvent,
       inventory: inventory.slice(),
       message: msg.textContent,
       panicVisible: panic.style.display
@@ -1216,6 +1219,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       const data=JSON.parse(raw);
       saveName.value=data.saveName || ('Salvataggio '+selectedSlot);
       scene=data.scene || 'regia';
+      ocean3ReadyForEvent=!!data.ocean3ReadyForEvent;
       warehouseConversationStarted=!!data.warehouseConversationStarted;
       barrierReached=!!data.barrierReached;
       // Migrazione dei vecchi salvataggi: il vecchio magazzino dopo Regia diventa la scena di uscita per PASS revocato.
@@ -1228,12 +1232,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       selectedItem=data.selectedItem || '';
       goWarehouse.style.display='none';
       goBarrier.style.display='none';
+      document.getElementById('goZaniniButton').style.display='none';
       document.getElementById('smokeBreakButton').style.display='none';
       // Ripristina la classe della scena prima di applicare quella salvata.
       document.getElementById('scene').classList.remove('ocean3-clean');
       if(scene === 'ocean3'){
         // OCEAN 3 va ripristinata come scena, non deve ricadere nel ramo Regia Gold.
         document.getElementById('bg').src='./assets/ocean3-allestita.png?rev=1';
+        if(ocean3ReadyForEvent) document.getElementById('goZaniniButton').style.display='block';
         if(typeof ocean3Audio !== 'undefined' && !audioMuted){ ocean3Audio.currentTime=0; ocean3Audio.play().catch(function(){}); ocean3Started=true; }
         document.querySelectorAll('.hot').forEach(function(h){
           h.hidden=true;
