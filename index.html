@@ -1045,10 +1045,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   function getSaveData(){
+    // Usa anche la scena realmente visibile: evita che un valore interno rimasto indietro
+    // salvi Regia Gold mentre la viabilità FUMA FUMA è sullo schermo.
+    const fumaSceneVisible = document.getElementById('viabilitaScene').style.display === 'block';
+    const sceneToSave = fumaSceneVisible ? 'fumaFuma' : scene;
     return {
       version: 3,
       saveName: saveName.value.trim(),
-      scene: scene,
+      scene: sceneToSave,
       warehouseConversationStarted: warehouseConversationStarted,
       barrierReached: barrierReached,
       passChecked: passChecked,
@@ -1150,6 +1154,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       const data=JSON.parse(raw);
       saveName.value=data.saveName || ('Salvataggio '+selectedSlot);
       scene=data.scene || 'regia';
+      // Compatibilità con salvataggi FUMA FUMA che in precedenza potevano aver memorizzato Regia.
+      if(data.scene === 'fumaFuma' || data.scene === 'fuma-fuma' || data.scene === 'viabilita'){
+        scene='fumaFuma';
+      }
       warehouseConversationStarted=!!data.warehouseConversationStarted;
       barrierReached=!!data.barrierReached;
       // Migrazione dei vecchi salvataggi: il vecchio magazzino dopo Regia diventa la scena di uscita per PASS revocato.
