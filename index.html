@@ -1237,7 +1237,28 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           warehouseAudio.play().catch(function(){});
           warehouseStarted=true;
         }
+      }else if(scene === 'fumaFuma'){
+        // Ripristina la scena FUMA FUMA/viabilità invece di ricadere nella Regia Gold.
+        document.getElementById('bg').style.display='none';
+        document.getElementById('viabilitaScene').style.display='block';
+        document.getElementById('fumaFumaOverlay').style.display='none';
+        document.getElementById('smokeBreakButton').style.display='none';
+        document.querySelectorAll('.hot').forEach(function(h){
+          h.hidden=true;
+          h.style.setProperty('display','none','important');
+          h.style.setProperty('visibility','hidden','important');
+          h.style.setProperty('pointer-events','none','important');
+        });
+        document.getElementById('paulHotspot').style.display='none';
+        if(typeof loungeAudio !== 'undefined'){ loungeAudio.pause(); loungeAudio.currentTime=0; loungeStarted=false; }
+        if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Started=false; }
+        if(typeof warehouseAudio !== 'undefined'){ warehouseAudio.pause(); warehouseAudio.currentTime=0; warehouseStarted=false; }
+        if(typeof barrierAudio !== 'undefined'){ barrierAudio.pause(); barrierAudio.currentTime=0; barrierStarted=false; }
+        if(typeof fumaFumaAudio !== 'undefined' && !audioMuted){ fumaFumaAudio.currentTime=0; fumaFumaAudio.play().catch(function(){}); }
+        document.getElementById('viaDialogue').innerHTML='<span class="viaStatus">SCENA 6 — FUMA FUMA · VIABILITÀ</span><br>Paul e Andriu escono nella viabilità coperta. Si accendono una sigaretta: finalmente una pausa, mentre camion, catering e pulizie continuano a lavorare.';
       }else{
+        document.getElementById('viabilitaScene').style.display='none';
+        document.getElementById('bg').style.display='block';
         document.getElementById('bg').src=regiaBackground;
         if(typeof barrierAudio !== 'undefined'){
           barrierAudio.pause();
@@ -1249,6 +1270,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           warehouseAudio.currentTime=0;
           warehouseStarted=false;
         }
+        if(typeof fumaFumaAudio !== 'undefined'){ fumaFumaAudio.pause(); fumaFumaAudio.currentTime=0; }
       }
       verb=data.verb || 'GUARDA';
       radioCalled=!!data.radioCalled;
