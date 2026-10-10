@@ -156,6 +156,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <div class="hot" data-name="zaniniWaiter" title="CAMERIERE" style="display:none;left:61%;top:17%;width:14%;height:38%;z-index:100"></div>
     <div class="hot" data-name="zaniniMenu" title="MENÙ DEL GIORNO" style="display:none;left:67%;top:4%;width:18%;height:19%;z-index:100"></div>
     <div class="hot" data-name="zaniniKitchen" title="CUCINA" style="display:none;left:78%;top:19%;width:21%;height:46%;z-index:100"></div>
+    <div class="hot" data-name="zaniniPaul" title="PAUL — TECNICO NAVIGATO" style="display:none;left:39%;top:48%;width:15%;height:19%;z-index:101"></div>
     <button type="button" id="zaniniBackButton" style="display:none;position:absolute;left:2%;bottom:2%;z-index:10020;font-size:13px;padding:9px 12px;background:rgba(0,0,0,.85);color:#fff;border:2px solid #ffd84a;cursor:pointer;font-family:monospace;font-weight:bold">↩ TORNA AL MICO</button>
     <button type="button" id="smokeBreakButton" style="display:none;position:absolute;left:50%;top:78%;transform:translateX(-50%);z-index:10010;background:#2b3326;color:#f6f0d4;border:2px solid #d2b66c;padding:12px 18px;font:bold clamp(12px,1.5vw,18px) monospace;cursor:pointer;box-shadow:0 0 12px #000">FAI A FUMARE</button>
     <div id="fumaFumaOverlay" style="display:none;position:absolute;inset:0;z-index:10020;background:linear-gradient(180deg,rgba(5,7,9,.28),rgba(5,7,9,.88));align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:5%;box-sizing:border-box;font-family:monospace">
@@ -329,6 +330,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let timers = [];
   let coffeeDrunk = false;
   let scene = 'regia';
+  let zaniniMenuSeen = false;
+  let zaniniKitchenSeen = false;
+  let zaniniWaiterTalked = false;
   let fumaFumaReturned = false;
   let ocean3TestStep = 0;
   let warehouseConversationStarted = false;
@@ -702,7 +706,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       /* Coordinate riferite alla scena Zanini 16:9: cameriere al bancone, lavagna del menù, porta della cucina. */
       {name:'zaniniWaiter',title:'CAMERIERE DI ZANINI',style:'left:82%;top:35%;width:16%;height:25%'},
       {name:'zaniniMenu',title:'MENÙ DEL GIORNO',style:'left:40%;top:19%;width:15%;height:25%'},
-      {name:'zaniniKitchen',title:'CUCINA',style:'left:59%;top:24%;width:15%;height:39%'}
+      {name:'zaniniKitchen',title:'CUCINA',style:'left:59%;top:24%;width:15%;height:39%'},
+      {name:'zaniniPaul',title:'PAUL — TECNICO NAVIGATO',style:'left:39%;top:48%;width:15%;height:19%'}
     ].forEach(function(item){
       const h=document.querySelector('.hot[data-name="'+item.name+'"]');
       if(h){
@@ -716,6 +721,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function enterZanini(){
     clearTimers();
     scene='zanini';
+    zaniniMenuSeen=false;
+    zaniniKitchenSeen=false;
+    zaniniWaiterTalked=false;
     document.getElementById('scene').classList.remove('ocean3-clean');
     document.getElementById('bg').style.display='block';
     document.getElementById('bg').src=zaniniBackground;
@@ -1561,20 +1569,28 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function act(name){
     if(scene === 'zanini'){
+      if(name==='zaniniPaul'){
+        if(verb==='GUARDA') return say('👷 PAUL è un tecnico navigato: sa che una pausa pranzo fatta bene richiede metodo, calma e una trattoria affidabile.');
+        if(verb==='PARLA'){
+          if(zaniniMenuSeen && zaniniKitchenSeen && zaniniWaiterTalked) return say('👷 PAUL: «E dopo un bel pranzetto, sventagliata di amari, Mirto, Sambuca e Unicum»');
+          return say('👷 PAUL: «Prima vediamo il menù, diamo un’occhiata alla cucina e sentiamo il cameriere. Le pause pranzo vanno organizzate come si deve!»');
+        }
+        return say('PAUL sta già pianificando il pranzo. Prova a PARLARE con lui.');
+      }
       if(name==='zaniniWaiter'){
         if(verb==='GUARDA') return say('👨‍🍳 Il cameriere dietro al bancone tiene d’occhio la sala. Ha l’aria di chi conosce tutti i clienti abituali.');
-        if(verb==='PARLA') return say('👨‍🍳 CAMERIERE: «Ciao ragazzi! Oggi abbiamo panissa novarese, risotto e cotoletta. Per i tecnici del MiCo facciamo in fretta: qui la pausa pranzo è sacra!»');
+        if(verb==='PARLA'){ zaniniWaiterTalked=true; return say('👨‍🍳 CAMERIERE: «Ciao ragazzi! Oggi abbiamo panissa novarese, risotto e cotoletta. Per i tecnici del MiCo facciamo in fretta: qui la pausa pranzo è sacra!»'); }
         if(verb==='USA') return say('Il cameriere è pronto a prendere l’ordinazione. Prima decidete cosa mangiare.');
         return say('Non è il caso di fare questo con il cameriere. Prova PARLA.');
       }
       if(name==='zaniniMenu'){
-        if(verb==='GUARDA' || verb==='LEGGI') return say('📜 MENÙ DI ZANINI: panissa novarese, risotto del giorno, cotoletta con patate, pasta al pomodoro e caffè. Il menù è scritto a mano e macchiato di sugo.');
+        if(verb==='GUARDA' || verb==='LEGGI'){ zaniniMenuSeen=true; return say('📜 MENÙ DI ZANINI: panissa novarese, risotto del giorno, cotoletta con patate, pasta al pomodoro e caffè. Il menù è scritto a mano e macchiato di sugo.'); }
         if(verb==='PARLA') return say('Il menù non risponde, ma il cameriere può spiegarti i piatti del giorno.');
         if(verb==='USA') return say('🍝 Hai scelto mentalmente la panissa. Ora puoi parlarne al cameriere.');
         return say('È un menù appeso al muro: puoi leggerlo, non portarlo via.');
       }
       if(name==='zaniniKitchen'){
-        if(verb==='GUARDA') return say('🔥 Dalla cucina arrivano profumo di risotto, pentole che tintinnano e ordini urlati. I cuochi sono nel pieno del servizio.');
+        if(verb==='GUARDA'){ zaniniKitchenSeen=true; return say('🔥 Dalla cucina arrivano profumo di risotto, pentole che tintinnano e ordini urlati. I cuochi sono nel pieno del servizio.'); }
         if(verb==='PARLA') return say('👨‍🍳 DALLA CUCINA: «Un attimo che escono i piatti! Quelli del MiCo hanno sempre fame come se montassero un palco ogni cinque minuti!»');
         if(verb==='USA') return say('Meglio non entrare in cucina senza permesso: rischieresti di intralciare il servizio.');
         return say('La cucina è in piena attività. Guarda o parla con il personale.');
