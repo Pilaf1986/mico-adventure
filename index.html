@@ -1384,13 +1384,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         goWarehouse.style.display='block';
       }
       renderInventory();
-      // Ripristina il pulsante della pausa se Paul ha già ricevuto lo schema e il microfono è stato consegnato.
-      // Nei salvataggi OCEAN 3 lo stato si deduce dai progressi già salvati, senza chiedere di rifare le azioni.
+      // Il caricamento di un salvataggio non deve mostrare automaticamente il pulsante "FAI A FUMARE".
+      // Il pulsante viene mostrato solo dal normale evento di gioco previsto per quel momento.
       const smokeButton=document.getElementById('smokeBreakButton');
-      if(smokeButton){
-        const microphoneStillInInventory = inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1 || inventory.indexOf('MICROFONO GOOSENECK') !== -1;
-        smokeButton.style.display = scene === 'ocean3' && paulHasSchema && !microphoneStillInInventory ? 'block' : 'none';
-      }
+      if(smokeButton) smokeButton.style.display='none';
       buttons.forEach(function(button){
         button.classList.toggle('sel', button.dataset.verb === verb);
       });
