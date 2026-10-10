@@ -769,7 +769,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(inventory.indexOf('CELLULARE') === -1) inventory.push('CELLULARE');
     if(inventory.indexOf('PASS') === -1) inventory.push('PASS');
     renderInventory();
-    say('🚧 LA SBARRA — Andriu è uscito dal magazzino. Davanti a lui, la barriera d’ingresso del MiCo.');
+    say('');
   }
 
   function openAssemblySchema(){
@@ -869,7 +869,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       chestHotspot.style.cssText='left:0.5%;top:57%;width:54%;height:42%;z-index:9999;display:block!important;visibility:visible!important;pointer-events:auto!important;background:transparent;border:0';
       chestHotspot.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
     }
-    say('Benvenuto in OCEAN 3.');
+    say('');
   }
 
   function enterWarehouseExit(){
@@ -904,7 +904,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     bg.src=warehouseBackground;
     bg.onerror=function(){ bg.src=regiaBackground; };
     configureWarehouseHotspots();
-    say('SCENA 2 — MAGAZZINO MICO A/V. Qui devi parlare con FRANK, l’ON SITE MANAGER: seleziona PARLA e clicca su di lui per iniziare il briefing.');
+    say('');
   }
 
   function enterWarehouse(){
@@ -946,7 +946,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     buttons.forEach(function(button){
       button.classList.toggle('sel', button.dataset.verb === verb);
     });
-    say('MAGAZZINO MICO A/V — Andriu è arrivato al livello iniziale della sua nuova carriera. Seleziona PARLA e poi clicca sull’ON SITE MANAGER per iniziare il briefing.');
+    say('');
   }
 
     function talkOnSiteManager(){
@@ -1260,7 +1260,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         if(inventory.indexOf('CELLULARE') === -1) inventory.push('CELLULARE');
         if(inventory.indexOf('PASS') === -1) inventory.push('PASS');
       }
-      msg.textContent=data.message || 'Partita caricata.';
+      msg.textContent='';
       panic.style.display=data.panicVisible || 'none';
       if(scene === 'barrier' && accessGranted){
         goWarehouse.textContent='🚪 VAI AL MAGAZZINO';
