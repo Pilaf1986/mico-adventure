@@ -153,6 +153,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <button type="button" id="goWarehouse">🚪 VAI IN MAGAZZINO</button>
     <button type="button" id="goBarrier">🚧 VAI ALLA SBARRA</button>
     <button type="button" id="goZaniniButton" style="display:none;position:absolute;left:50%;bottom:8%;transform:translateX(-50%);z-index:10020;font-size:15px;padding:12px 20px;background:#252a34;color:#fff;border:3px solid #ffd84a;box-shadow:0 0 18px #000;cursor:pointer;font-family:monospace;font-weight:bold">🍝 VAI DA ZANINI</button>
+    <div class="hot" data-name="zaniniWaiter" title="CAMERIERE" style="display:none;left:61%;top:17%;width:14%;height:38%;z-index:100"></div>
+    <div class="hot" data-name="zaniniMenu" title="MENÙ DEL GIORNO" style="display:none;left:67%;top:4%;width:18%;height:19%;z-index:100"></div>
+    <div class="hot" data-name="zaniniKitchen" title="CUCINA" style="display:none;left:78%;top:19%;width:21%;height:46%;z-index:100"></div>
+    <button type="button" id="zaniniBackButton" style="display:none;position:absolute;left:2%;bottom:2%;z-index:10020;font-size:13px;padding:9px 12px;background:rgba(0,0,0,.85);color:#fff;border:2px solid #ffd84a;cursor:pointer;font-family:monospace;font-weight:bold">↩ TORNA AL MICO</button>
     <button type="button" id="smokeBreakButton" style="display:none;position:absolute;left:50%;top:78%;transform:translateX(-50%);z-index:10010;background:#2b3326;color:#f6f0d4;border:2px solid #d2b66c;padding:12px 18px;font:bold clamp(12px,1.5vw,18px) monospace;cursor:pointer;box-shadow:0 0 12px #000">FAI A FUMARE</button>
     <div id="fumaFumaOverlay" style="display:none;position:absolute;inset:0;z-index:10020;background:linear-gradient(180deg,rgba(5,7,9,.28),rgba(5,7,9,.88));align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:5%;box-sizing:border-box;font-family:monospace">
       <div style="font-size:clamp(12px,2vw,18px);color:#d8c28a;letter-spacing:.18em;margin-bottom:12px">SCENA 6</div>
@@ -684,6 +688,50 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const warehouseBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/magazzino-mico-av.png';
   const barrierBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/La%20sbarra%20del%20MiCo%20al%20tramonto.png';
   const regiaBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/Regia%20Gold_%20caos%20in%20console.png';
+
+  const zaniniBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/zanini.png';
+
+  function configureZaniniHotspots(){
+    hotspots.forEach(function(h){
+      h.hidden=true;
+      h.style.setProperty('display','none','important');
+      h.style.setProperty('visibility','hidden','important');
+      h.style.setProperty('pointer-events','none','important');
+    });
+    [
+      {name:'zaniniWaiter',title:'CAMERIERE DI ZANINI',style:'left:61%;top:17%;width:14%;height:38%'},
+      {name:'zaniniMenu',title:'MENÙ DEL GIORNO',style:'left:67%;top:4%;width:18%;height:19%'},
+      {name:'zaniniKitchen',title:'CUCINA',style:'left:78%;top:19%;width:21%;height:46%'}
+    ].forEach(function(item){
+      const h=document.querySelector('.hot[data-name="'+item.name+'"]');
+      if(h){
+        h.hidden=false;
+        h.style.cssText=item.style+';display:block!important;visibility:visible!important;pointer-events:auto!important;z-index:100';
+        h.title=item.title;
+      }
+    });
+  }
+
+  function enterZanini(){
+    clearTimers();
+    scene='zanini';
+    document.getElementById('scene').classList.remove('ocean3-clean');
+    document.getElementById('bg').style.display='block';
+    document.getElementById('bg').src=zaniniBackground;
+    document.getElementById('bg').onerror=function(){say('Non riesco a caricare lo sfondo Zanini: controlla che assets/zanini.png sia presente nel repository.');};
+    document.getElementById('viabilitaScene').style.display='none';
+    document.getElementById('fumaFumaOverlay').style.display='none';
+    document.getElementById('goZaniniButton').style.display='none';
+    document.getElementById('smokeBreakButton').style.display='none';
+    goWarehouse.style.display='none';
+    goBarrier.style.display='none';
+    panic.style.display='none';
+    document.getElementById('zaniniBackButton').style.display='block';
+    configureZaniniHotspots();
+    verb='GUARDA';
+    buttons.forEach(function(button){button.classList.toggle('sel',button.dataset.verb===verb);});
+    say('🍝 TRATTORIA ZANINI — Andriu e Paul si godono la pausa pranzo. Puoi parlare con il cameriere, leggere il menù o dare un’occhiata alla cucina.');
+  }
 
   function configureWarehouseHotspots(){
     const config = {
@@ -1237,6 +1285,20 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           warehouseAudio.play().catch(function(){});
           warehouseStarted=true;
         }
+      }else if(scene === 'zanini'){
+        document.getElementById('bg').style.display='block';
+        document.getElementById('bg').src=zaniniBackground;
+        document.getElementById('bg').onerror=function(){say('Non riesco a caricare lo sfondo Zanini: controlla assets/zanini.png.');};
+        document.getElementById('viabilitaScene').style.display='none';
+        document.getElementById('zaniniBackButton').style.display='block';
+        document.getElementById('goZaniniButton').style.display='none';
+        document.getElementById('smokeBreakButton').style.display='none';
+        configureZaniniHotspots();
+        if(typeof loungeAudio!=='undefined'){loungeAudio.pause();loungeAudio.currentTime=0;loungeStarted=false;}
+        if(typeof ocean3Audio!=='undefined'){ocean3Audio.pause();ocean3Audio.currentTime=0;ocean3Started=false;}
+        if(typeof warehouseAudio!=='undefined'){warehouseAudio.pause();warehouseAudio.currentTime=0;warehouseStarted=false;}
+        if(typeof barrierAudio!=='undefined'){barrierAudio.pause();barrierAudio.currentTime=0;barrierStarted=false;}
+        if(typeof fumaFumaAudio!=='undefined'){fumaFumaAudio.pause();fumaFumaAudio.currentTime=0;}
       }else if(scene === 'fumaFuma'){
         // Ripristina FUMA FUMA quando il salvataggio viene caricato.
         document.getElementById('bg').style.display='none';
@@ -1379,8 +1441,25 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     else enterWarehouseExit();
   });
 
-  document.getElementById('goZaniniButton').addEventListener('click', function(){
-    say('🍝 Andriu e Paul si avviano da Zanini per la pausa pranzo.');
+  document.getElementById('goZaniniButton').addEventListener('click', enterZanini);
+  document.getElementById('zaniniBackButton').addEventListener('click', function(){
+    scene='ocean3';
+    document.getElementById('zaniniBackButton').style.display='none';
+    document.getElementById('bg').onerror=null;
+    document.getElementById('bg').src='./assets/ocean3-scena5.png?rev=0841331';
+    document.getElementById('scene').classList.add('ocean3-clean');
+    document.getElementById('viabilitaScene').style.display='none';
+    document.querySelectorAll('.hot').forEach(function(h){
+      h.hidden=true;
+      h.style.setProperty('display','none','important');
+      h.style.setProperty('visibility','hidden','important');
+      h.style.setProperty('pointer-events','none','important');
+    });
+    document.getElementById('paulHotspot').style.display='block';
+    const chest=document.getElementById('oceanChestHotspot');
+    if(chest) chest.style.display='block';
+    if(typeof ocean3Audio!=='undefined' && !audioMuted){ocean3Audio.currentTime=0;ocean3Audio.play().catch(function(){});ocean3Started=true;}
+    say('Sei tornato a OCEAN 3.');
   });
   document.getElementById('smokeBreakButton').addEventListener('click', function(){
     clearTimers();
@@ -1480,6 +1559,27 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.getElementById('northWarehouse').addEventListener('click', function(){chooseNorthRoom('MAGAZZINO');});
 
   function act(name){
+    if(scene === 'zanini'){
+      if(name==='zaniniWaiter'){
+        if(verb==='GUARDA') return say('👨‍🍳 Il cameriere dietro al bancone tiene d’occhio la sala. Ha l’aria di chi conosce tutti i clienti abituali.');
+        if(verb==='PARLA') return say('👨‍🍳 CAMERIERE: «Ciao ragazzi! Oggi abbiamo panissa novarese, risotto e cotoletta. Per i tecnici del MiCo facciamo in fretta: qui la pausa pranzo è sacra!»');
+        if(verb==='USA') return say('Il cameriere è pronto a prendere l’ordinazione. Prima decidete cosa mangiare.');
+        return say('Non è il caso di fare questo con il cameriere. Prova PARLA.');
+      }
+      if(name==='zaniniMenu'){
+        if(verb==='GUARDA' || verb==='LEGGI') return say('📜 MENÙ DI ZANINI: panissa novarese, risotto del giorno, cotoletta con patate, pasta al pomodoro e caffè. Il menù è scritto a mano e macchiato di sugo.');
+        if(verb==='PARLA') return say('Il menù non risponde, ma il cameriere può spiegarti i piatti del giorno.');
+        if(verb==='USA') return say('🍝 Hai scelto mentalmente la panissa. Ora puoi parlarne al cameriere.');
+        return say('È un menù appeso al muro: puoi leggerlo, non portarlo via.');
+      }
+      if(name==='zaniniKitchen'){
+        if(verb==='GUARDA') return say('🔥 Dalla cucina arrivano profumo di risotto, pentole che tintinnano e ordini urlati. I cuochi sono nel pieno del servizio.');
+        if(verb==='PARLA') return say('👨‍🍳 DALLA CUCINA: «Un attimo che escono i piatti! Quelli del MiCo hanno sempre fame come se montassero un palco ogni cinque minuti!»');
+        if(verb==='USA') return say('Meglio non entrare in cucina senza permesso: rischieresti di intralciare il servizio.');
+        return say('La cucina è in piena attività. Guarda o parla con il personale.');
+      }
+      return say('Alla Trattoria Zanini puoi interagire con il cameriere, il menù e la cucina.');
+    }
     if(scene === 'ocean3'){
       if(name === 'coffee'){
         // OCEAN 3: prima seleziona APRI, poi clicca sul baule per trovare il microfono.
