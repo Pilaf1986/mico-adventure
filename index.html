@@ -865,12 +865,20 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function chooseNorthRoom(room){
     if(room === 'MAGAZZINO'){
       closeNorthPlanimetry();
-      // Il magazzino operativo di Frank è accessibile solo dopo il rientro autorizzato dalla sbarra.
+      // Evita di intrappolare il giocatore nella scena di uscita: prima deve passare dalla sbarra.
       if(scene === 'barrier' && accessGranted) return enterWarehouse();
-      return enterWarehouseExit();
+      say('📐 PLANIMETRIA NORD — Per entrare nel Magazzino operativo devi prima raggiungere la sbarra e ottenere l’autorizzazione. Torna alla Regia e segui il percorso verso la sbarra.');
+      return;
     }
     if(room === 'OCEAN 3'){
       closeNorthPlanimetry();
+      // Entrare in OCEAN 3 azzera i timer: non interrompere il briefing di Frank né saltare le consegne.
+      if(!frankBriefingComplete){
+        say(frankBriefingRunning
+          ? '📐 OCEAN 3 — Frank sta ancora facendo il briefing. Aspetta che finisca e consegni tutto il materiale prima di entrare in sala.'
+          : '📐 OCEAN 3 — La sala è indicata sulla planimetria, ma prima devi completare il briefing di Frank nel Magazzino e ricevere tutto il materiale.');
+        return;
+      }
       return enterOcean3();
     }
     closeNorthPlanimetry();
