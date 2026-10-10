@@ -896,7 +896,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     bg.onerror=function(){
       bg.onerror=null;
       bg.removeAttribute('src');
-      say('⚠️ SCENA 5 — Non riesco a caricare ./assets/ocean3-scena5.png. Controlla che il file sia pubblicato nella cartella assets del sito GitHub Pages.');
+      say('⚠️ OCEAN 3 ALLESTITA — Non riesco a caricare ./assets/ocean3-allestita.png. Controlla che il file sia pubblicato nella cartella assets del sito GitHub Pages.');
     };
     bg.onload=function(){
       bg.onerror=null;
@@ -1228,7 +1228,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       document.getElementById('scene').classList.remove('ocean3-clean');
       if(scene === 'ocean3'){
         // OCEAN 3 va ripristinata come scena, non deve ricadere nel ramo Regia Gold.
-        document.getElementById('bg').src='./assets/ocean3-scena5.png?rev=0841331';
+        document.getElementById('bg').src='./assets/ocean3-allestita.png?rev=1';
         if(typeof ocean3Audio !== 'undefined' && !audioMuted){ ocean3Audio.currentTime=0; ocean3Audio.play().catch(function(){}); ocean3Started=true; }
         document.querySelectorAll('.hot').forEach(function(h){
           h.hidden=true;
