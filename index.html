@@ -871,8 +871,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         say('📐 PLANIMETRIA NORD — Sei già nel Magazzino operativo. Parla con Frank e completa il briefing.');
         return;
       }
-      // L’accesso al Magazzino avviene solo dalla sbarra dopo l’autorizzazione.
-      if(scene === 'barrier' && accessGranted) return enterWarehouse();
+      // Primo accesso dalla sbarra; ritorno consentito da OCEAN 3 per recuperare materiale.
+      if((scene === 'barrier' && accessGranted) ||
+         (scene === 'ocean3' && accessGranted && frankBriefingComplete)) return enterWarehouse();
       say('📐 PLANIMETRIA NORD — Per entrare nel Magazzino operativo devi prima raggiungere la sbarra e ottenere l’autorizzazione. Torna alla Regia e segui il percorso verso la sbarra.');
       return;
     }
@@ -1018,9 +1019,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   function enterWarehouse(){
-    // Blocco di sicurezza: nessun percorso può aprire la scena di Frank prima dell'accesso autorizzato.
+    // Primo accesso dalla sbarra; da OCEAN 3 si può tornare solo dopo aver completato il briefing.
     if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
-    if(scene !== 'barrier' || !accessGranted){
+    const firstEntryAllowed = scene === 'barrier' && accessGranted;
+    const returnFromOceanAllowed = scene === 'ocean3' && accessGranted && frankBriefingComplete;
+    if(!firstEntryAllowed && !returnFromOceanAllowed){
       return enterWarehouseExit();
     }
     clearTimers();
