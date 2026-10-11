@@ -1624,6 +1624,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.getElementById('northWarehouse').addEventListener('click', function(){chooseNorthRoom('MAGAZZINO');});
 
   function act(name){
+    // MAGAZZINO INDEX: riconosci la scena anche se il flag non è stato ripristinato da un salvataggio.
+    const activeBackground = document.getElementById('bg').getAttribute('src') || '';
+    const isMagazzinoIndex = warehouseIndex || activeBackground.indexOf('magazzino-index.png') !== -1;
+    if(scene === 'warehouse' && isMagazzinoIndex && verb === 'PARLA' &&
+       (name === 'monitor' || name === 'phone')){
+      return say('MAGAZZINIERE: «Sei già tornato, fai cagare, vai a lavorare.»');
+    }
     if(scene === 'zanini'){
       if(name==='zaniniPaul'){
         if(verb==='GUARDA') return say('👷 PAUL è un tecnico navigato: sa che una pausa pranzo fatta bene richiede metodo, calma e una trattoria affidabile.');
