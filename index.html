@@ -1323,19 +1323,6 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         const chestButton=document.getElementById('oceanChestHotspot');
         chestButton.style.display='block';
         chestButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
-        // Se il salvataggio è stato creato dopo che Andriu ha consegnato il microfono a Paul,
-        // ripristina anche il pulsante per andare a fumare.
-        const smokeButton=document.getElementById('smokeBreakButton');
-        const micStillInInventory = inventory.indexOf('MICROFONO GOOSENECK') !== -1 ||
-          inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1;
-        if(smokeButton && paulHasSchema && !micStillInInventory){
-          smokeButton.textContent='🚬 VAI A FUMARE';
-          smokeButton.hidden=false;
-          smokeButton.style.setProperty('display','block','important');
-          smokeButton.style.setProperty('visibility','visible','important');
-          smokeButton.style.setProperty('pointer-events','auto','important');
-          smokeButton.style.setProperty('z-index','10030','important');
-        }
         const savedChestHotspot=document.querySelector('.hot[data-name="coffee"]');
         if(savedChestHotspot){
           savedChestHotspot.hidden=false;
@@ -1488,20 +1475,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         goWarehouse.textContent='🚪 VAI IN MAGAZZINO';
         goWarehouse.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:10030!important;';
       }
-      // Ripristina "VAI A FUMARE" solo se il salvataggio è successivo alla consegna del microfono a Paul.
-      // I vecchi salvataggi non hanno il flag dedicato, quindi usiamo anche la battuta salvata come compatibilità.
+      // Il caricamento di un salvataggio non deve mostrare automaticamente il pulsante "FAI A FUMARE".
+      // Il pulsante viene mostrato solo dal normale evento di gioco previsto per quel momento.
       const smokeButton=document.getElementById('smokeBreakButton');
-      if(smokeButton){
-        smokeButton.style.display='none';
-        const savedMessage=String(data.message || '');
-        const microphoneWasHandedOver=!!data.microphoneGivenToPaul ||
-          savedMessage.indexOf('Perfetto! Vedo che il congresso si chiama FICA 2026') !== -1;
-        if(scene === 'ocean3' && microphoneWasHandedOver){
-          smokeButton.textContent='🚬 VAI A FUMARE';
-          smokeButton.hidden=false;
-          smokeButton.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:10030!important;';
-        }
-      }
+      if(smokeButton) smokeButton.style.display='none';
       buttons.forEach(function(button){
         button.classList.toggle('sel', button.dataset.verb === verb);
       });
