@@ -543,16 +543,6 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     coffeeDrunk=true;
     if(inventory.indexOf('CAFFÈ') === -1) inventory.push('CAFFÈ');
   
-  // Copertina iniziale: il gioco resta fermo finché il giocatore non clicca.
-  const introScreen = document.getElementById('introScreen');
-  const startGameBtn = document.getElementById('startGameBtn');
-  if(startGameBtn && introScreen){
-    startGameBtn.addEventListener('click', function(){
-      introScreen.classList.add('hidden');
-      // La scena iniziale del gioco è già Regia Gold ('regia').
-    });
-  }
-
   renderInventory();
     say('☕ Andriu beve il caffè. La carriera può continuare.');
   }
@@ -2107,6 +2097,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       act(hotspot.dataset.name);
     });
   });
+
+  // Copertina iniziale: nascondila al clic; la scena di partenza è già Regia Gold.
+  const introScreen = document.getElementById('introScreen');
+  const startGameBtn = document.getElementById('startGameBtn');
+  if(startGameBtn && introScreen){
+    startGameBtn.addEventListener('click', function(){
+      introScreen.classList.add('hidden');
+    });
+  }
 
   renderInventory();
   updateAudioButton();
