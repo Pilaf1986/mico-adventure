@@ -1170,9 +1170,35 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     },56000);
   }
 
+  // Unico punto di migrazione per i salvataggi storici.
+  // Le versioni vecchie restano leggibili, ma ogni nuovo salvataggio usa lo schema corrente.
+  function normalizeSaveData(rawData){
+    const data = rawData && typeof rawData === 'object' ? rawData : {};
+    data.version = 4;
+    data.scene = data.scene || 'regia';
+    data.inventory = Array.isArray(data.inventory) ? data.inventory.slice() : [];
+    data.ocean3ReadyForEvent = !!data.ocean3ReadyForEvent;
+    data.fumaFumaReturned = !!data.fumaFumaReturned;
+    data.ocean3Devastated = !!data.ocean3Devastated ||
+      (data.scene === 'ocean3' && /Sei tornato a OCEAN 3/i.test(data.message || ''));
+    const oldSaveAlreadyDeliveredMic = !!data.paulHasSchema &&
+      data.inventory.indexOf('MICROFONO GOOSENECK') === -1 &&
+      data.inventory.indexOf('MICROFONO GOOSENECK DA PODIO') === -1;
+    data.ocean3Assembled = !!data.ocean3Assembled ||
+      data.ocean3ReadyForEvent || data.fumaFumaReturned ||
+      (data.scene === 'ocean3' && oldSaveAlreadyDeliveredMic);
+    // Nei vecchi slot il magazzino poteva indicare già la fase di uscita.
+    if(data.scene === 'warehouse' && !data.barrierReached && !data.frankBriefingComplete){
+      data.scene = 'warehouseExit';
+    }
+    data.warehouseIndex = !!data.warehouseIndex;
+    data.coffeeDrunk = !!data.coffeeDrunk;
+    return data;
+  }
+
   function getSaveData(){
     return {
-      version: 3,
+      version: 4,
       saveName: saveName.value.trim(),
       scene: scene,
       warehouseConversationStarted: warehouseConversationStarted,
@@ -1198,6 +1224,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       fumaFumaReturned: fumaFumaReturned,
       ocean3Assembled: ocean3Assembled,
       ocean3Devastated: ocean3Devastated,
+      warehouseIndex: warehouseIndex,
+      coffeeDrunk: coffeeDrunk,
       inventory: inventory.slice(),
       message: msg.textContent,
       panicVisible: panic.style.display
@@ -1279,25 +1307,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       }
       clearTimers();
       if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
-      const data=JSON.parse(raw);
+      const data=normalizeSaveData(JSON.parse(raw));
       saveName.value=data.saveName || ('Salvataggio '+selectedSlot);
-      scene=data.scene || 'regia';
-      ocean3ReadyForEvent=!!data.ocean3ReadyForEvent;
-      // Migrazione dei vecchi salvataggi: prima del flag dedicato, il messaggio salvato identificava il rientro nella scena devastata.
-      ocean3Devastated=!!data.ocean3Devastated || (data.scene === 'ocean3' && /Sei tornato a OCEAN 3/i.test(data.message || ''));
-      fumaFumaReturned=!!data.fumaFumaReturned;
-      // Compatibilità con i vecchi salvataggi creati prima del flag ocean3Assembled.
-      const savedInventory = Array.isArray(data.inventory) ? data.inventory : [];
-      const oldSaveAlreadyDeliveredMic = !!data.paulHasSchema &&
-        savedInventory.indexOf('MICROFONO GOOSENECK') === -1 &&
-        savedInventory.indexOf('MICROFONO GOOSENECK DA PODIO') === -1;
-      ocean3Assembled=!!data.ocean3Assembled || !!data.ocean3ReadyForEvent || !!data.fumaFumaReturned || (scene === 'ocean3' && oldSaveAlreadyDeliveredMic);
+      scene=data.scene;
+      ocean3ReadyForEvent=data.ocean3ReadyForEvent;
+      ocean3Devastated=data.ocean3Devastated;
+      fumaFumaReturned=data.fumaFumaReturned;
+      ocean3Assembled=data.ocean3Assembled;
+      warehouseIndex=data.warehouseIndex;
+      coffeeDrunk=data.coffeeDrunk;
       warehouseConversationStarted=!!data.warehouseConversationStarted;
       barrierReached=!!data.barrierReached;
-      // Migrazione dei vecchi salvataggi: il vecchio magazzino dopo Regia diventa la scena di uscita per PASS revocato.
-      if(scene === 'warehouse' && !barrierReached && !data.frankBriefingComplete){
-        scene='warehouseExit';
-      }
       passChecked=!!data.passChecked;
       cooperativeCleared=!!data.cooperativeCleared;
       accessGranted=!!data.accessGranted;
@@ -1474,8 +1494,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         goBarrier.textContent='🚧 VAI ALLA SBARRA';
         goBarrier.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:10030!important;';
       }
-      inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
-      if(inventory.indexOf('CHAT WHATSAPP') === -1) inventory.push('CHAT WHATSAPP');
+      inventory=data.inventory.slice();
+      // La chat WhatsApp compare solo quando è stata davvero consegnata (o nei vecchi slot che già la contenevano).
       if(!planimetryDelivered){
         inventory=inventory.filter(function(item){ return item !== 'PLANIMETRIA NORD'; });
       }
