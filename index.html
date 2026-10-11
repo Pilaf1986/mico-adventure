@@ -693,6 +693,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
 
   const warehouseBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/magazzino-mico-av.png';
+  const magazzinoIndexBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/magazzino-index.jpg';
+  let warehouseIndex = false;
   const barrierBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/La%20sbarra%20del%20MiCo%20al%20tramonto.png';
   const regiaBackground = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/Regia%20Gold_%20caos%20in%20console.png';
 
@@ -748,7 +750,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   function configureWarehouseHotspots(){
-    const config = {
+    const config = warehouseIndex ? {
+      // Magazzino Index: Frank e la squadra sono andati via; resta il magazziniere sugli scaffali.
+      monitor: {title:'MAGAZZINIERE PELATO SUGLI SCAFFALI', style:'left:55%;top:7%;width:22%;height:48%'},
+      door:    {title:'USCITA MAGAZZINO', style:'left:42%;top:12%;width:18%;height:30%'},
+      greenTape:   {title:'NASTRO ADESIVO VERDE', style:'left:9%;top:86%;width:7%;height:10%;z-index:20'},
+      blackMarker: {title:'PENNARELLO NERO', style:'left:18%;top:84%;width:7%;height:11%;z-index:20'},
+      leatherman:  {title:'LEATHERMAN', style:'left:27%;top:87%;width:8%;height:9%;z-index:20'}
+    } : {
       mixer:   {title:'BAULI MICO A/V', style:'left:0%;top:25%;width:28%;height:55%'},
       fader:   {title:'ATTREZZATURA', style:'left:1%;top:55%;width:18%;height:25%'},
       postit:  {title:'MATERIALI', style:'left:25%;top:62%;width:20%;height:20%'},
@@ -764,6 +773,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     };
     hotspots.forEach(function(h){
       const name=h.dataset.name;
+      h.style.display='none';
       if(h.classList.contains('warehouseItem')) h.style.display='none';
       if(config[name]){
         h.style.cssText=config[name].style;
@@ -868,12 +878,12 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       closeNorthPlanimetry();
       // Se il giocatore è già nel Magazzino, non deve essere rimandato alla scena di uscita.
       if(scene === 'warehouse'){
-        say('📐 PLANIMETRIA NORD — Sei già nel Magazzino operativo. Parla con Frank e completa il briefing.');
+        say(warehouseIndex ? 'MAGAZZINO INDEX — Il magazziniere è impegnato sugli scaffali.' : '📐 PLANIMETRIA NORD — Sei già nel Magazzino operativo. Parla con Frank e completa il briefing.');
         return;
       }
       // Primo accesso dalla sbarra; ritorno consentito da OCEAN 3 per recuperare materiale.
       if((scene === 'barrier' && accessGranted) ||
-         (scene === 'ocean3' && frankBriefingComplete)) return enterWarehouse();
+         (scene === 'ocean3' && frankBriefingComplete)) { warehouseIndex = scene === 'ocean3'; return enterWarehouse(); }
       say('📐 PLANIMETRIA NORD — Per entrare nel Magazzino operativo devi prima raggiungere la sbarra e ottenere l’autorizzazione. Torna alla Regia e segui il percorso verso la sbarra.');
       return;
     }
@@ -1049,10 +1059,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     goWarehouse.style.display='none';
     goBarrier.style.display='none';
     const bg=document.getElementById('bg');
-    bg.src=warehouseBackground;
-    bg.onerror=function(){
-      bg.src=regiaBackground;
-    };
+    bg.src=warehouseIndex ? magazzinoIndexBackground : warehouseBackground;
+    bg.onerror=function(){ bg.src=warehouseBackground; };
     configureWarehouseHotspots();
     // In scena 2 si parte sempre da GUARDA: il briefing di Frank non deve avviarsi
     // semplicemente cliccando il suo hotspot con l'azione rimasta selezionata.
@@ -1317,7 +1325,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           barrierStarted=true;
         }
       }else if(scene === 'warehouse' || scene === 'warehouseExit'){
-        document.getElementById('bg').src=warehouseBackground;
+        document.getElementById('bg').src=(scene === 'warehouse' && warehouseIndex) ? magazzinoIndexBackground : warehouseBackground;
         configureWarehouseHotspots();
         if(typeof loungeAudio !== 'undefined'){
           loungeAudio.pause();
