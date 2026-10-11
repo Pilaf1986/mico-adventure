@@ -11,6 +11,15 @@ body{display:flex;align-items:center;justify-content:center}
 #scene{position:relative;aspect-ratio:16/9;border:3px solid #69717e;background:#111;overflow:hidden;box-shadow:0 0 30px #000}
 #bg{width:100%;height:100%;display:block;object-fit:cover}
 .hot{position:absolute;cursor:pointer;background:transparent;border:0;z-index:2}
+#scene.ocean3-devastated .hot,
+#scene.ocean3-devastated #paulHotspot,
+#scene.ocean3-devastated #oceanChestHotspot,
+#scene.ocean3-devastated #oceanChestOpen{
+  display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+
 .hot:hover{outline:2px dashed #ffd84a;outline-offset:-2px}
 #faderHint{position:absolute;left:24%;top:51%;width:4%;height:7%;border:2px dashed transparent;box-sizing:border-box;pointer-events:none;z-index:9;transition:.15s}
 #scene:hover #faderHint{border-color:rgba(255,216,74,.35)}
@@ -933,6 +942,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(typeof barrierAudio !== 'undefined'){ barrierAudio.pause(); barrierAudio.currentTime=0; barrierStarted=false; }
     if(typeof loungeAudio !== 'undefined'){ loungeAudio.pause(); loungeAudio.currentTime=0; loungeStarted=false; }
     if(typeof ocean3Audio !== 'undefined' && !audioMuted){ ocean3Audio.currentTime=0; ocean3Audio.play().catch(function(){}); ocean3Started=true; }
+    document.getElementById('scene').classList.remove('ocean3-devastated');
     document.getElementById('scene').classList.add('ocean3-clean');
     frankBriefingRunning=false;
     goWarehouse.style.display='none';
@@ -1525,7 +1535,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     document.getElementById('zaniniBackButton').style.display='none';
     document.getElementById('bg').onerror=null;
     document.getElementById('bg').src='./assets/ocean3_devastata.png?rev=1';
-    document.getElementById('scene').classList.add('ocean3-clean');
+    document.getElementById('scene').classList.add('ocean3-clean','ocean3-devastated');
     document.getElementById('viabilitaScene').style.display='none';
     document.querySelectorAll('.hot').forEach(function(h){
       h.hidden=true;
