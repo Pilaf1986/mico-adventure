@@ -1804,6 +1804,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
 
     if(scene === 'warehouse'){
+      // MAGAZZINO INDEX: il magazziniere risponde sempre allo stesso modo quando gli si parla.
+      if(warehouseIndex && name === 'monitor' && verb === 'PARLA') return say('MAGAZZINIERE: «Sei già tornato, fai cagare, vai a lavorare.»');
       if(verb === 'PRENDI'){
         const itemMap = {
           greenTape: 'NASTRO VERDE',
