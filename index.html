@@ -1433,9 +1433,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       frankBriefingComplete=!!data.frankBriefingComplete;
       frankBriefingRunning=false;
       // Ripristina il pulsante di avanzamento anche quando si carica un salvataggio dopo il briefing di Regia.
-      if(scene === 'regia' && (frankBriefingComplete || data.goWarehouseVisible || data.regiaComplete)){
+      if(scene === 'regia'){
+        // Il percorso da Regia al Magazzino deve restare accessibile anche nei salvataggi creati prima del briefing/flag.
         goWarehouse.textContent='🚪 VAI IN MAGAZZINO';
-        goWarehouse.style.display='block';
+        goWarehouse.hidden=false;
+        goWarehouse.style.setProperty('display','block','important');
+        goWarehouse.style.setProperty('visibility','visible','important');
+        goWarehouse.style.setProperty('pointer-events','auto','important');
       }
       if(scene === 'warehouse' && frankBriefingComplete){
         goBarrier.style.display='none';
