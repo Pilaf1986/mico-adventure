@@ -2122,6 +2122,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
   if(startGameBtn && introScreen){
     startGameBtn.addEventListener('click', function(){
+      // Ferma immediatamente la musica della copertina quando si entra nel gioco.
+      if(introAudio){
+        introAudio.pause();
+        introAudio.currentTime = 0;
+      }
       introScreen.style.setProperty('display','none','important');
       introScreen.setAttribute('aria-hidden','true');
     });
