@@ -1445,7 +1445,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         goBarrier.style.display='none';
       }
       if(scene === 'warehouseExit'){
-        goBarrier.style.display='none';
+        // Il salvataggio può essere fatto subito dopo che Frank revoca il PASS: ripristina il pulsante d'uscita.
+        goBarrier.hidden=false;
+        goBarrier.textContent='🚧 VAI ALLA SBARRA';
+        goBarrier.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:10030!important;';
       }
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
       if(inventory.indexOf('CHAT WHATSAPP') === -1) inventory.push('CHAT WHATSAPP');
