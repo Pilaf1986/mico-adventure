@@ -1075,12 +1075,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     },8000);
     later(function(){
       say('ON SITE MANAGER (FRANK): «Ecco a te la planimetria di questo labirinto chiamato MiCo, cerca di non perderti.»');
-    },12000);
-    later(function(){
+      // La consegna avviene nello stesso momento in cui Frank la annuncia.
       planimetryDelivered=true;
       if(inventory.indexOf('PLANIMETRIA NORD') === -1) inventory.push('PLANIMETRIA NORD');
       renderInventory();
-    },16000);
+    },12000);
 
     // BLOCCO 2 — incarico, chat WhatsApp e schema
     later(function(){
