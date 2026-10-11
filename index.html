@@ -2099,45 +2099,76 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     });
   });
 
-  // Copertina iniziale: nascondila al clic; la scena di partenza è già Regia Gold.
+  // Audio copertina: tenta autoplay e, se il browser lo blocca,
+  // il pulsante INIZIO avvia prima l'audio con un gesto esplicito.
   const introScreen = document.getElementById('introScreen');
   const startGameBtn = document.getElementById('startGameBtn');
   const introAudio = document.getElementById('introAudio');
+  let introAudioReady = false;
+  let enteringGame = false;
+
+  function enterGame(){
+    if(enteringGame) return;
+    enteringGame = true;
+    if(introAudio){
+      introAudio.pause();
+      introAudio.currentTime = 0;
+    }
+    introScreen.style.setProperty('display','none','important');
+    introScreen.setAttribute('aria-hidden','true');
+    if(typeof startLounge === 'function') startLounge();
+  }
+
   if(introAudio){
     introAudio.loop = false;
     introAudio.volume = 0.8;
     introAudio.preload = 'auto';
+    introAudio.addEventListener('playing', function(){
+      introAudioReady = true;
+      if(startGameBtn) startGameBtn.textContent = 'INIZIO IL GIOCO';
+    });
     introAudio.addEventListener('ended', function(){
       introAudio.pause();
       introAudio.currentTime = 0;
+      if(startGameBtn) startGameBtn.textContent = 'INIZIO IL GIOCO';
     });
-    // Prova l'autoplay all'apertura della copertina.
-    introAudio.play().catch(function(error){
-      // Safari/Chrome possono bloccare l'autoplay con audio. Al primo tocco
-      // sulla copertina (non sul pulsante INIZIO) riprova soltanto il beep.
-      console.info('Autoplay copertina bloccato dal browser:', error);
+    introAudio.addEventListener('error', function(){
+      console.error('Errore nel caricamento dell’audio copertina:', introAudio.currentSrc, introAudio.error);
+      if(startGameBtn) startGameBtn.textContent = 'AUDIO NON DISPONIBILE — ENTRA';
+    });
+    introAudio.play().then(function(){
+      introAudioReady = true;
+    }).catch(function(error){
+      console.info('Autoplay copertina bloccato: serve un gesto dell’utente.', error);
     });
   }
+
   if(introScreen && introAudio){
     introScreen.addEventListener('pointerdown', function(event){
-      if(event.target === startGameBtn) return;
-      if(introAudio.paused){
-        introAudio.play().catch(function(error){
-          console.warn('Audio copertina non avviato:', error);
-        });
-      }
-    }, {once:true});
+      if(event.target === startGameBtn || introAudioReady || !introAudio.paused) return;
+      introAudio.play().then(function(){
+        introAudioReady = true;
+      }).catch(function(error){
+        console.warn('Impossibile avviare l’audio copertina:', error);
+      });
+    });
   }
+
   if(startGameBtn && introScreen){
     startGameBtn.addEventListener('click', function(){
-      // Ferma la copertina quando si entra nel gioco.
-      if(introAudio){
-        introAudio.pause();
-        introAudio.currentTime = 0;
+      if(introAudio && !introAudioReady && introAudio.paused){
+        // Primo clic: avvia l'audio e lascia la copertina visibile.
+        // Il giocatore può entrare con un secondo clic.
+        introAudio.play().then(function(){
+          introAudioReady = true;
+          startGameBtn.textContent = 'ENTRA NEL GIOCO';
+        }).catch(function(error){
+          console.error('Audio copertina non disponibile:', error);
+          enterGame();
+        });
+        return;
       }
-      introScreen.style.setProperty('display','none','important');
-      introScreen.setAttribute('aria-hidden','true');
-      if(typeof startLounge === 'function') startLounge();
+      enterGame();
     });
   }
 
