@@ -141,6 +141,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 <div id="introScreen" aria-label="Copertina MiCo Adventure">
   <img id="introArtwork" src="./MiCo-Adventure-il%20congresso%20non%20deve%20finire%20COPERTINA%20OK.png" alt="MiCo Adventure — Il congresso non deve finire">
   <button type="button" id="startGameBtn">INIZIO IL GIOCO</button>
+  <audio id="introAudio" src="./assets/Ogni-giorno-arrivo.mp3" preload="auto"></audio>
 </div>
 <div id="wrap">
   <div id="scene">
@@ -2101,6 +2102,24 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   // Copertina iniziale: nascondila al clic; la scena di partenza è già Regia Gold.
   const introScreen = document.getElementById('introScreen');
   const startGameBtn = document.getElementById('startGameBtn');
+  const introAudio = document.getElementById('introAudio');
+  if(introAudio){
+    introAudio.loop = false;
+    introAudio.volume = 0.8;
+    introAudio.addEventListener('ended', function(){
+      introAudio.pause();
+      introAudio.currentTime = 0;
+    });
+    // Avvio automatico quando consentito; se bloccato, riprova al primo click/tocco sulla copertina.
+    introAudio.play().catch(function(){});
+    if(introScreen){
+      introScreen.addEventListener('pointerdown', function(){
+        if(introAudio.paused && introAudio.currentTime === 0){
+          introAudio.play().catch(function(){});
+        }
+      }, {once:true});
+    }
+  }
   if(startGameBtn && introScreen){
     startGameBtn.addEventListener('click', function(){
       introScreen.style.setProperty('display','none','important');
