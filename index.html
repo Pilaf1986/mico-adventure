@@ -1466,6 +1466,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         goBarrier.textContent='🚧 VAI ALLA SBARRA';
         goBarrier.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:10030!important;';
       }
+      if(scene === 'ocean3'){
+        // Nascondi il pulsante per default; verrà ripristinato dopo aver caricato i flag.
+        document.getElementById('smokeBreakButton').style.display='none';
+      }
       inventory=Array.isArray(data.inventory) ? data.inventory.slice() : [];
       if(inventory.indexOf('CHAT WHATSAPP') === -1) inventory.push('CHAT WHATSAPP');
       if(!planimetryDelivered){
