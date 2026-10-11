@@ -2110,15 +2110,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       introAudio.pause();
       introAudio.currentTime = 0;
     });
-    // Avvio automatico quando consentito; se bloccato, riprova al primo click/tocco sulla copertina.
+    // Tenta l'avvio automatico. Alcuni browser bloccano l'audio non silenziato
+    // finché l'utente non compie un gesto: non agganciare l'audio a clic casuali.
     introAudio.play().catch(function(){});
-    if(introScreen){
-      introScreen.addEventListener('pointerdown', function(){
-        if(introAudio.paused && introAudio.currentTime === 0){
-          introAudio.play().catch(function(){});
-        }
-      }, {once:true});
-    }
   }
   if(startGameBtn && introScreen){
     startGameBtn.addEventListener('click', function(){
@@ -2129,6 +2123,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       }
       introScreen.style.setProperty('display','none','important');
       introScreen.setAttribute('aria-hidden','true');
+      // Avvia la musica della Regia Gold solo entrando nel gioco, non cliccando
+      // punti casuali della copertina o dello schermo.
+      if(typeof startLounge === 'function') startLounge();
     });
   }
 
@@ -2216,9 +2213,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }catch(e){}
   }
 
-  // Una sola partenza al primo gesto dell'utente.
-  document.addEventListener('click', startLounge, {once:true});
-  document.addEventListener('touchstart', startLounge, {once:true, passive:true});
+  // La lounge viene avviata soltanto dal pulsante INIZIO IL GIOCO.
 
 
   later(radioCall, 2500);
