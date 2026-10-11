@@ -1323,6 +1323,19 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         const chestButton=document.getElementById('oceanChestHotspot');
         chestButton.style.display='block';
         chestButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
+        // Se il salvataggio è stato creato dopo che Andriu ha consegnato il microfono a Paul,
+        // ripristina anche il pulsante per andare a fumare.
+        const smokeButton=document.getElementById('smokeBreakButton');
+        const micStillInInventory = inventory.indexOf('MICROFONO GOOSENECK') !== -1 ||
+          inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1;
+        if(smokeButton && paulHasSchema && !micStillInInventory){
+          smokeButton.textContent='🚬 VAI A FUMARE';
+          smokeButton.hidden=false;
+          smokeButton.style.setProperty('display','block','important');
+          smokeButton.style.setProperty('visibility','visible','important');
+          smokeButton.style.setProperty('pointer-events','auto','important');
+          smokeButton.style.setProperty('z-index','10030','important');
+        }
         const savedChestHotspot=document.querySelector('.hot[data-name="coffee"]');
         if(savedChestHotspot){
           savedChestHotspot.hidden=false;
