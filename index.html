@@ -2123,6 +2123,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     introAudio.loop = false;
     introAudio.volume = 0.8;
     introAudio.preload = 'auto';
+    introAudio.addEventListener('play', function(){
+      introAudioReady = true;
+      if(startGameBtn) startGameBtn.textContent = 'ENTRA NEL GIOCO';
+    });
     introAudio.addEventListener('playing', function(){
       introAudioReady = true;
       if(startGameBtn) startGameBtn.textContent = 'ENTRA NEL GIOCO';
@@ -2130,7 +2134,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     introAudio.addEventListener('ended', function(){
       introAudio.pause();
       introAudio.currentTime = 0;
-      if(startGameBtn) startGameBtn.textContent = 'INIZIO IL GIOCO';
+      if(startGameBtn) startGameBtn.textContent = 'ENTRA NEL GIOCO';
     });
     introAudio.addEventListener('error', function(){
       console.error('Errore nel caricamento dell’audio copertina:', introAudio.currentSrc, introAudio.error);
@@ -2138,6 +2142,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     });
     introAudio.play().then(function(){
       introAudioReady = true;
+      if(startGameBtn) startGameBtn.textContent = 'ENTRA NEL GIOCO';
     }).catch(function(error){
       console.info('Autoplay copertina bloccato: serve un gesto dell’utente.', error);
     });
@@ -2148,6 +2153,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(event.target === startGameBtn || introAudioReady || !introAudio.paused) return;
       introAudio.play().then(function(){
         introAudioReady = true;
+        if(startGameBtn) startGameBtn.textContent = 'ENTRA NEL GIOCO';
       }).catch(function(error){
         console.warn('Impossibile avviare l’audio copertina:', error);
       });
