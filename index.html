@@ -1282,7 +1282,12 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       scene=data.scene || 'regia';
       ocean3ReadyForEvent=!!data.ocean3ReadyForEvent;
       fumaFumaReturned=!!data.fumaFumaReturned;
-      ocean3Assembled=!!data.ocean3Assembled || !!data.ocean3ReadyForEvent || !!data.fumaFumaReturned;
+      // Compatibilità con i vecchi salvataggi creati prima del flag ocean3Assembled.
+      const savedInventory = Array.isArray(data.inventory) ? data.inventory : [];
+      const oldSaveAlreadyDeliveredMic = !!data.paulHasSchema &&
+        savedInventory.indexOf('MICROFONO GOOSENECK') === -1 &&
+        savedInventory.indexOf('MICROFONO GOOSENECK DA PODIO') === -1;
+      ocean3Assembled=!!data.ocean3Assembled || !!data.ocean3ReadyForEvent || !!data.fumaFumaReturned || (scene === 'ocean3' && oldSaveAlreadyDeliveredMic);
       warehouseConversationStarted=!!data.warehouseConversationStarted;
       barrierReached=!!data.barrierReached;
       // Migrazione dei vecchi salvataggi: il vecchio magazzino dopo Regia diventa la scena di uscita per PASS revocato.
