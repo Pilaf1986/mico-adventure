@@ -1190,6 +1190,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       paulHasSchema: paulHasSchema,
       whatsappChatDelivered: whatsappChatDelivered,
       frankBriefingComplete: frankBriefingComplete,
+      goWarehouseVisible: goWarehouse.style.display !== 'none',
       ocean3ReadyForEvent: ocean3ReadyForEvent,
       fumaFumaReturned: fumaFumaReturned,
       inventory: inventory.slice(),
@@ -1288,6 +1289,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       cooperativeCleared=!!data.cooperativeCleared;
       accessGranted=!!data.accessGranted;
       selectedItem=data.selectedItem || '';
+      // Il pulsante è nascosto durante il ripristino generale: verrà riattivato in base alla scena e alla progressione salvata.
       goWarehouse.style.display='none';
       goBarrier.style.display='none';
       document.getElementById('goZaniniButton').style.display='none';
@@ -1431,7 +1433,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       frankBriefingComplete=!!data.frankBriefingComplete;
       frankBriefingRunning=false;
       // Ripristina il pulsante di avanzamento anche quando si carica un salvataggio dopo il briefing di Regia.
-      if(scene === 'regia' && frankBriefingComplete){
+      if(scene === 'regia' && (frankBriefingComplete || data.goWarehouseVisible || data.regiaComplete)){
         goWarehouse.textContent='🚪 VAI IN MAGAZZINO';
         goWarehouse.style.display='block';
       }
