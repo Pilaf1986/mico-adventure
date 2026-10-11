@@ -1430,6 +1430,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       whatsappChatDelivered=!!data.whatsappChatDelivered;
       frankBriefingComplete=!!data.frankBriefingComplete;
       frankBriefingRunning=false;
+      // Ripristina il pulsante di avanzamento anche quando si carica un salvataggio dopo il briefing di Regia.
+      if(scene === 'regia' && frankBriefingComplete){
+        goWarehouse.textContent='🚪 VAI IN MAGAZZINO';
+        goWarehouse.style.display='block';
+      }
       if(scene === 'warehouse' && frankBriefingComplete){
         goBarrier.style.display='none';
       }
