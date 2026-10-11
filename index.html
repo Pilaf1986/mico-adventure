@@ -549,13 +549,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   if(startGameBtn && introScreen){
     startGameBtn.addEventListener('click', function(){
       introScreen.classList.add('hidden');
-      // Avvia sempre dall'inizio della storia: Regia Gold.
-      if(typeof changeScene === 'function') changeScene('regiaGold');
-      else if(typeof setScene === 'function') setScene('regiaGold');
-      else {
-        const bg = document.getElementById('bg');
-        if(bg) bg.src = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/Regia%20Gold_%20caos%20in%20console.png';
-      }
+      // La scena iniziale del gioco è già Regia Gold ('regia').
     });
   }
 
