@@ -1773,7 +1773,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           const chestVisual=document.getElementById('oceanChestOpen');
           if(chestVisual) chestVisual.style.display='none';
           const smokeButton=document.getElementById('smokeBreakButton');
-          if(smokeButton) smokeButton.style.display='block';
+          if(smokeButton){
+            smokeButton.hidden=false;
+            smokeButton.style.setProperty('display','block','important');
+            smokeButton.style.setProperty('visibility','visible','important');
+            smokeButton.style.setProperty('opacity','1','important');
+            smokeButton.style.setProperty('pointer-events','auto','important');
+            smokeButton.style.setProperty('z-index','10040','important');
+          }
           return say('👷 PAUL: «Perfetto! Vedo che il congresso si chiama FICA 2026. Bah, sarà la Federazione Italiana Congressisti Anonimi, chissà di cosa parlano. Bom, qualcosa abbiamo fatto: PAUSA, andiamo a fumare!»');
         }
         if(verb === 'GUARDA') return say('👷 Paul è il tecnico in primo piano a sinistra. Sta aspettando lo schema di montaggio.');
