@@ -345,6 +345,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let ocean3ReadyForEvent = false;
   let fumaFumaReturned = false;
   let ocean3Assembled = false;
+  let ocean3Devastated = false;
   let ocean3TestStep = 0;
   let warehouseConversationStarted = false;
   let planimetryDelivered = false;
@@ -1196,6 +1197,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       ocean3ReadyForEvent: ocean3ReadyForEvent,
       fumaFumaReturned: fumaFumaReturned,
       ocean3Assembled: ocean3Assembled,
+      ocean3Devastated: ocean3Devastated,
       inventory: inventory.slice(),
       message: msg.textContent,
       panicVisible: panic.style.display
@@ -1281,6 +1283,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       saveName.value=data.saveName || ('Salvataggio '+selectedSlot);
       scene=data.scene || 'regia';
       ocean3ReadyForEvent=!!data.ocean3ReadyForEvent;
+      ocean3Devastated=!!data.ocean3Devastated;
       fumaFumaReturned=!!data.fumaFumaReturned;
       // Compatibilità con i vecchi salvataggi creati prima del flag ocean3Assembled.
       const savedInventory = Array.isArray(data.inventory) ? data.inventory : [];
@@ -1307,10 +1310,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       document.getElementById('scene').classList.remove('ocean3-clean');
       if(scene === 'ocean3'){
         // OCEAN 3 va ripristinata come scena, non deve ricadere nel ramo Regia Gold.
-        const savedOcean3Background = (ocean3Assembled || fumaFumaReturned || ocean3ReadyForEvent) ? './assets/ocean3-allestita.png' : './assets/ocean3-scena5.png?rev=2';
+        const savedOcean3Background = ocean3Devastated ? './assets/ocean3_devastata.png?rev=1' : ((ocean3Assembled || fumaFumaReturned || ocean3ReadyForEvent) ? './assets/ocean3-allestita.png' : './assets/ocean3-scena5.png?rev=2');
         document.getElementById('bg').src=savedOcean3Background;
+        document.getElementById('scene').classList.toggle('ocean3-devastated', ocean3Devastated);
         if(ocean3ReadyForEvent) document.getElementById('goZaniniButton').style.display='block';
-        if(typeof ocean3Audio !== 'undefined' && !audioMuted){ ocean3Audio.currentTime=0; ocean3Audio.play().catch(function(){}); ocean3Started=true; }
+        if(ocean3Devastated){
+          if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Started=false; }
+          if(typeof sabotatoreAudio !== 'undefined' && !audioMuted){ sabotatoreAudio.currentTime=0; sabotatoreAudio.play().catch(function(){}); }
+        }else if(typeof ocean3Audio !== 'undefined' && !audioMuted){ ocean3Audio.currentTime=0; ocean3Audio.play().catch(function(){}); ocean3Started=true; }
         document.querySelectorAll('.hot').forEach(function(h){
           h.hidden=true;
           h.style.setProperty('display','none','important');
@@ -1321,16 +1328,23 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         document.getElementById('oceanChestOpen').style.display='none';
         // Paul deve essere visibile anche quando si ripristina un salvataggio già in OCEAN 3.
         const paulButton=document.getElementById('paulHotspot');
+        if(ocean3Devastated){
+          document.querySelectorAll('.hot').forEach(function(h){ h.hidden=true; h.style.setProperty('display','none','important'); h.style.setProperty('visibility','hidden','important'); h.style.setProperty('pointer-events','none','important'); });
+        }
         if(paulButton){
+          if(ocean3Devastated){ paulButton.hidden=true; paulButton.style.setProperty('display','none','important'); paulButton.style.setProperty('visibility','hidden','important'); paulButton.style.setProperty('pointer-events','none','important'); }
+          else {
           paulButton.hidden=false;
           paulButton.style.cssText='position:absolute!important;left:20%!important;top:28%!important;width:19%!important;height:43%!important;z-index:10002!important;display:block!important;visibility:visible!important;pointer-events:auto!important;background:transparent!important;border:0!important;outline:none!important;box-shadow:none!important;color:transparent!important;font-size:0!important;text-shadow:none!important;cursor:pointer!important;padding:0!important;margin:0!important';
           paulButton.textContent='';
           paulButton.setAttribute('aria-label','Parla con Paul');
           paulButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('phone');};
+          }
         }
         // Dopo il caricamento mostra il controllo visibile del baule verde.
         const chestButton=document.getElementById('oceanChestHotspot');
-        chestButton.style.display='block';
+        chestButton.style.display=ocean3Devastated ? 'none' : 'block';
+        if(ocean3Devastated){ chestButton.hidden=true; chestButton.style.setProperty('visibility','hidden','important'); chestButton.style.setProperty('pointer-events','none','important'); }
         chestButton.onclick=function(event){event.preventDefault();event.stopPropagation();act('coffee');};
         const savedChestHotspot=document.querySelector('.hot[data-name="coffee"]');
         if(savedChestHotspot){
@@ -1588,6 +1602,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(typeof sabotatoreAudio!=='undefined' && !audioMuted){sabotatoreAudio.currentTime=0;sabotatoreAudio.play().catch(function(){});}
     document.getElementById('zaniniBackButton').style.display='none';
     document.getElementById('bg').onerror=null;
+    ocean3Devastated=true;
     document.getElementById('bg').src='./assets/ocean3_devastata.png?rev=1';
     document.getElementById('scene').classList.add('ocean3-clean','ocean3-devastated');
     document.getElementById('viabilitaScene').style.display='none';
