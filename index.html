@@ -873,7 +873,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       }
       // Primo accesso dalla sbarra; ritorno consentito da OCEAN 3 per recuperare materiale.
       if((scene === 'barrier' && accessGranted) ||
-         (scene === 'ocean3' && accessGranted && frankBriefingComplete)) return enterWarehouse();
+         (scene === 'ocean3' && frankBriefingComplete)) return enterWarehouse();
       say('📐 PLANIMETRIA NORD — Per entrare nel Magazzino operativo devi prima raggiungere la sbarra e ottenere l’autorizzazione. Torna alla Regia e segui il percorso verso la sbarra.');
       return;
     }
@@ -1022,7 +1022,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     // Primo accesso dalla sbarra; da OCEAN 3 si può tornare solo dopo aver completato il briefing.
     if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
     const firstEntryAllowed = scene === 'barrier' && accessGranted;
-    const returnFromOceanAllowed = scene === 'ocean3' && accessGranted && frankBriefingComplete;
+    const returnFromOceanAllowed = scene === 'ocean3' && frankBriefingComplete;
     if(!firstEntryAllowed && !returnFromOceanAllowed){
       return enterWarehouseExit();
     }
