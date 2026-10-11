@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MiCo Adventure — Regia Gold</title>
 <style>
+
+#introScreen{position:fixed;inset:0;z-index:999999;background:#05070b;display:flex;align-items:center;justify-content:center}
+#introArtwork{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#05070b}
+#startGameBtn{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);z-index:2;padding:13px 25px;border:3px solid #ffe36a;border-radius:3px;background:rgba(9,15,25,.9);color:#fff2a0;font:bold clamp(16px,2vw,25px) monospace;letter-spacing:.04em;text-shadow:2px 2px #000;box-shadow:0 0 22px #000;cursor:pointer}
+#startGameBtn:hover{background:#ffe36a;color:#111;transform:translateX(-50%) scale(1.04)}
+#introScreen.hidden{display:none}
+
 html,body{margin:0;background:#07090e;color:#fff;font-family:monospace;height:100%;overflow:hidden}
 body{display:flex;align-items:center;justify-content:center}
 #wrap{width:min(1100px,100vw);padding:8px;box-sizing:border-box}
@@ -131,6 +138,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 </style>
 </head>
 <body>
+<div id="introScreen" aria-label="Copertina MiCo Adventure">
+  <img id="introArtwork" src="./MiCo-Adventure-il%20congresso%20non%20deve%20finire%20COPERTINA.png" alt="MiCo Adventure — Il congresso non deve finire">
+  <button type="button" id="startGameBtn">INIZIO IL GIOCO</button>
+</div>
 <div id="wrap">
   <div id="scene">
     <img id="bg" src="https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/Regia%20Gold_%20caos%20in%20console.png" alt="Regia Gold MiCo">
@@ -531,7 +542,24 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(coffeeDrunk) return say('☕ La tazza è già vuota.');
     coffeeDrunk=true;
     if(inventory.indexOf('CAFFÈ') === -1) inventory.push('CAFFÈ');
-    renderInventory();
+  
+  // Copertina iniziale: il gioco resta fermo finché il giocatore non clicca.
+  const introScreen = document.getElementById('introScreen');
+  const startGameBtn = document.getElementById('startGameBtn');
+  if(startGameBtn && introScreen){
+    startGameBtn.addEventListener('click', function(){
+      introScreen.classList.add('hidden');
+      // Avvia sempre dall'inizio della storia: Regia Gold.
+      if(typeof changeScene === 'function') changeScene('regiaGold');
+      else if(typeof setScene === 'function') setScene('regiaGold');
+      else {
+        const bg = document.getElementById('bg');
+        if(bg) bg.src = 'https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/Regia%20Gold_%20caos%20in%20console.png';
+      }
+    });
+  }
+
+  renderInventory();
     say('☕ Andriu beve il caffè. La carriera può continuare.');
   }
 
