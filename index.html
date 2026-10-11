@@ -1466,6 +1466,12 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         goWarehouse.style.display='block';
       }
       renderInventory();
+      // Ultimo ripristino UI: Regia Gold deve sempre mostrare il passaggio al Magazzino dopo il caricamento.
+      if(scene === 'regia'){
+        goWarehouse.hidden=false;
+        goWarehouse.textContent='🚪 VAI IN MAGAZZINO';
+        goWarehouse.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:10030!important;';
+      }
       // Il caricamento di un salvataggio non deve mostrare automaticamente il pulsante "FAI A FUMARE".
       // Il pulsante viene mostrato solo dal normale evento di gioco previsto per quel momento.
       const smokeButton=document.getElementById('smokeBreakButton');
