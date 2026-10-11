@@ -2103,7 +2103,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   const startGameBtn = document.getElementById('startGameBtn');
   if(startGameBtn && introScreen){
     startGameBtn.addEventListener('click', function(){
-      introScreen.classList.add('hidden');
+      introScreen.style.setProperty('display','none','important');
+      introScreen.setAttribute('aria-hidden','true');
     });
   }
 
