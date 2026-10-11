@@ -865,7 +865,12 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function chooseNorthRoom(room){
     if(room === 'MAGAZZINO'){
       closeNorthPlanimetry();
-      // Evita di intrappolare il giocatore nella scena di uscita: prima deve passare dalla sbarra.
+      // Se il giocatore è già nel Magazzino, non deve essere rimandato alla scena di uscita.
+      if(scene === 'warehouse'){
+        say('📐 PLANIMETRIA NORD — Sei già nel Magazzino operativo. Parla con Frank e completa il briefing.');
+        return;
+      }
+      // L’accesso al Magazzino avviene solo dalla sbarra dopo l’autorizzazione.
       if(scene === 'barrier' && accessGranted) return enterWarehouse();
       say('📐 PLANIMETRIA NORD — Per entrare nel Magazzino operativo devi prima raggiungere la sbarra e ottenere l’autorizzazione. Torna alla Regia e segui il percorso verso la sbarra.');
       return;
