@@ -141,7 +141,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 <div id="introScreen" aria-label="Copertina MiCo Adventure">
   <img id="introArtwork" src="./MiCo-Adventure-il%20congresso%20non%20deve%20finire%20COPERTINA%20OK.png" alt="MiCo Adventure — Il congresso non deve finire">
   <button type="button" id="startGameBtn">INIZIO IL GIOCO</button>
-  <audio id="introAudio" src="./assets/BEEP-Ogni-giorno-arrivo.mp3" preload="auto"></audio>
+  <audio id="introAudio" src="./assets/BEEP-Ogni-giorno-arrivo.mp3" preload="auto" autoplay></audio>
 </div>
 <div id="wrap">
   <div id="scene">
@@ -2106,25 +2106,37 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   if(introAudio){
     introAudio.loop = false;
     introAudio.volume = 0.8;
+    introAudio.preload = 'auto';
     introAudio.addEventListener('ended', function(){
       introAudio.pause();
       introAudio.currentTime = 0;
     });
-    // Tenta l'avvio automatico. Alcuni browser bloccano l'audio non silenziato
-    // finché l'utente non compie un gesto: non agganciare l'audio a clic casuali.
-    introAudio.play().catch(function(){});
+    // Prova l'autoplay all'apertura della copertina.
+    introAudio.play().catch(function(error){
+      // Safari/Chrome possono bloccare l'autoplay con audio. Al primo tocco
+      // sulla copertina (non sul pulsante INIZIO) riprova soltanto il beep.
+      console.info('Autoplay copertina bloccato dal browser:', error);
+    });
+  }
+  if(introScreen && introAudio){
+    introScreen.addEventListener('pointerdown', function(event){
+      if(event.target === startGameBtn) return;
+      if(introAudio.paused){
+        introAudio.play().catch(function(error){
+          console.warn('Audio copertina non avviato:', error);
+        });
+      }
+    }, {once:true});
   }
   if(startGameBtn && introScreen){
     startGameBtn.addEventListener('click', function(){
-      // Ferma immediatamente la musica della copertina quando si entra nel gioco.
+      // Ferma la copertina quando si entra nel gioco.
       if(introAudio){
         introAudio.pause();
         introAudio.currentTime = 0;
       }
       introScreen.style.setProperty('display','none','important');
       introScreen.setAttribute('aria-hidden','true');
-      // Avvia la musica della Regia Gold solo entrando nel gioco, non cliccando
-      // punti casuali della copertina o dello schermo.
       if(typeof startLounge === 'function') startLounge();
     });
   }
