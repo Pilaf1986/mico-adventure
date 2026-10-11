@@ -2103,6 +2103,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   // il pulsante INIZIO avvia prima l'audio con un gesto esplicito.
   const introScreen = document.getElementById('introScreen');
   const startGameBtn = document.getElementById('startGameBtn');
+  if(startGameBtn) startGameBtn.textContent = 'INIZIA';
   const introAudio = document.getElementById('introAudio');
   let introAudioReady = false;
   let enteringGame = false;
@@ -2262,7 +2263,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }catch(e){}
   }
 
-  // La lounge viene avviata soltanto dal pulsante INIZIO IL GIOCO.
+  // La lounge viene avviata soltanto dal pulsante ENTRA NEL GIOCO.
 
 
   later(radioCall, 2500);
