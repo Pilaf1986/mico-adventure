@@ -632,7 +632,18 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(!cleaned) return;
     addWhatsappBubble('Andriu',cleaned,true);
     document.getElementById('waInput').value='';
-    if(scene === 'ocean3' && cleaned.toLocaleLowerCase('it-IT') === "ocean 3 pronta per l'evento"){
+    const normalizedMessage = cleaned.toLocaleLowerCase('it-IT')
+      .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')
+      .replace(/[’']/g,' ')
+      .replace(/[^a-z0-9]+/g,' ')
+      .trim().replace(/\\s+/g,' ');
+    const ocean3ReadyMessages = [
+      'ocean 3 pronta',
+      'ocean 3 pronta per l evento',
+      'ocean 3 allestita',
+      'ocean 3 provata'
+    ];
+    if(scene === 'ocean3' && ocean3ReadyMessages.includes(normalizedMessage)){
       ocean3ReadyForEvent = true;
       later(function(){
         addWhatsappBubble('Frank — ON SITE MANAGER','Ottimo ragazzi, andate a mangiare e fate pure il taglio della cravatta abbiamo tempo.',false);
