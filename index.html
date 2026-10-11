@@ -1500,6 +1500,22 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       buttons.forEach(function(button){
         button.classList.toggle('sel', button.dataset.verb === verb);
       });
+      // Se si ricarica OCEAN 3 già allestita, riprendi automaticamente il dialogo di collaudo con Paul.
+      if(scene === 'ocean3' && ocean3Assembled && paulHasSchema && !ocean3ReadyForEvent){
+        const reunionDialogueOnLoad=[
+          'ANDRIU: «Ella madonna, che velocità, tempo di una sigaretta ed è tutto pronto, noi in plenaria siamo molto più lenti.»',
+          'PAUL: «È certo, noi salettare di mestiere non facciamo cagare, siamo solo poco considerati ma siamo bravi.»',
+          'ANDRIU: «Ok, vai a provare i microfoni da podio e i radio per le poltroncine.»',
+          'PAUL: «Sa sa sa di cazzo, si si si sente là in fondo, prova podio: un due tre quattro cinque.»',
+          'ANDRIU: «Tutto a posto, ora prova i lavalier per le poltroncine che attivo il Dan Dugan :-)»',
+          'PAUL: «Sei sette otto e oplà, provo lavalier, provo lavalier.»',
+          'ANDRIU: «Tutto a posto, direi che ci siamo.»',
+          'PAUL: «Ok, scrivi a Frank che siamo operativi e allestiti, pronti per il congresso. Usa CHAT WHATSAPP e inviagli: Ocean 3 pronta per l’evento.»'
+        ];
+        reunionDialogueOnLoad.forEach(function(line,index){
+          later(function(){ if(scene === 'ocean3') say(line); }, 1800 + index*4200);
+        });
+      }
       saveStatus.textContent='SLOT '+selectedSlot+' CARICATO.';
       updateSlotButtons();
     }catch(e){
