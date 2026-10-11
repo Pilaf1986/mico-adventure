@@ -343,6 +343,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let whatsappChatDelivered = false;
   let frankBriefingComplete = false;
   let frankBriefingRunning = false;
+  let warehouseItemsWarningShown = false;
   let barrierReached = false;
   let passChecked = false;
   let cooperativeCleared = false;
@@ -882,6 +883,15 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         say(frankBriefingRunning
           ? '📐 OCEAN 3 — Frank sta ancora facendo il briefing. Aspetta che finisca e consegni tutto il materiale prima di entrare in sala.'
           : '📐 OCEAN 3 — La sala è indicata sulla planimetria, ma prima devi completare il briefing di Frank nel Magazzino e ricevere tutto il materiale.');
+        return;
+      }
+      const requiredWarehouseItems = ['PENNARELLO NERO', 'NASTRO VERDE', 'LEATHERMAN'];
+      const missingWarehouseItems = requiredWarehouseItems.filter(function(item){
+        return inventory.indexOf(item) === -1;
+      });
+      if(missingWarehouseItems.length && !warehouseItemsWarningShown){
+        warehouseItemsWarningShown = true;
+        say('Ci sono tre oggetti importanti per il tuo lavoro qui: prendili.');
         return;
       }
       return enterOcean3();
