@@ -1533,9 +1533,23 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       h.style.setProperty('visibility','hidden','important');
       h.style.setProperty('pointer-events','none','important');
     });
-    document.getElementById('paulHotspot').style.display='block';
+    // OCEAN 3 DEVASTATA è una scena distinta: non mostrare hotspot di OCEAN 3 ALLESTITA.
+    const paulHotspot=document.getElementById('paulHotspot');
+    if(paulHotspot){
+      paulHotspot.hidden=true;
+      paulHotspot.style.setProperty('display','none','important');
+      paulHotspot.style.setProperty('visibility','hidden','important');
+      paulHotspot.style.setProperty('pointer-events','none','important');
+    }
     const chest=document.getElementById('oceanChestHotspot');
-    if(chest) chest.style.display='block';
+    if(chest){
+      chest.hidden=true;
+      chest.style.setProperty('display','none','important');
+      chest.style.setProperty('visibility','hidden','important');
+      chest.style.setProperty('pointer-events','none','important');
+    }
+    const chestOpen=document.getElementById('oceanChestOpen');
+    if(chestOpen) chestOpen.style.display='none';
     // In OCEAN 3 devastata deve suonare solo la Canzone del Sabotatore.
     if(typeof ocean3Audio!=='undefined'){ocean3Audio.pause();ocean3Audio.currentTime=0;ocean3Started=false;}
     if(typeof sabotatoreAudio!=='undefined' && !audioMuted){sabotatoreAudio.currentTime=0;sabotatoreAudio.play().catch(function(){});}
