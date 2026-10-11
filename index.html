@@ -1283,7 +1283,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       saveName.value=data.saveName || ('Salvataggio '+selectedSlot);
       scene=data.scene || 'regia';
       ocean3ReadyForEvent=!!data.ocean3ReadyForEvent;
-      ocean3Devastated=!!data.ocean3Devastated;
+      // Migrazione dei vecchi salvataggi: prima del flag dedicato, il messaggio salvato identificava il rientro nella scena devastata.
+      ocean3Devastated=!!data.ocean3Devastated || (data.scene === 'ocean3' && /Sei tornato a OCEAN 3/i.test(data.message || ''));
       fumaFumaReturned=!!data.fumaFumaReturned;
       // Compatibilità con i vecchi salvataggi creati prima del flag ocean3Assembled.
       const savedInventory = Array.isArray(data.inventory) ? data.inventory : [];
