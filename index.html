@@ -1489,11 +1489,13 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       if(smokeButton){
         const micStillInInventory = inventory.indexOf('MICROFONO GOOSENECK') !== -1 ||
           inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1;
+        // La pausa FUMA FUMA è disponibile solo prima che OCEAN 3 risulti allestita.
         const micAlreadyDelivered = scene === 'ocean3' && paulHasSchema && !micStillInInventory;
-        smokeButton.hidden = !micAlreadyDelivered;
-        smokeButton.style.setProperty('display', micAlreadyDelivered ? 'block' : 'none', 'important');
-        smokeButton.style.setProperty('visibility', micAlreadyDelivered ? 'visible' : 'hidden', 'important');
-        smokeButton.style.setProperty('pointer-events', micAlreadyDelivered ? 'auto' : 'none', 'important');
+        const showSmokeBreak = micAlreadyDelivered && !ocean3Assembled && !fumaFumaReturned && !ocean3ReadyForEvent;
+        smokeButton.hidden = !showSmokeBreak;
+        smokeButton.style.setProperty('display', showSmokeBreak ? 'block' : 'none', 'important');
+        smokeButton.style.setProperty('visibility', showSmokeBreak ? 'visible' : 'hidden', 'important');
+        smokeButton.style.setProperty('pointer-events', showSmokeBreak ? 'auto' : 'none', 'important');
       }
       buttons.forEach(function(button){
         button.classList.toggle('sel', button.dataset.verb === verb);
