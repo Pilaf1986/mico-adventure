@@ -349,6 +349,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let planimetryDelivered = false;
   let assemblySchemaDelivered = false;
   let paulHasSchema = false;
+  let microphoneGivenToPaul = false;
   let whatsappChatDelivered = false;
   let frankBriefingComplete = false;
   let frankBriefingRunning = false;
@@ -1188,6 +1189,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       planimetryDelivered: planimetryDelivered,
       assemblySchemaDelivered: assemblySchemaDelivered,
       paulHasSchema: paulHasSchema,
+      microphoneGivenToPaul: microphoneGivenToPaul,
       whatsappChatDelivered: whatsappChatDelivered,
       frankBriefingComplete: frankBriefingComplete,
       goWarehouseVisible: goWarehouse.style.display !== 'none',
@@ -1442,6 +1444,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       planimetryDelivered=!!data.planimetryDelivered;
       assemblySchemaDelivered=!!data.assemblySchemaDelivered;
       paulHasSchema=!!data.paulHasSchema;
+      microphoneGivenToPaul=!!data.microphoneGivenToPaul;
       whatsappChatDelivered=!!data.whatsappChatDelivered;
       frankBriefingComplete=!!data.frankBriefingComplete;
       frankBriefingRunning=false;
@@ -1497,6 +1500,16 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         const microphoneWasHandedOver=!!data.microphoneGivenToPaul ||
           savedMessage.indexOf('Perfetto! Vedo che il congresso si chiama FICA 2026') !== -1;
         if(scene === 'ocean3' && microphoneWasHandedOver){
+          smokeButton.textContent='🚬 VAI A FUMARE';
+          smokeButton.hidden=false;
+          smokeButton.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:10030!important;';
+        }
+      }
+      // Ultimo ripristino del pulsante: usa il flag persistente, non il testo del dialogo.
+      const smokeButton=document.getElementById('smokeBreakButton');
+      if(smokeButton){
+        smokeButton.style.display='none';
+        if(scene === 'ocean3' && microphoneGivenToPaul){
           smokeButton.textContent='🚬 VAI A FUMARE';
           smokeButton.hidden=false;
           smokeButton.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:10030!important;';
@@ -1789,6 +1802,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           if(selectedItem !== 'MICROFONO GOOSENECK' && selectedItem !== 'MICROFONO GOOSENECK DA PODIO') return say('👷 PAUL: «Prima mi serve lo SCHEMA DI MONTAGGIO!» Seleziona SCHEMA DI MONTAGGIO nell’inventario e clicca su di me.');
           if(!paulHasSchema) return say('👷 PAUL: «Prima lo schema, Andriu! Senza istruzioni rischio di montare tutto al contrario.»');
           const micItem=selectedItem;
+          microphoneGivenToPaul=true;
           const idx=inventory.indexOf(micItem);
           if(idx !== -1) inventory.splice(idx,1);
           selectedItem='';
