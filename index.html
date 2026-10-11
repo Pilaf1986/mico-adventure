@@ -931,11 +931,12 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     bg.onerror=null;
     bg.onload=null;
     bg.style.background='#fff';
-    bg.src='./assets/ocean3-scena5.png?rev=2';
+    const ocean3Background = fumaFumaReturned ? './assets/ocean3-allestita.png' : './assets/ocean3-scena5.png?rev=2';
+    bg.src=ocean3Background;
     bg.onerror=function(){
       bg.onerror=null;
       bg.removeAttribute('src');
-      say('⚠️ OCEAN 3 ALLESTITA — Non riesco a caricare ./assets/ocean3-scena5.png. Controlla che il file sia pubblicato nella cartella assets del sito GitHub Pages.');
+      say('⚠️ OCEAN 3 — Non riesco a caricare ' + ocean3Background + '. Controlla che il file sia pubblicato nella cartella assets del sito GitHub Pages.');
     };
     bg.onload=function(){
       bg.onerror=null;
