@@ -633,10 +633,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     addWhatsappBubble('Andriu',cleaned,true);
     document.getElementById('waInput').value='';
     const normalizedMessage = cleaned.toLocaleLowerCase('it-IT')
-      .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
       .replace(/[’']/g,' ')
       .replace(/[^a-z0-9]+/g,' ')
-      .trim().replace(/\\s+/g,' ');
+      .trim().replace(/\s+/g,' ');
     const ocean3ReadyMessages = [
       'ocean 3 pronta',
       'ocean 3 pronta per l evento',
