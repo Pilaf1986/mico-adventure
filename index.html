@@ -1475,10 +1475,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         goWarehouse.textContent='🚪 VAI IN MAGAZZINO';
         goWarehouse.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:10030!important;';
       }
-      // Il caricamento di un salvataggio non deve mostrare automaticamente il pulsante "FAI A FUMARE".
-      // Il pulsante viene mostrato solo dal normale evento di gioco previsto per quel momento.
+      // Ripristina il pulsante se il salvataggio è stato fatto dopo aver consegnato il microfono a Paul.
       const smokeButton=document.getElementById('smokeBreakButton');
-      if(smokeButton) smokeButton.style.display='none';
+      if(smokeButton){
+        const micStillInInventory = inventory.indexOf('MICROFONO GOOSENECK') !== -1 ||
+          inventory.indexOf('MICROFONO GOOSENECK DA PODIO') !== -1;
+        const micAlreadyDelivered = scene === 'ocean3' && paulHasSchema && !micStillInInventory;
+        smokeButton.hidden = !micAlreadyDelivered;
+        smokeButton.style.setProperty('display', micAlreadyDelivered ? 'block' : 'none', 'important');
+        smokeButton.style.setProperty('visibility', micAlreadyDelivered ? 'visible' : 'hidden', 'important');
+        smokeButton.style.setProperty('pointer-events', micAlreadyDelivered ? 'auto' : 'none', 'important');
+      }
       buttons.forEach(function(button){
         button.classList.toggle('sel', button.dataset.verb === verb);
       });
