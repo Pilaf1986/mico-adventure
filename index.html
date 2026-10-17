@@ -1384,7 +1384,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         const savedOcean3Background = ocean3Devastated ? './assets/ocean3_devastata.png?rev=1' : ((ocean3Assembled || fumaFumaReturned || ocean3ReadyForEvent) ? './assets/ocean3-allestita.png' : './assets/ocean3-scena5.png?rev=2');
         document.getElementById('bg').src=savedOcean3Background;
         document.getElementById('scene').classList.toggle('ocean3-devastated', ocean3Devastated);
-        if(ocean3ReadyForEvent) document.getElementById('goZaniniButton').style.display='block';
+        if(ocean3ReadyForEvent && !ocean3Devastated) document.getElementById('goZaniniButton').style.display='block';
         if(ocean3Devastated){
           if(typeof ocean3Audio !== 'undefined'){ ocean3Audio.pause(); ocean3Audio.currentTime=0; ocean3Started=false; }
           if(typeof sabotatoreAudio !== 'undefined' && !audioMuted){ sabotatoreAudio.currentTime=0; sabotatoreAudio.play().catch(function(){}); }
