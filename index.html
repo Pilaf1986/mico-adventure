@@ -972,6 +972,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       return;
     }
     if(room === 'SKY 1'){
+      if(inventory.indexOf('DECAGALO') === -1){
+        closeNorthPlanimetry();
+        say('Hai un oggetto da prendere qui');
+        return;
+      }
       closeNorthPlanimetry();
       if(!frankSky1AlertDelivered){
         say('📐 PLANIMETRIA NORD — SKY 1 non è ancora disponibile. Aspetta il messaggio di allarme di Frank.');
@@ -1005,6 +1010,16 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   function enterSky1(){
+    if(inventory.indexOf('DECAGALO') === -1){
+      closeNorthPlanimetry();
+      say('Hai un oggetto da prendere qui');
+      return;
+    }
+    if(!frankSky1AlertDelivered){
+      closeNorthPlanimetry();
+      say('📐 PLANIMETRIA NORD — SKY 1 non è ancora disponibile. Aspetta il messaggio di allarme di Frank.');
+      return;
+    }
     clearTimers();
     scene='sky1';
     if(typeof zaniniAudio!=='undefined'){zaniniAudio.pause();zaniniAudio.currentTime=0;}
