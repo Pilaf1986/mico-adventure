@@ -972,9 +972,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       return;
     }
     if(room === 'SKY 1'){
-      if(inventory.indexOf('DECAGALO') === -1){
+      if(!inventory.some(function(item){ return String(item).trim().toUpperCase() === 'DECAGALO'; })){
         closeNorthPlanimetry();
-        say('Hai un oggetto da prendere qui');
+        msg.textContent='Hai un oggetto da prendere qui';
         return;
       }
       closeNorthPlanimetry();
@@ -1010,9 +1010,9 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   function enterSky1(){
-    if(inventory.indexOf('DECAGALO') === -1){
+    if(!inventory.some(function(item){ return String(item).trim().toUpperCase() === 'DECAGALO'; })){
       closeNorthPlanimetry();
-      say('Hai un oggetto da prendere qui');
+      msg.textContent='Hai un oggetto da prendere qui';
       return;
     }
     if(!frankSky1AlertDelivered){
