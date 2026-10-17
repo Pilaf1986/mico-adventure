@@ -90,6 +90,16 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 #northMeeting{right:3%;top:35%}#northSuites{left:5%;bottom:12%}#northBlue{left:62%;top:55%}
 @media(max-width:600px){.northRoom{font-size:9px;padding:4px 5px}}
 
+#sky1Scene{position:absolute;inset:0;z-index:10018;display:none;overflow:hidden;font-family:monospace;color:#fff;background:linear-gradient(180deg,rgba(9,17,28,.35),rgba(5,8,14,.92)),linear-gradient(90deg,#293746 0%,#101b28 48%,#263646 100%);}
+#sky1Scene:before{content:"";position:absolute;inset:0 0 34%;background:repeating-linear-gradient(90deg,transparent 0 11%,rgba(170,205,225,.12) 11.2% 11.6%,transparent 11.8% 22%),linear-gradient(180deg,#243d52,#0d1724);border-bottom:10px solid #5b6670;clip-path:polygon(0 0,100% 0,88% 100%,12% 100%);}
+#sky1Scene .skyStage{position:absolute;left:17%;right:17%;bottom:26%;height:27%;background:linear-gradient(180deg,#38414b,#10151b);border:3px solid #73818c;box-shadow:0 0 35px #000;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;}
+#sky1Scene .skyScreen{width:72%;height:58%;background:linear-gradient(135deg,#152c42,#31516a);border:5px solid #151b21;box-shadow:0 0 16px #000;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:clamp(16px,3vw,36px);font-weight:bold;letter-spacing:.12em;color:#d7e9f5;text-shadow:2px 2px #000;}
+#sky1Scene .skyPodium{position:absolute;bottom:19%;left:45%;width:10%;height:12%;background:linear-gradient(90deg,#161c22,#46525a,#111820);border:2px solid #7c858c;clip-path:polygon(15% 0,85% 0,100% 100%,0 100%);}
+#sky1Scene .skyRows{position:absolute;left:4%;right:4%;bottom:2%;height:23%;display:flex;align-items:flex-end;justify-content:space-around;gap:2%;}
+#sky1Scene .skyRows span{display:block;width:12%;height:65%;border-radius:45% 45% 5% 5%;background:linear-gradient(90deg,#242b34,#59616a,#171d25);border-bottom:12px solid #111820;box-shadow:0 0 10px #000;}
+#sky1Scene .skyTitle{position:absolute;top:4%;left:4%;font-size:clamp(22px,4vw,46px);font-weight:bold;color:#f3d783;text-shadow:3px 3px #000;}
+#sky1Scene .skyBriefing{position:absolute;top:15%;left:4%;max-width:43%;padding:12px;background:rgba(0,0,0,.68);border-left:4px solid #e53935;line-height:1.5;font-size:clamp(11px,1.4vw,16px);}
+#sky1Scene #sky1BackToMap{position:absolute;right:2%;top:3%;z-index:4;background:#252a34;color:#fff;border:2px solid #ffd84a;padding:10px;font:bold 12px monospace;cursor:pointer;}
 #viabilitaScene{position:absolute;inset:0;z-index:10019;display:none;overflow:hidden;font-family:monospace;background:#252a30 url("./assets/viabilita-scena6.png") center center / cover no-repeat;color:#fff}
 #viabilitaScene:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 13%,rgba(10,18,24,.7) 13.2% 13.8%,transparent 14% 27%),linear-gradient(180deg,transparent 0 16%,rgba(7,12,18,.8) 16% 19%,transparent 19% 22%,rgba(0,0,0,.12) 22% 100%);pointer-events:none}
 .viaRoof{position:absolute;inset:0 0 auto;height:25%;background:repeating-linear-gradient(90deg,#343a40 0 2%,#7b8588 2.3% 2.8%,#252b31 3% 18%),repeating-linear-gradient(0deg,transparent 0 45px,rgba(255,255,255,.16) 47px 50px);border-bottom:8px solid #252b31}
@@ -202,6 +212,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       <button type="button" class="viaHot" id="viaCleanerBtn" data-label="ADDETTO ALLE PULIZIE" aria-label="Addetto alle pulizie" title="Addetto alle pulizie"></button>
       <button type="button" class="viaHot" id="viaBackBtn">↩ TORNA A OCEAN 3</button>
       <div id="viaDialogue"><span class="viaStatus">SCENA 6 — FUMA FUMA · VIABILITÀ</span><br>Paul e Andriu si godono una sigaretta sotto la copertura. I camion passano, il catering prepara le brioche e l'addetto alle pulizie continua il suo turno.</div>
+    </div>
+    <div id="sky1Scene" aria-label="Nuova scena SKY 1">
+      <div class="skyTitle">SKY 1 · RIUNIONE TECNICA</div>
+      <div class="skyBriefing">🚨 ALLARME ROSSO<br>Frank ha convocato tutti dopo il sabotaggio di OCEAN 3. La riunione tecnica è iniziata: controlla la sala e ascolta le indicazioni.</div>
+      <div class="skyStage"><div class="skyScreen">SKY 1<small style="font-size:.38em;letter-spacing:.08em">TECHNICAL BRIEFING</small></div></div>
+      <div class="skyPodium"></div>
+      <div class="skyRows" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <button type="button" id="sky1BackToMap">📐 APRI PLANIMETRIA</button>
     </div>
     <div id="panicOverlay">
       <div class="panicText">FIIIIIIIIIIII!</div>
@@ -950,6 +968,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       say('📐 PLANIMETRIA NORD — Per entrare nel Magazzino operativo devi prima raggiungere la sbarra e ottenere l’autorizzazione. Torna alla Regia e segui il percorso verso la sbarra.');
       return;
     }
+    if(room === 'SKY 1'){
+      closeNorthPlanimetry();
+      enterSky1();
+      return;
+    }
     if(room === 'OCEAN 3'){
       closeNorthPlanimetry();
       // Entrare in OCEAN 3 azzera i timer: non interrompere il briefing di Frank né saltare le consegne.
@@ -972,6 +995,31 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
     closeNorthPlanimetry();
     say('📐 PLANIMETRIA NORD — Destinazione selezionata: ' + room + '.');
+  }
+
+  function enterSky1(){
+    clearTimers();
+    scene='sky1';
+    if(typeof zaniniAudio!=='undefined'){zaniniAudio.pause();zaniniAudio.currentTime=0;}
+    if(typeof ocean3Audio!=='undefined'){ocean3Audio.pause();ocean3Audio.currentTime=0;ocean3Started=false;}
+    if(typeof sabotatoreAudio!=='undefined'){sabotatoreAudio.pause();sabotatoreAudio.currentTime=0;}
+    document.getElementById('bg').style.display='none';
+    document.getElementById('sky1Scene').style.display='block';
+    document.getElementById('viabilitaScene').style.display='none';
+    document.getElementById('fumaFumaOverlay').style.display='none';
+    document.getElementById('goZaniniButton').style.display='none';
+    document.getElementById('zaniniBackButton').style.display='none';
+    document.getElementById('smokeBreakButton').style.display='none';
+    goWarehouse.style.display='none';
+    goBarrier.style.display='none';
+    panic.style.display='none';
+    document.querySelectorAll('.hot').forEach(function(h){
+      h.hidden=true;
+      h.style.setProperty('display','none','important');
+      h.style.setProperty('visibility','hidden','important');
+      h.style.setProperty('pointer-events','none','important');
+    });
+    say('SKY 1 — Sei arrivato alla riunione tecnica convocata da Frank dopo il sabotaggio.');
   }
 
   function configureDecagaloHotspot(){
@@ -1833,6 +1881,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.getElementById('northAqua2').addEventListener('click', function(){chooseNorthRoom('AQUA 2');});
   document.getElementById('northAqua3').addEventListener('click', function(){chooseNorthRoom('AQUA 3');});
   document.getElementById('northAqua4').addEventListener('click', function(){chooseNorthRoom('AQUA 4');});
+  document.getElementById('sky1BackToMap').addEventListener('click',function(){
+    document.getElementById('sky1Scene').style.display='none';
+    document.getElementById('bg').style.display='block';
+    openNorthPlanimetry();
+  });
   document.getElementById('northSky1').addEventListener('click', function(){chooseNorthRoom('SKY 1');});
   document.getElementById('northSky2').addEventListener('click', function(){chooseNorthRoom('SKY 2');});
   document.getElementById('northMeeting').addEventListener('click', function(){chooseNorthRoom('MEETING N1–N9');});
