@@ -274,7 +274,11 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
       </div>
     </div>
 
-    <div id="planimetryOverlay">
+    <div id="decagaloOverlay" style="display:none;position:fixed;inset:0;z-index:10030;background:rgba(0,0,0,.94);align-items:center;justify-content:center;padding:12px;box-sizing:border-box" onclick="if(event.target===this)closeDecagaloImage()">
+    <button type="button" onclick="closeDecagaloImage()" style="position:absolute;top:12px;right:16px;z-index:2;font-size:28px;padding:6px 14px;cursor:pointer" aria-label="Chiudi documento">✕</button>
+    <img src="./assets/Decagalo.JPG" alt="Decagalo di comportamento del sabotatore" style="max-width:100%;max-height:94vh;object-fit:contain;background:#fff" />
+  </div>
+  <div id="planimetryOverlay">
       <div id="planimetryBox">
         <img id="planimetryImage" src="https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/assets/Planimetria-NORD.webp" alt="PLANIMETRIA NORD">
         <button type="button" id="closePlanimetry">✕ CHIUDI</button>
@@ -713,6 +717,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
           selectedItem=item;
           return say('🎤 Microfono selezionato. Ora clicca su Paul per consegnarglielo.');
         }
+        if(verb === 'GUARDA' && item === 'DECAGALO') return openDecagaloImage();
         if(verb === 'GUARDA' && item === 'PLANIMETRIA NORD') return openNorthPlanimetry();
         if((verb === 'GUARDA' || verb === 'USA') && item === 'CHAT WHATSAPP') return openWhatsapp();
         if(verb === 'GUARDA' && item === 'SCHEMA DI MONTAGGIO') return openAssemblySchema();
@@ -901,6 +906,14 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function closeAssemblySchema(){
     document.getElementById('assemblySchemaOverlay').style.display='none';
   }
+
+  function openDecagaloImage(){
+    document.getElementById('decagaloOverlay').style.display='flex';
+  }
+  function closeDecagaloImage(){
+    document.getElementById('decagaloOverlay').style.display='none';
+  }
+  document.addEventListener('keydown',function(e){if(e.key==='Escape') closeDecagaloImage();});
 
   function openNorthPlanimetry(){
     planimetryOverlay.style.display='flex';
@@ -1783,7 +1796,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
 
   function act(name){
     if(scene === 'ocean3' && ocean3Devastated && name === 'decagalo'){
-      if(verb === 'GUARDA') return say('DECAGALO: le nuove regole di comportamento per il buon tecnico secondo il sabotatore');
+      if(verb === 'GUARDA') return openDecagaloImage();
       if(verb === 'PRENDI'){
         if(inventory.indexOf('DECAGALO') === -1){
           inventory.push('DECAGALO');
