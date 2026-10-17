@@ -1696,6 +1696,19 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(inventory.indexOf('CHAT WHATSAPP')===-1) inventory.push('CHAT WHATSAPP');
     renderInventory();
     say('📱 NUOVO MESSAGGIO WHATSAPP DA FRANK! Apri CHAT WHATSAPP nell’inventario per leggere le istruzioni.');
+    // Avviso modale ben visibile: il normale testo di stato può essere coperto dalla scena.
+    let frankAlertOverlay=document.getElementById('frankSabotageAlertOverlay');
+    if(!frankAlertOverlay){
+      frankAlertOverlay=document.createElement('div');
+      frankAlertOverlay.id='frankSabotageAlertOverlay';
+      frankAlertOverlay.style.cssText='position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;font-family:monospace;';
+      frankAlertOverlay.innerHTML='<div style="max-width:620px;width:100%;box-sizing:border-box;background:#241515;border:4px solid #e53935;box-shadow:0 0 35px #000;padding:24px;color:#fff;text-align:center"><div style="font-size:clamp(24px,5vw,40px);font-weight:bold;color:#ff4b45;margin-bottom:18px">🚨 ALLARME ROSSO 🚨</div><div style="font-size:clamp(16px,2.8vw,22px);line-height:1.6;margin-bottom:24px">Frank — ON SITE MANAGER<br><br>Il sabotatore ha devastato l\'allestimento, tutti in sky 1 per riunione tecnica</div><button type="button" id="frankSabotageReadButton" style="font:bold 16px monospace;padding:13px 18px;background:#e53935;color:#fff;border:2px solid #fff;cursor:pointer">LEGGI SU WHATSAPP</button><button type="button" id="frankSabotageCloseButton" style="font:bold 16px monospace;padding:13px 18px;margin-left:8px;background:#222;color:#fff;border:2px solid #aaa;cursor:pointer">CHIUDI</button></div>';
+      document.body.appendChild(frankAlertOverlay);
+      document.getElementById('frankSabotageReadButton').addEventListener('click',function(){frankAlertOverlay.style.display='none';openWhatsapp();});
+      document.getElementById('frankSabotageCloseButton').addEventListener('click',function(){frankAlertOverlay.style.display='none';});
+    }else{
+      frankAlertOverlay.style.display='flex';
+    }
     document.getElementById('scene').classList.add('ocean3-clean','ocean3-devastated');
     document.getElementById('viabilitaScene').style.display='none';
     document.querySelectorAll('.hot').forEach(function(h){
