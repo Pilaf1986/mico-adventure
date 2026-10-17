@@ -908,18 +908,21 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   }
 
   function openDecagaloImage(){
-    document.getElementById('decagaloOverlay').style.display='flex';
+    const overlay=document.getElementById('decagaloOverlay');
+    if(overlay.parentElement!==document.body) document.body.appendChild(overlay);
+    overlay.style.display='flex';
   }
   function closeDecagaloImage(){
-    document.getElementById('decagaloOverlay').style.display='none';
+    const overlay=document.getElementById('decagaloOverlay');
+    if(overlay) overlay.style.display='none';
   }
   document.getElementById('closeDecagaloImage').addEventListener('click',function(e){
     e.preventDefault();
     e.stopPropagation();
-    closeDecagaloImage();
+    document.getElementById('decagaloOverlay').style.display='none';
   });
   document.getElementById('decagaloOverlay').addEventListener('click',function(e){
-    if(e.target===this) closeDecagaloImage();
+    if(e.target===this) this.style.display='none';
   });
   document.addEventListener('keydown',function(e){if(e.key==='Escape') closeDecagaloImage();});
 
