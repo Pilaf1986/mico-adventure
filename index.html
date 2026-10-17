@@ -148,6 +148,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     <img id="bg" src="https://raw.githubusercontent.com/Pilaf1986/mico-adventure/main/Regia%20Gold_%20caos%20in%20console.png" alt="Regia Gold MiCo">
 
     <div class="hot" data-name="mixer" title="MIXER YAMAHA RIVAGE" style="left:21%;top:33%;width:59%;height:35%"></div>
+    <div class="hot" id="decagaloHotspot" data-name="decagalo" title="DECAGALO — SUL MIXER AUDIO" style="display:none;left:21%;top:33%;width:59%;height:35%;z-index:90"></div>
     <div class="hot" data-name="fader" title="PRIMO FADER — USA QUI" style="left:19%;top:43%;width:16%;height:22%;z-index:80;pointer-events:auto"></div>
     <div class="hot" data-name="postit" title="POST-IT" style="left:42%;top:68%;width:7%;height:12%;z-index:10"></div>
     <div id="faderHint"></div>
@@ -948,6 +949,17 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     say('📐 PLANIMETRIA NORD — Destinazione selezionata: ' + room + '.');
   }
 
+  function configureDecagaloHotspot(){
+    const hotspot=document.getElementById('decagaloHotspot');
+    if(!hotspot) return;
+    const active=scene === 'ocean3' && ocean3Devastated;
+    hotspot.hidden=!active;
+    hotspot.style.cssText=active
+      ? 'position:absolute!important;left:21%!important;top:33%!important;width:59%!important;height:35%!important;z-index:90!important;display:block!important;visibility:visible!important;pointer-events:auto!important;opacity:1!important;background:transparent!important;border:0!important;cursor:pointer!important'
+      : 'display:none!important;visibility:hidden!important;pointer-events:none!important';
+    hotspot.title='DECAGALO — SUL MIXER AUDIO';
+  }
+
   function enterOcean3(){
     clearTimers();
     if(typeof zaniniAudio !== 'undefined'){ zaniniAudio.pause(); zaniniAudio.currentTime=0; }
@@ -1364,6 +1376,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
         const paulButton=document.getElementById('paulHotspot');
         if(ocean3Devastated){
           document.querySelectorAll('.hot').forEach(function(h){ h.hidden=true; h.style.setProperty('display','none','important'); h.style.setProperty('visibility','hidden','important'); h.style.setProperty('pointer-events','none','important'); });
+          configureDecagaloHotspot();
         }
         if(paulButton){
           if(ocean3Devastated){ paulButton.hidden=true; paulButton.style.setProperty('display','none','important'); paulButton.style.setProperty('visibility','hidden','important'); paulButton.style.setProperty('pointer-events','none','important'); }
@@ -1663,6 +1676,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
     const chestOpen=document.getElementById('oceanChestOpen');
     if(chestOpen) chestOpen.style.display='none';
+    configureDecagaloHotspot();
     // In OCEAN 3 devastata deve suonare solo la Canzone del Sabotatore.
     if(typeof ocean3Audio!=='undefined'){ocean3Audio.pause();ocean3Audio.currentTime=0;ocean3Started=false;}
     if(typeof sabotatoreAudio!=='undefined' && !audioMuted){sabotatoreAudio.currentTime=0;sabotatoreAudio.play().catch(function(){});}
@@ -1767,6 +1781,18 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   document.getElementById('northWarehouse').addEventListener('click', function(){chooseNorthRoom('MAGAZZINO');});
 
   function act(name){
+    if(scene === 'ocean3' && ocean3Devastated && name === 'decagalo'){
+      if(verb === 'GUARDA') return say('Sul mixer audio è rimasto il DECAGALO: dieci regole sacre del fonico, sopravvissute al sabotaggio.');
+      if(verb === 'PRENDI'){
+        if(inventory.indexOf('DECAGALO') === -1){
+          inventory.push('DECAGALO');
+          renderInventory();
+          return say('Hai preso il DECAGALO dal mixer audio. Aggiunto all’inventario.');
+        }
+        return say('Il DECAGALO è già nel tuo inventario.');
+      }
+      return say('Il DECAGALO è incastrato sul mixer audio. Seleziona PRENDI per raccoglierlo.');
+    }
     // MAGAZZINO INDEX: riconosci la scena anche se il flag non è stato ripristinato da un salvataggio.
     const activeBackground = document.getElementById('bg').getAttribute('src') || '';
     const isMagazzinoIndex = warehouseIndex || activeBackground.indexOf('magazzino-index.png') !== -1;
