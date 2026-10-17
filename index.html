@@ -1676,6 +1676,26 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     document.getElementById('bg').onerror=null;
     ocean3Devastated=true;
     document.getElementById('bg').src='./assets/ocean3_devastata.png?rev=1';
+    const frankAlertText='Allarme rosso, il sabotatore ha devastato l\'allestimento, tutti in sky 1 per riunione tecnica';
+    const waMessages=document.getElementById('waMessages');
+    if(!waMessages.querySelector('[data-frank-sabotage-alert="true"]')){
+      const alertBubble=document.createElement('div');
+      alertBubble.className='waBubble waFrank';
+      alertBubble.setAttribute('data-frank-sabotage-alert','true');
+      const alertSender=document.createElement('strong');
+      alertSender.textContent='Frank — ON SITE MANAGER';
+      const alertBody=document.createElement('div');
+      alertBody.style.fontWeight='normal';
+      alertBody.style.marginTop='4px';
+      alertBody.textContent=frankAlertText;
+      alertBubble.appendChild(alertSender);
+      alertBubble.appendChild(alertBody);
+      waMessages.appendChild(alertBubble);
+      waMessages.scrollTop=waMessages.scrollHeight;
+    }
+    if(inventory.indexOf('CHAT WHATSAPP')===-1) inventory.push('CHAT WHATSAPP');
+    renderInventory();
+    say('📱 NUOVO MESSAGGIO WHATSAPP DA FRANK! Apri CHAT WHATSAPP nell’inventario per leggere le istruzioni.');
     document.getElementById('scene').classList.add('ocean3-clean','ocean3-devastated');
     document.getElementById('viabilitaScene').style.display='none';
     document.querySelectorAll('.hot').forEach(function(h){
