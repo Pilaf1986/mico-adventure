@@ -1787,8 +1787,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     if(typeof ocean3Audio!=='undefined'){ocean3Audio.pause();ocean3Audio.currentTime=0;ocean3Started=false;}
     if(typeof sabotatoreAudio!=='undefined' && !audioMuted){sabotatoreAudio.currentTime=0;sabotatoreAudio.play().catch(function(){});}
     say('🚨 ALLARME ROSSO! Frank: il sabotatore ha devastato l’allestimento. Tutti in SKY 1 per riunione tecnica.');
-    // Avviso nativo attivato dal clic dell'utente: resta visibile anche se la grafica della scena copre la UI.
-    window.alert('🚨 ALLARME ROSSO 🚨\n\nFRANK — ON SITE MANAGER\n\nIl sabotatore ha devastato l\'allestimento, tutti in sky 1 per riunione tecnica');
+    // Nessun popup del browser: l'avviso resta nel messaggio di gioco e nella chat WhatsApp di Frank.
   });
   document.getElementById('smokeBreakButton').addEventListener('click', function(){
     clearTimers();
