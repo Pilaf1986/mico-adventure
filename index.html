@@ -381,6 +381,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   let fumaFumaReturned = false;
   let ocean3Assembled = false;
   let ocean3Devastated = false;
+  let frankSky1AlertDelivered = false;
   let ocean3TestStep = 0;
   let warehouseConversationStarted = false;
   let planimetryDelivered = false;
@@ -947,6 +948,8 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
   function openNorthPlanimetry(){
     planimetryOverlay.style.display='flex';
     document.querySelectorAll('.northRoom').forEach(function(btn){ btn.style.display='block'; });
+    const sky1Button=document.getElementById('northSky1');
+    if(sky1Button) sky1Button.style.display=frankSky1AlertDelivered ? 'block' : 'none';
   }
 
   function closeNorthPlanimetry(){
@@ -970,6 +973,10 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     }
     if(room === 'SKY 1'){
       closeNorthPlanimetry();
+      if(!frankSky1AlertDelivered){
+        say('📐 PLANIMETRIA NORD — SKY 1 non è ancora disponibile. Aspetta il messaggio di allarme di Frank.');
+        return;
+      }
       enterSky1();
       return;
     }
@@ -1725,6 +1732,7 @@ button:hover,button.sel{background:#3e4654;border-color:#ffd84a;color:#ffd84a}
     ocean3Devastated=true;
     document.getElementById('bg').src='./assets/ocean3_devastata.png?rev=1';
     const frankAlertText='Allarme rosso, il sabotatore ha devastato l\'allestimento, tutti in sky 1 per riunione tecnica';
+    frankSky1AlertDelivered=true;
     const waMessages=document.getElementById('waMessages');
     if(!waMessages.querySelector('[data-frank-sabotage-alert="true"]')){
       const alertBubble=document.createElement('div');
